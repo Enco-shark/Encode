@@ -15,6 +15,18 @@ const IMAGE_EXT = new Set([".png", ".jpg", ".jpeg"])
 const NONE_VALUE = "__encode_image_none__"
 const IMPORT_VALUE = "__encode_image_import__"
 
+const BUILTIN_BACKGROUNDS = [
+  { id: "__builtin__starry", name: "✦ Starry (Default)" },
+  { id: "__builtin__matrix", name: "𝑚 Matrix Rain" },
+  { id: "__builtin__waves", name: "≋ Waves" },
+  { id: "__builtin__dots", name: "••• Dots Grid" },
+  { id: "__builtin__fireflies", name: "✦ Fireflies" },
+  { id: "__builtin__rain", name: "| Rain" },
+  { id: "__builtin__particles", name: "● Particles" },
+  { id: "__builtin__pulse", name: "◎ Pulse Rings" },
+  { id: "__builtin__grid", name: "┼ Grid" },
+]
+
 async function listBackgrounds() {
   await fs.mkdir(BG_DIR, { recursive: true }).catch(() => {})
   const items = await fs.readdir(BG_DIR).catch(() => [] as string[])
@@ -73,13 +85,23 @@ export function DialogImageList() {
       {
         title: t("tui.dialog.image.import.option"),
         value: IMPORT_VALUE,
+        category: "actions",
         onSelect: () => {
           void importImage()
         },
       },
     ]
-    for (const f of files() ?? []) list.push({ title: f, value: f })
-    list.push({ title: t("tui.dialog.image.none"), value: NONE_VALUE })
+
+    for (const bg of BUILTIN_BACKGROUNDS) {
+      list.push({ title: bg.name, value: bg.id, category: "built-in" })
+    }
+
+    const customFiles = files() ?? []
+    for (const f of customFiles) {
+      list.push({ title: f, value: f, category: "custom" })
+    }
+
+    list.push({ title: t("tui.dialog.image.none"), value: NONE_VALUE, category: "actions" })
     return list
   }
 
@@ -87,7 +109,7 @@ export function DialogImageList() {
     <DialogSelect
       title={t("tui.dialog.image.title")}
       options={options()}
-      current={initial}
+      current={initial ?? "__builtin__grid"}
       onMove={(opt) => {
         if (opt.value === IMPORT_VALUE) return
         if (opt.value === NONE_VALUE) {

@@ -61,7 +61,7 @@ export function DialogStatus() {
                   style={{
                     fg: (
                       {
-                        connected: theme.success,
+                        connected: theme.info,
                         failed: theme.error,
                         pending: theme.warning,
                         disabled: theme.textMuted,
@@ -105,7 +105,7 @@ export function DialogStatus() {
                   flexShrink={0}
                   style={{
                     fg: {
-                      connected: theme.success,
+                      connected: theme.info,
                       error: theme.error,
                     }[item.status],
                   }}
@@ -129,7 +129,7 @@ export function DialogStatus() {
                 <text
                   flexShrink={0}
                   style={{
-                    fg: theme.success,
+                    fg: theme.info,
                   }}
                 >
                   •
@@ -151,7 +151,7 @@ export function DialogStatus() {
                 <text
                   flexShrink={0}
                   style={{
-                    fg: theme.success,
+                    fg: theme.info,
                   }}
                 >
                   •

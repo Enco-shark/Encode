@@ -177,17 +177,17 @@ export function formatKeybind(config: string, t?: (key: KeyLabel) => string): st
   const kb = keybinds[0]
   const parts: string[] = []
 
-  if (kb.ctrl) parts.push(IS_MAC ? "‚å? : keyText("common.key.ctrl", t))
-  if (kb.alt) parts.push(IS_MAC ? "‚å? : keyText("common.key.alt", t))
-  if (kb.shift) parts.push(IS_MAC ? "‚á? : keyText("common.key.shift", t))
-  if (kb.meta) parts.push(IS_MAC ? "‚å? : keyText("common.key.meta", t))
+  if (kb.ctrl) parts.push(IS_MAC ? "‚åÉ" : keyText("common.key.ctrl", t))
+  if (kb.alt) parts.push(IS_MAC ? "‚å•" : keyText("common.key.alt", t))
+  if (kb.shift) parts.push(IS_MAC ? "‚áß" : keyText("common.key.shift", t))
+  if (kb.meta) parts.push(IS_MAC ? "‚åò" : keyText("common.key.meta", t))
 
   if (kb.key) {
     const keys: Record<string, string> = {
-      arrowup: "‚Ü?,
-      arrowdown: "‚Ü?,
-      arrowleft: "‚Ü?,
-      arrowright: "‚Ü?,
+      arrowup: "‚Üë",
+      arrowdown: "‚Üì",
+      arrowleft: "‚Üê",
+      arrowright: "‚Üí",
       comma: ",",
       plus: "+",
     }

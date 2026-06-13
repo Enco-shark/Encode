@@ -28,7 +28,7 @@ export function TaskItem(props: TaskItemProps) {
         : props.status === "abandoned"
           ? "✗"
           : " "
-  const fg = () => (running() ? theme.warning : theme.textMuted)
+  const fg = () => (running() ? theme.info : theme.textMuted)
   const indent = "  ".repeat(props.depth)
 
   return (
@@ -45,14 +45,14 @@ export function TaskItem(props: TaskItemProps) {
         }
       >
         <box flexShrink={0} flexDirection="row" gap={0}>
-          <text style={{ fg: theme.warning }}>[</text>
+          <text style={{ fg: theme.info }}>[</text>
           <Show
             when={kv.get("animations_enabled", true)}
-            fallback={<text style={{ fg: theme.warning }}>•</text>}
+            fallback={<text style={{ fg: theme.info }}>•</text>}
           >
-            <spinner frames={spinnerFrames} interval={80} color={theme.warning} />
+            <spinner frames={spinnerFrames} interval={80} color={theme.info} />
           </Show>
-          <text style={{ fg: theme.warning }}>]{" "}</text>
+          <text style={{ fg: theme.info }}>]{" "}</text>
         </box>
       </Show>
       <text flexGrow={1} wrapMode="word" style={{ fg: fg() }}>

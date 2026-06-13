@@ -17,7 +17,7 @@ function View(props: { api: TuiPluginApi }) {
   )
 
   const dot = (status: string) => {
-    if (status === "connected") return theme().success
+    if (status === "connected") return theme().info
     if (status === "failed") return theme().error
     if (status === "pending") return theme().warning
     if (status === "disabled") return theme().textMuted

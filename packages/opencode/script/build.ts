@@ -215,12 +215,12 @@ for (const item of targets) {
     files: embeddedFileMap ? { "encode-web-ui.gen.ts": embeddedFileMap } : {},
     entrypoints: ["./src/index.ts", parserWorker, workerPath, ...(embeddedFileMap ? ["encode-web-ui.gen.ts"] : [])],
     define: {
-      ENCODE_VERSION: `'${Script.version}'`,
-      ENCODE_MIGRATIONS: JSON.stringify(migrations),
+      OPENCODE_VERSION: `'${Script.version}'`,
+      OPENCODE_MIGRATIONS: JSON.stringify(migrations),
       OTUI_TREE_SITTER_WORKER_PATH: bunfsRoot + workerRelativePath,
-      ENCODE_WORKER_PATH: workerPath,
+      OPENCODE_WORKER_PATH: workerPath,
       ENCODE_CHANNEL: `'${Script.channel}'`,
-      ENCODE_LIBC: item.os === "linux" ? `'${item.abi ?? "glibc"}'` : "",
+      OPENCODE_LIBC: item.os === "linux" ? `'${item.abi ?? "glibc"}'` : "",
     },
   })
 

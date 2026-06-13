@@ -1,10 +1,18 @@
 import { Prompt, type PromptRef } from "@tui/component/prompt"
-import { createEffect, createMemo, createSignal, Show } from "solid-js"
+import { createEffect, createMemo, createSignal, Show, Switch, Match } from "solid-js"
 import path from "path"
 import { Logo } from "../component/logo"
 import { logoThin, logos, type LogoKey } from "@/cli/logo"
 import { StarryBackground } from "../component/starry-background"
 import { BackgroundImage } from "../component/background-image"
+import { MatrixBackground } from "../component/matrix-background"
+import { WavesBackground } from "../component/waves-background"
+import { DotsBackground } from "../component/dots-background"
+import { FirefliesBackground } from "../component/fireflies-background"
+import { RainBackground } from "../component/rain-background"
+import { ParticlesBackground } from "../component/particles-background"
+import { PulseBackground } from "../component/pulse-background"
+import { GridBackground } from "../component/grid-background"
 import { useProject } from "../context/project"
 import { useSync } from "../context/sync"
 import { Toast } from "../ui/toast"
@@ -34,7 +42,14 @@ export function Home() {
   const bgImagePath = createMemo(() => {
     const filename = kv.get("background_image")
     if (!filename || typeof filename !== "string") return undefined
+    if (filename.startsWith("__builtin__")) return undefined
     return path.join(Global.Path.config, "backgrounds", filename)
+  })
+  const bgType = createMemo(() => {
+    const filename = kv.get("background_image")
+    if (!filename || typeof filename !== "string") return "grid"
+    if (filename.startsWith("__builtin__")) return filename.slice("__builtin__".length)
+    return "image"
   })
   const logoKey = createMemo(() => {
     const key = kv.get("logo_design")
@@ -83,9 +98,38 @@ export function Home() {
   return (
     <>
       <Show when={!plainTerminal}>
-        <Show when={bgImagePath()} fallback={<StarryBackground meteor={showMeteor} />}>
-          {(p) => <BackgroundImage path={p()} />}
-        </Show>
+        <Switch>
+          <Match when={bgImagePath()}>
+            {(p) => <BackgroundImage path={p()} />}
+          </Match>
+          <Match when={bgType() === "matrix"}>
+            <MatrixBackground />
+          </Match>
+          <Match when={bgType() === "waves"}>
+            <WavesBackground />
+          </Match>
+          <Match when={bgType() === "dots"}>
+            <DotsBackground />
+          </Match>
+          <Match when={bgType() === "fireflies"}>
+            <FirefliesBackground />
+          </Match>
+          <Match when={bgType() === "rain"}>
+            <RainBackground />
+          </Match>
+          <Match when={bgType() === "particles"}>
+            <ParticlesBackground />
+          </Match>
+          <Match when={bgType() === "pulse"}>
+            <PulseBackground />
+          </Match>
+          <Match when={bgType() === "grid"}>
+            <GridBackground />
+          </Match>
+          <Match when={bgType() === "starry"}>
+            <StarryBackground meteor={showMeteor} />
+          </Match>
+        </Switch>
       </Show>
       <box flexGrow={1} alignItems="center" paddingLeft={8} paddingRight={8} zIndex={1}>
         <box flexGrow={1} minHeight={0} />

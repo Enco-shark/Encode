@@ -190,7 +190,7 @@ const [store, setStore] = createStore<State>({
   themes: listThemes(),
   mode: "dark",
   lock: undefined,
-  active: "encode",
+  active: "github",
   ready: false,
 })
 

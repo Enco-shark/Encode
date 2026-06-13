@@ -904,8 +904,8 @@ export function Logo(props: { shape?: LogoShape; ink?: RGBA; idle?: boolean; swe
     }
   }
 
-  const MIMO_ORANGE = RGBA.fromInts(251, 129, 71)
-  const MIMO_GRAY = RGBA.fromInts(160, 160, 160)
+  const MIMO_ORANGE = RGBA.fromInts(0, 119, 182)
+  const MIMO_GRAY = RGBA.fromInts(140, 180, 210)
 
   return (
     <box ref={(item: BoxRenderable) => (box = item)}>
