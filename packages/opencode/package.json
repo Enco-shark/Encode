@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "version": "0.1.0",
-  "name": "@encode-ai/cli",
+  "name": "encode-ai-cli",
   "description": "AI-powered coding assistant with cross-session memory",
   "type": "module",
   "license": "MIT",
