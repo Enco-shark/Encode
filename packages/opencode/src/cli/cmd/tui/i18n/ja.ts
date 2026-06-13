@@ -358,22 +358,9 @@ export const dict = {
   "tui.command.plugins.list.title": "プラグイン",
   "tui.command.plugins.install.title": "プラグインをインストール",
 
-  // Encode (free) — TUI login dialog
-  "tui.dialog.login.Encode_free": "Encode (無料)",
-  "tui.dialog.login.Encode_free.desc": "ログイン不要の匿名無料チャネル",
-  "tui.dialog.login.Encode_free.success": "Encode (無料) の準備完了 — デフォルトモデルを Encode/Encode-auto に設定しました",
-  "tui.dialog.login.Encode_free.unavailable": "Encode (無料) プロバイダーが読み込まれていません",
-
   // CLI: providers command (auth login)
   "cli.providers.select": "プロバイダーを選択",
   "cli.providers.other": "その他のプロバイダー",
-  "cli.providers.Encode.recommended_hint": "推奨",
-  "cli.providers.Encode_free.hint": "匿名無料チャネル / Encode-auto",
-  "cli.providers.Encode_free.verifying": "Encode (無料) チャネルを検証中...",
-  "cli.providers.Encode_free.ready": "Encode (無料) チャネル準備完了",
-  "cli.providers.Encode_free.failed": "Encode (無料) の自己診断に失敗",
-  "cli.providers.Encode_free.default_set": "デフォルトモデルを Encode/Encode-auto に設定（1M コンテキスト、無料）",
-  "cli.providers.Encode_free.usage_hint": "ログイン不要 — そのまま Encode を実行できます。",
   "cli.providers.Encode_login.decrypt_retry": "復号に失敗しました、再試行してください（残り {remaining} 回）",
   "cli.providers.Encode_login.decrypt_exhausted": "復号に失敗しました、最大再試行回数に達しました",
 

@@ -418,22 +418,9 @@ export const dict = {
   "tui.command.plugins.list.title": "Плагины",
   "tui.command.plugins.install.title": "Установить плагин",
 
-  // Encode (free) — TUI login dialog
-  "tui.dialog.login.Encode_free": "Encode (бесплатно)",
-  "tui.dialog.login.Encode_free.desc": "Анонимный бесплатный канал — вход не требуется",
-  "tui.dialog.login.Encode_free.success": "Encode (бесплатно) готов — модель по умолчанию: Encode/Encode-auto",
-  "tui.dialog.login.Encode_free.unavailable": "Провайдер Encode (бесплатно) не загружен",
-
   // CLI: providers command (auth login)
   "cli.providers.select": "Выберите провайдера",
   "cli.providers.other": "Другой провайдер",
-  "cli.providers.Encode.recommended_hint": "рекомендуется",
-  "cli.providers.Encode_free.hint": "Анонимный бесплатный канал / Encode-auto",
-  "cli.providers.Encode_free.verifying": "Проверка канала Encode (бесплатно)...",
-  "cli.providers.Encode_free.ready": "Канал Encode (бесплатно) готов",
-  "cli.providers.Encode_free.failed": "Не удалось проверить Encode (бесплатно)",
-  "cli.providers.Encode_free.default_set": "Модель по умолчанию: Encode/Encode-auto (контекст 1M, бесплатно)",
-  "cli.providers.Encode_free.usage_hint": "Вход не требуется — просто запустите Encode.",
   "cli.providers.Encode_login.decrypt_retry": "Ошибка расшифровки, повторите попытку (осталось попыток: {remaining})",
   "cli.providers.Encode_login.decrypt_exhausted": "Ошибка расшифровки, превышено максимальное число попыток",
 

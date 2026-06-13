@@ -10,7 +10,6 @@ import os from "os"
 import { Config } from "../../config"
 import { Global } from "../../global"
 import { Plugin } from "../../plugin"
-import { EncodeFree } from "../../plugin/Encode-free"
 import { t } from "../i18n"
 import { Instance } from "../../project/instance"
 import type { Hooks } from "@encode-ai/plugin"
@@ -215,30 +214,6 @@ export function resolvePluginProviders(input: {
   return result
 }
 
-async function EncodeFreeLogin() {
-  const spinner = prompts.spinner()
-  spinner.start(t("cli.providers.Encode_free.verifying"))
-  try {
-    const { fingerprint, exp } = await EncodeFree.verify()
-    spinner.stop(t("cli.providers.Encode_free.ready"))
-    const expDate = new Date(exp).toISOString()
-    prompts.log.success(t("cli.providers.Encode_free.default_set"))
-    prompts.log.info(
-      [
-        `Endpoint:    ${EncodeFree.chatBaseUrl}/chat`,
-        `Fingerprint: ${fingerprint.slice(0, 12)}…${fingerprint.slice(-4)}`,
-        `Token exp:   ${expDate}`,
-      ].join("\n"),
-    )
-    prompts.log.info(t("cli.providers.Encode_free.usage_hint"))
-    prompts.outro("Done")
-  } catch (err) {
-    spinner.stop(t("cli.providers.Encode_free.failed"), 1)
-    prompts.log.error(err instanceof Error ? err.message : String(err))
-    prompts.outro("Done")
-  }
-}
-
 export const ProvidersCommand = cmd({
   command: "providers",
   aliases: ["auth"],
@@ -422,10 +397,7 @@ export const ProvidersLoginCommand = cmd({
         ]
 
         let provider: string
-        if (args.provider === "Encode") {
-          await EncodeFreeLogin()
-          return
-        } else if (args.provider) {
+        if (args.provider) {
           const input = args.provider
           const byID = options.find((x) => x.value === input)
           const byName = options.find((x) => x.label.toLowerCase() === input.toLowerCase())
@@ -439,16 +411,10 @@ export const ProvidersLoginCommand = cmd({
           const choice = await prompts.select({
             message: t("cli.providers.select"),
             options: [
-              { label: "Encode", value: "Encode", hint: t("cli.providers.Encode_free.hint") },
               { label: t("cli.providers.other"), value: "__other__" },
             ],
           })
           if (prompts.isCancel(choice)) throw new UI.CancelledError()
-
-          if (choice === "Encode") {
-            await EncodeFreeLogin()
-            return
-          }
 
           const selected = await prompts.autocomplete({
             message: t("cli.providers.select"),

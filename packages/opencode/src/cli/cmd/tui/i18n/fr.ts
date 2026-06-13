@@ -406,22 +406,9 @@ export const dict = {
   "tui.command.plugins.list.title": "Plugins",
   "tui.command.plugins.install.title": "Installer un plugin",
 
-  // Encode (free) — TUI login dialog
-  "tui.dialog.login.Encode_free": "Encode (gratuit)",
-  "tui.dialog.login.Encode_free.desc": "Canal anonyme gratuit — aucune connexion requise",
-  "tui.dialog.login.Encode_free.success": "Encode (gratuit) est prêt — modèle par défaut défini sur Encode/Encode-auto",
-  "tui.dialog.login.Encode_free.unavailable": "Fournisseur Encode (gratuit) non chargé",
-
   // CLI: providers command (auth login)
   "cli.providers.select": "Sélectionner un fournisseur",
   "cli.providers.other": "Autre fournisseur",
-  "cli.providers.Encode.recommended_hint": "recommandé",
-  "cli.providers.Encode_free.hint": "Canal anonyme gratuit / Encode-auto",
-  "cli.providers.Encode_free.verifying": "Vérification du canal Encode (gratuit)...",
-  "cli.providers.Encode_free.ready": "Canal Encode (gratuit) prêt",
-  "cli.providers.Encode_free.failed": "Échec de la vérification de Encode (gratuit)",
-  "cli.providers.Encode_free.default_set": "Modèle par défaut défini sur Encode/Encode-auto (contexte 1M, gratuit)",
-  "cli.providers.Encode_free.usage_hint": "Aucune connexion requise — exécutez simplement Encode.",
   "cli.providers.Encode_login.decrypt_retry": "Échec du déchiffrement, veuillez réessayer ({remaining} tentatives restantes)",
   "cli.providers.Encode_login.decrypt_exhausted": "Échec du déchiffrement, nombre maximal de tentatives atteint",
 
