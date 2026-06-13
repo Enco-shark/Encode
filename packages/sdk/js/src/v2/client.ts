@@ -43,6 +43,8 @@ function rewrite(request: Request, values: { directory?: string; workspace?: str
   return next
 }
 
+export const createOpencodeClient = createEncodeClient
+
 export function createEncodeClient(config?: Config & { directory?: string; experimental_workspaceID?: string }) {
   if (!config?.fetch) {
     const customFetch: any = (req: any) => {

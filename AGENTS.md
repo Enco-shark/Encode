@@ -1,36 +1,76 @@
-- Always use superpowers skill instead of builtin plan mode.
-- To regenerate the JavaScript SDK, run `./packages/sdk/js/script/build.ts`.
-- ALWAYS USE PARALLEL TOOLS WHEN APPLICABLE.
-- The default branch in this repo is `dev`.
-- Local `main` ref may not exist; use `dev` or `origin/dev` for diffs.
-- Prefer automation: execute requested actions without confirmation unless blocked by missing info or safety/irreversibility.
+# Encode Agent Guide
 
-## Style Guide
+## Quick Reference
+
+- **Default branch**: `dev` (not `main`)
+- **Runtime**: Bun 1.3.14 + Turbo monorepo
+- **Type checking**: `bun typecheck` (runs `bun turbo typecheck`)
+- **Linting**: `bun lint` (uses oxlint)
+- **Testing**: Run from package dirs only (e.g., `cd packages/opencode && bun test`)
+
+## Project Structure
+
+```
+packages/
+├── opencode/    # Core business logic & server (main entry: src/index.ts)
+│   └── src/cli/cmd/tui/  # TUI terminal interface (opentui + SolidJS)
+├── app/         # Web interface (SolidJS + Vite)
+├── desktop/     # Electron desktop client (Tauri)
+├── sdk/         # JavaScript SDK
+├── ui/          # Shared UI component library
+├── plugin/      # Plugin system
+└── script/      # Build scripts
+```
+
+## Development Commands
+
+```bash
+# Install dependencies
+bun install
+
+# Run TUI (development mode)
+bun dev
+
+# Run against specific directory
+bun dev <directory>
+
+# Type checking (always from package dir)
+bun typecheck
+
+# Linting
+bun lint
+
+# Run tests (from package dir only)
+cd packages/opencode && bun test --timeout 30000
+
+# Regenerate JavaScript SDK
+./packages/sdk/js/script/build.ts
+
+# Database migrations (from packages/opencode)
+bun run db generate --name <slug>
+```
+
+## Important Guards
+
+- **Tests cannot run from repo root** (guard: `do-not-run-tests-from-root`)
+- **Always run `bun typecheck` from package directories** (e.g., `packages/opencode`), never `tsc` directly
+- **Pre-push hook** validates Bun version and runs typecheck
+
+## Code Style
 
 ### General Principles
 
+- Use Bun APIs when possible (e.g., `Bun.file()`)
+- Avoid `any` type
+- Prefer `const` over `let`; use ternaries or early returns instead of reassignment
+- Avoid `else` statements; prefer early returns
+- Prefer functional array methods (flatMap, filter, map) over for loops
 - Keep things in one function unless composable or reusable
-- Avoid `try`/`catch` where possible
-- Avoid using the `any` type
-- Use Bun APIs when possible, like `Bun.file()`
-- Rely on type inference when possible; avoid explicit type annotations or interfaces unless necessary for exports or clarity
-- Prefer functional array methods (flatMap, filter, map) over for loops; use type guards on filter to maintain type inference downstream
-- In `src/config`, follow the existing self-export pattern at the top of the file (for example `export * as ConfigAgent from "./agent"`) when adding a new config module.
-
-Reduce total variable count by inlining when a value is only used once.
-
-```ts
-// Good
-const journal = await Bun.file(path.join(dir, "journal.json")).json()
-
-// Bad
-const journalPath = path.join(dir, "journal.json")
-const journal = await Bun.file(journalPath).json()
-```
+- Reduce variable count by inlining when a value is only used once
 
 ### Destructuring
 
-Avoid unnecessary destructuring. Use dot notation to preserve context.
+Avoid unnecessary destructuring. Use dot notation to preserve context:
 
 ```ts
 // Good
@@ -41,41 +81,9 @@ obj.b
 const { a, b } = obj
 ```
 
-### Variables
-
-Prefer `const` over `let`. Use ternaries or early returns instead of reassignment.
-
-```ts
-// Good
-const foo = condition ? 1 : 2
-
-// Bad
-let foo
-if (condition) foo = 1
-else foo = 2
-```
-
-### Control Flow
-
-Avoid `else` statements. Prefer early returns.
-
-```ts
-// Good
-function foo() {
-  if (condition) return 1
-  return 2
-}
-
-// Bad
-function foo() {
-  if (condition) return 1
-  else return 2
-}
-```
-
 ### Schema Definitions (Drizzle)
 
-Use snake_case for field names so column names don't need to be redefined as strings.
+Use snake_case for field names so column names don't need to be redefined as strings:
 
 ```ts
 // Good
@@ -97,8 +105,67 @@ const table = sqliteTable("session", {
 
 - Avoid mocks as much as possible
 - Test actual implementation, do not duplicate logic into tests
-- Tests cannot run from repo root (guard: `do-not-run-tests-from-root`); run from package dirs like `packages/opencode`.
+- Use `testEffect(...)` for Effect-based tests
+- Use `it.live(...)` for tests depending on real time, filesystem, git, etc.
+- Use `it.effect(...)` for tests with TestClock and TestConsole
 
-## Type Checking
+### Test Fixtures
 
-- Always run `bun typecheck` from package directories (e.g., `packages/opencode`), never `tsc` directly.
+```typescript
+import { tmpdir } from "./fixture/fixture"
+
+test("example", async () => {
+  await using tmp = await tmpdir({ git: true })
+  // tmp.path is the temp directory path
+  // automatically cleaned up when test ends
+})
+```
+
+## Architecture Notes
+
+### Entry Points
+
+- **CLI**: `packages/opencode/src/index.ts` (yargs-based CLI)
+- **Server**: `packages/opencode/src/server/server.ts` (Hono framework)
+- **TUI**: `packages/opencode/src/cli/cmd/tui/app.tsx` (opentui + SolidJS)
+
+### Key Technologies
+
+- **Effect**: Used extensively for service composition and error handling
+- **Drizzle ORM**: SQLite database with schema in `src/**/*.sql.ts`
+- **Hono**: HTTP server framework
+- **SolidJS**: UI framework for TUI and web app
+- **opentui**: Terminal UI framework
+
+### Module Pattern
+
+Use flat top-level exports with self-reexport (not `export namespace`):
+
+```ts
+// src/foo/foo.ts
+export interface Interface { ... }
+export class Service extends Context.Service<Service, Interface>()("@opencode/Foo") {}
+export const layer = Layer.effect(Service, ...)
+
+export * as Foo from "./foo"
+```
+
+## Environment Variables
+
+- `ENCODE_HOME`: Custom home directory for development
+- `ENCODE_PURE`: Run without external plugins
+- `ENCODE_DISABLE_SHARE`: Disable sharing features
+
+## Common Pitfalls
+
+1. **Running tests from root**: Always cd to package directory first
+2. **Using `tsc` directly**: Use `bun typecheck` instead
+3. **Forgetting Bun version**: Pre-push hook validates Bun version matches package.json
+4. **Using `export namespace`**: Use flat exports with self-reexport pattern
+5. **Running `bun dev` without args**: Defaults to running in packages/opencode directory
+
+## References
+
+- [CONTRIBUTING.md](./CONTRIBUTING.md) - Detailed contribution guidelines
+- [packages/opencode/AGENTS.md](./packages/opencode/AGENTS.md) - Effect patterns and database guide
+- [packages/opencode/test/AGENTS.md](./packages/opencode/test/AGENTS.md) - Testing patterns and fixtures

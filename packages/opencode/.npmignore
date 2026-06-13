@@ -1,0 +1,45 @@
+# Development files
+.dev-home/
+.git/
+.github/
+.vscode/
+.zed/
+.husky/
+.turbo/
+
+# Build artifacts (keep dist)
+node_modules/
+
+# Test files
+test/
+*.test.ts
+*.test.js
+
+# Config files
+.editorconfig
+.gitignore
+.prettierignore
+.oxlintrc.json
+tsconfig.json
+bunfig.toml
+drizzle.config.ts
+
+# Development documentation
+AGENTS.md
+CONTRIBUTING.md
+
+# Patches (not needed in published package)
+patches/
+
+# Scripts (not needed in published package)
+script/
+
+# Migration files (not needed in published package)
+migration/
+
+# Docker files
+Dockerfile
+.dockerignore
+
+# Logs
+*.log
