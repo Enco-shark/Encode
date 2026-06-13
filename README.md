@@ -30,7 +30,6 @@ npm install -g @encode-ai/cli
 
 首次启动会自动引导配置。支持的选项：
 - **自定义提供商** — 在 TUI 中添加任何 OpenAI 兼容 API
-- **从 Claude Code 导入** — 一步迁移现有认证
 
 ---
 
@@ -117,6 +116,36 @@ Compose 模式为规范驱动开发提供结构化工作流。内置规划、执
 
 每轮对话结束后预测用户可能的下一个提示，以内联幽灵文本显示（按 `Tab` 接受）。
 
+### TUI 终端界面
+
+基于 [opentui](https://github.com/sst/opentui) 框架 + SolidJS 渲染的全终端 UI，支持：
+
+- **Home 页面**：Logo ASCII art + 动态背景 + Prompt 输入框
+- **Session 页面**：消息时间线 + 侧边栏 + Prompt 输入
+- **命令面板**：`/` 触发，支持模型/代理/主题/会话等操作
+- **鼠标支持**：点击、滚轮、右键粘贴、选中复制
+- **键盘快捷键**：`Tab` 切换代理、`Ctrl+P` 命令面板、`Escape` 中断
+
+#### 内置背景（`/background` 切换）
+
+| 背景 | 效果 |
+|------|------|
+| **┼ Grid** | 闪烁网格线（默认） |
+| **𝑚 Matrix Rain** | 蓝色代码雨 |
+| **≋ Waves** | 三层正弦波 |
+| **••• Dots Grid** | 脉冲扩散网格点 |
+| **✦ Fireflies** | 萤火虫漂浮发光 |
+| **\| Rain** | 竖直雨滴下落 |
+| **● Particles** | 粒子 + 连线网络 |
+| **◎ Pulse Rings** | 同心圆脉冲波纹 |
+| **✦ Starry** | 星空 + 流星 |
+
+也支持自定义图片背景（PNG/JPG），通过 `/background` 导入。
+
+#### 主题
+
+默认使用 GitHub 主题，支持 30+ 内置主题（`/themes` 切换），包括 dark/light 模式。
+
 ---
 
 ## 配置
@@ -141,6 +170,26 @@ Max Mode（并行 best-of-N 推理与评判选择）可通过配置中的 `exper
 bun install              # 安装依赖
 bun run dev              # 以开发模式运行
 bun turbo typecheck      # 类型检查
+```
+
+### 项目结构
+
+```
+packages/
+├── opencode/    # 核心业务逻辑 & 服务器
+│   └── src/cli/cmd/tui/  # TUI 终端界面
+├── app/         # Web 界面（SolidJS）
+├── ui/          # 共享 UI 组件库
+├── desktop/     # Electron 桌面客户端
+├── sdk/         # JavaScript SDK
+└── script/      # 构建脚本
+```
+
+### 编译独立可执行文件
+
+```bash
+./packages/opencode/script/build.ts --single
+./packages/opencode/dist/encode-<platform>/bin/Encode
 ```
 
 ---

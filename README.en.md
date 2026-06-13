@@ -30,7 +30,6 @@ npm install -g @encode-ai/cli
 
 The first launch guides you through configuration automatically. Supported options:
 - **Custom Provider** — add any OpenAI-compatible API in the TUI
-- **Import from Claude Code** — migrate existing authentication in one step
 
 ---
 
@@ -116,6 +115,36 @@ Built-in Language Server Protocol support for code intelligence within the TUI.
 ### Predict Next Prompt (Experimental)
 
 Predicts the user's likely next prompt after each turn and shows it as inline ghost text (press `Tab` to accept).
+
+### TUI Terminal Interface
+
+A full terminal UI built with [opentui](https://github.com/sst/opentui) and SolidJS:
+
+- **Home page**: Logo ASCII art + dynamic backgrounds + Prompt input
+- **Session page**: Message timeline + Sidebar + Prompt input
+- **Command palette**: Triggered with `/`, supports model/agent/theme/session operations
+- **Mouse support**: Click, scroll wheel, right-click paste, select-to-copy
+- **Keyboard shortcuts**: `Tab` switch agent, `Ctrl+P` command palette, `Escape` interrupt
+
+#### Built-in Backgrounds (switch with `/background`)
+
+| Background | Effect |
+|------|------|
+| **┼ Grid** | Shimmering grid lines (default) |
+| **𝑚 Matrix Rain** | Blue code rain |
+| **≋ Waves** | Three-layer sine waves |
+| **••• Dots Grid** | Pulsing dot grid |
+| **✦ Fireflies** | Floating glowing fireflies |
+| **\| Rain** | Vertical rain drops |
+| **● Particles** | Particles with connection lines |
+| **◎ Pulse Rings** | Concentric pulse rings |
+| **✦ Starry** | Starfield + meteors |
+
+Also supports custom image backgrounds (PNG/JPG), imported via `/background`.
+
+#### Themes
+
+Default theme is GitHub. Supports 30+ built-in themes (`/themes` to switch), including dark/light modes.
 
 ---
 
