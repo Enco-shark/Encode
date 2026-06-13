@@ -8,15 +8,15 @@ import { SessionID } from "../../src/session/schema"
 
 async function withTmpHome<T>(fn: (sessionID: SessionID) => Promise<T>): Promise<T> {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), "subagent-progress-test-"))
-  const prevHome = process.env.MIMOCODE_HOME
-  process.env.MIMOCODE_HOME = dir
+  const prevHome = process.env.ENCODE_HOME
+  process.env.ENCODE_HOME = dir
   try {
     const sid = SessionID.make("ses_test_" + Date.now())
     await fs.mkdir(tasksDir(sid), { recursive: true })
     return await fn(sid)
   } finally {
-    if (prevHome === undefined) delete process.env.MIMOCODE_HOME
-    else process.env.MIMOCODE_HOME = prevHome
+    if (prevHome === undefined) delete process.env.ENCODE_HOME
+    else process.env.ENCODE_HOME = prevHome
     await fs.rm(dir, { recursive: true, force: true })
   }
 }
@@ -43,7 +43,7 @@ function makeInput(sessionID: SessionID, task_id?: string, canWrite?: boolean) {
 }
 
 describe("SubagentProgressCheckerPlugin postStop", () => {
-  test("no task_id â†’ no-op", async () => {
+  test("no task_id â†?no-op", async () => {
     await withTmpHome(async (sid) => {
       const hooks = await getHooks()
       const reg = hooks["actor.postStop"]
@@ -56,21 +56,21 @@ describe("SubagentProgressCheckerPlugin postStop", () => {
     })
   })
 
-  test("canWrite=false â†’ skip (read-only agent, no nudge even when file missing)", async () => {
+  test("canWrite=false â†?skip (read-only agent, no nudge even when file missing)", async () => {
     await withTmpHome(async (sid) => {
       const hooks = await getHooks()
       const reg = hooks["actor.postStop"]
       if (!reg || typeof reg === "function") throw new Error("expected object form with run")
       const fn = (reg as { run: (...args: any[]) => Promise<void> }).run
       const output: { continue?: boolean; reason?: string } = {}
-      // task-bound AND file missing, but agent cannot write â†’ must NOT nudge.
+      // task-bound AND file missing, but agent cannot write â†?must NOT nudge.
       await fn(makeInput(sid, "T4", false), output)
       expect(output.continue).toBeUndefined()
       expect(output.reason).toBeUndefined()
     })
   })
 
-  test("canWrite=true â†’ still nudges when file missing (writable agent unchanged)", async () => {
+  test("canWrite=true â†?still nudges when file missing (writable agent unchanged)", async () => {
     await withTmpHome(async (sid) => {
       const hooks = await getHooks()
       const reg = hooks["actor.postStop"]
@@ -83,7 +83,7 @@ describe("SubagentProgressCheckerPlugin postStop", () => {
     })
   })
 
-  test("file missing â†’ continue=true with full template feedback", async () => {
+  test("file missing â†?continue=true with full template feedback", async () => {
     await withTmpHome(async (sid) => {
       const hooks = await getHooks()
       const reg = hooks["actor.postStop"]
@@ -98,7 +98,7 @@ describe("SubagentProgressCheckerPlugin postStop", () => {
     })
   })
 
-  test("file exists with all 5 sections â†’ PASS, frontmatter injected", async () => {
+  test("file exists with all 5 sections â†?PASS, frontmatter injected", async () => {
     await withTmpHome(async (sid) => {
       const fp = progressPath(sid, "T7")
       await fs.mkdir(path.dirname(fp), { recursive: true })
@@ -125,7 +125,7 @@ describe("SubagentProgressCheckerPlugin postStop", () => {
     })
   })
 
-  test("file exists missing Â§3 â†’ continue=true, reason lists Â§3", async () => {
+  test("file exists missing Â§3 â†?continue=true, reason lists Â§3", async () => {
     await withTmpHome(async (sid) => {
       const fp = progressPath(sid, "T9")
       await fs.mkdir(path.dirname(fp), { recursive: true })
@@ -149,7 +149,7 @@ describe("SubagentProgressCheckerPlugin postStop", () => {
     })
   })
 
-  test("frontmatter idempotent â€” second PASS replaces, doesn't stack", async () => {
+  test("frontmatter idempotent â€?second PASS replaces, doesn't stack", async () => {
     await withTmpHome(async (sid) => {
       const fp = progressPath(sid, "T2")
       await fs.mkdir(path.dirname(fp), { recursive: true })
@@ -191,7 +191,7 @@ describe("SubagentProgressCheckerPlugin postStop", () => {
 //
 // Previously the plugin had no matcher field; matchesActor's default path
 // returned !isBuiltIn(agentType), so the plugin silently no-op'd for
-// general/explore/build/etc. â€” the exact built-in subagents that bind to
+// general/explore/build/etc. â€?the exact built-in subagents that bind to
 // task_id in production. The new excludeOnly form bypasses that early-return.
 
 import { matchesActor } from "../../src/plugin/matcher"
@@ -201,7 +201,7 @@ describe("SubagentProgressCheckerPlugin matcher (C1 regression)", () => {
     const hooks = await getHooks()
     const reg = hooks["actor.postStop"]
     if (!reg || typeof reg === "function") throw new Error("expected matcher form")
-    const matcher = (reg as { matcher?: import("@mimo-ai/plugin").ActorMatcher }).matcher
+    const matcher = (reg as { matcher?: import("@encode-ai/plugin").ActorMatcher }).matcher
     for (const at of ["general", "explore", "build"]) {
       expect(matchesActor(matcher, { mode: "subagent", agentType: at })).toBe(true)
     }
@@ -211,7 +211,7 @@ describe("SubagentProgressCheckerPlugin matcher (C1 regression)", () => {
     const hooks = await getHooks()
     const reg = hooks["actor.postStop"]
     if (!reg || typeof reg === "function") throw new Error("expected matcher form")
-    const matcher = (reg as { matcher?: import("@mimo-ai/plugin").ActorMatcher }).matcher
+    const matcher = (reg as { matcher?: import("@encode-ai/plugin").ActorMatcher }).matcher
     for (const at of ["checkpoint-writer", "title", "summary", "dream", "distill", "compaction", "main"]) {
       expect(matchesActor(matcher, { mode: "subagent", agentType: at })).toBe(false)
     }
@@ -221,7 +221,7 @@ describe("SubagentProgressCheckerPlugin matcher (C1 regression)", () => {
     const hooks = await getHooks()
     const reg = hooks["actor.postStop"]
     if (!reg || typeof reg === "function") throw new Error("expected matcher form")
-    const matcher = (reg as { matcher?: import("@mimo-ai/plugin").ActorMatcher }).matcher
+    const matcher = (reg as { matcher?: import("@encode-ai/plugin").ActorMatcher }).matcher
     expect(matchesActor(matcher, { mode: "subagent", agentType: "my-custom-reviewer" })).toBe(true)
   })
 })

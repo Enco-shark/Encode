@@ -32,7 +32,7 @@ import type {
   UserMessage,
   TextPart,
   ReasoningPart,
-} from "@mimo-ai/sdk/v2"
+} from "@encode-ai/sdk/v2"
 import { useLocal } from "@tui/context/local"
 import { Locale } from "@/util"
 import type { Tool } from "@/tool"
@@ -284,7 +284,7 @@ export function Session() {
         ...logo,
         ``,
         `  ${weak("Session")}${UI.Style.TEXT_NORMAL_BOLD}${title}${UI.Style.TEXT_NORMAL}`,
-        `  ${weak("Continue")}${UI.Style.TEXT_NORMAL_BOLD}mimo -s ${session()?.id}${UI.Style.TEXT_NORMAL}`,
+        `  ${weak("Continue")}${UI.Style.TEXT_NORMAL_BOLD}Encode -s ${session()?.id}${UI.Style.TEXT_NORMAL}`,
         ``,
       ].join("\n"),
     )
@@ -1359,16 +1359,16 @@ function AssistantMessage(props: { message: AssistantMessage; parts: Part[]; las
 
   // Goal judge verdict for this specific turn, if the stop-condition judge
   // evaluated it. Rendered as a foldable per-turn marker so the user can trace
-  // back which turn failed the check ‚Äî without polluting the message stream.
+  // back which turn failed the check ‚Ä?without polluting the message stream.
   const verdict = createMemo(() => sync.data.session_goal?.[props.message.sessionID]?.verdicts?.[props.message.id])
   const [verdictOpen, setVerdictOpen] = createSignal(false)
   const verdictMark = createMemo(() => {
     const v = verdict()
     if (!v) return undefined
     if (v.error) return { icon: "!", fg: theme.textMuted, label: "Judge: error (stopped)" }
-    if (v.ok) return { icon: "‚úì", fg: theme.success, label: "Judge: met" }
-    if (v.impossible) return { icon: "‚äò", fg: theme.error, label: "Judge: impossible" }
-    return { icon: "‚ü≥", fg: theme.warning, label: `Judge [round ${v.attempt}]: not met` }
+    if (v.ok) return { icon: "‚ú?, fg: theme.success, label: "Judge: met" }
+    if (v.impossible) return { icon: "‚ä?, fg: theme.error, label: "Judge: impossible" }
+    return { icon: "‚ü?, fg: theme.warning, label: `Judge [round ${v.attempt}]: not met` }
   })
 
   return (
@@ -1429,7 +1429,7 @@ function AssistantMessage(props: { message: AssistantMessage; parts: Part[]; las
         {(mark) => (
           <box paddingLeft={3} onMouseUp={() => setVerdictOpen((x) => !x)}>
             <text>
-              <span style={{ fg: theme.textMuted }}>{verdictOpen() ? "‚ñº" : "‚ñ∂"} </span>
+              <span style={{ fg: theme.textMuted }}>{verdictOpen() ? "‚ñ? : "‚ñ?} </span>
               <span style={{ fg: mark().fg }}>
                 {mark().icon} {mark().label}
               </span>
@@ -1479,7 +1479,7 @@ function ErrorBlock(props: { error: MessageError }) {
   return (
     <box flexDirection="column" paddingLeft={3} marginTop={1}>
       <text fg={theme.error} wrapMode="word">
-        <span style={{ fg: theme.error }}>‚úó  </span>
+        <span style={{ fg: theme.error }}>‚ú? </span>
         {errorBody(props.error)}
       </text>
       <Show when={meta()}>
@@ -1595,7 +1595,7 @@ function TextPart(props: { last: boolean; part: TextPart; message: AssistantMess
     <Show when={props.part.text.trim()}>
       <box id={"text-" + props.part.id} paddingLeft={3} marginTop={1} flexShrink={0}>
         <Switch>
-          <Match when={Flag.MIMOCODE_EXPERIMENTAL_MARKDOWN}>
+          <Match when={Flag.ENCODE_EXPERIMENTAL_MARKDOWN}>
             <markdown
               syntaxStyle={syntax()}
               streaming={true}
@@ -1605,7 +1605,7 @@ function TextPart(props: { last: boolean; part: TextPart; message: AssistantMess
               bg={theme.background}
             />
           </Match>
-          <Match when={!Flag.MIMOCODE_EXPERIMENTAL_MARKDOWN}>
+          <Match when={!Flag.ENCODE_EXPERIMENTAL_MARKDOWN}>
             <code
               filetype="markdown"
               drawUnstyledText={false}
@@ -1731,7 +1731,7 @@ function PlanExit(props: ToolProps<any>) {
 
   return (
     <>
-      <InlineTool icon="‚öô" pending="Asking..." complete={true} part={props.part} dismissed={dismissed()}>
+      <InlineTool icon="‚ö? pending="Asking..." complete={true} part={props.part} dismissed={dismissed()}>
         plan_exit
       </InlineTool>
       <Show when={feedback()}>
@@ -1753,14 +1753,14 @@ function GenericTool(props: ToolProps<any>) {
   const overflow = createMemo(() => lines().length > maxLines)
   const limited = createMemo(() => {
     if (expanded() || !overflow()) return output()
-    return [...lines().slice(0, maxLines), "‚Ä¶"].join("\n")
+    return [...lines().slice(0, maxLines), "‚Ä?].join("\n")
   })
 
   return (
     <Show
       when={props.output && ctx.showGenericToolOutput()}
       fallback={
-        <InlineTool icon="‚öô" pending="Writing command..." complete={true} part={props.part}>
+        <InlineTool icon="‚ö? pending="Writing command..." complete={true} part={props.part}>
           {props.tool} {input(props.input)}
         </InlineTool>
       }
@@ -1998,7 +1998,7 @@ function Bash(props: ToolProps<typeof BashTool>) {
   const overflow = createMemo(() => lines().length > 10)
   const limited = createMemo(() => {
     if (expanded() || !overflow()) return output()
-    return [...lines().slice(0, 10), "‚Ä¶"].join("\n")
+    return [...lines().slice(0, 10), "‚Ä?].join("\n")
   })
 
   const workdirDisplay = createMemo(() => {
@@ -2098,7 +2098,7 @@ function Write(props: ToolProps<typeof WriteTool>) {
         </BlockTool>
       </Match>
       <Match when={true}>
-        <InlineTool icon="‚Üê" pending="Preparing write..." complete={props.input.filePath} part={props.part}>
+        <InlineTool icon="‚Ü? pending="Preparing write..." complete={props.input.filePath} part={props.part}>
           Write {normalizePath(props.input.filePath!)}
         </InlineTool>
       </Match>
@@ -2108,7 +2108,7 @@ function Write(props: ToolProps<typeof WriteTool>) {
 
 function Glob(props: ToolProps<typeof GlobTool>) {
   return (
-    <InlineTool icon="‚ú±" pending="Finding files..." complete={props.input.pattern} part={props.part}>
+    <InlineTool icon="‚ú? pending="Finding files..." complete={props.input.pattern} part={props.part}>
       Glob "{props.input.pattern}" <Show when={props.input.path}>in {normalizePath(props.input.path)} </Show>
       <Show when={props.metadata.count}>
         ({props.metadata.count} {props.metadata.count === 1 ? "match" : "matches"})
@@ -2130,7 +2130,7 @@ function Read(props: ToolProps<typeof ReadTool>) {
   return (
     <>
       <InlineTool
-        icon="‚Üí"
+        icon="‚Ü?
         pending="Reading file..."
         complete={props.input.filePath}
         spinner={isRunning()}
@@ -2142,7 +2142,7 @@ function Read(props: ToolProps<typeof ReadTool>) {
         {(filepath) => (
           <box paddingLeft={3}>
             <text paddingLeft={3} fg={theme.textMuted}>
-              ‚Ü≥ Loaded {normalizePath(filepath)}
+              ‚Ü?Loaded {normalizePath(filepath)}
             </text>
           </box>
         )}
@@ -2153,7 +2153,7 @@ function Read(props: ToolProps<typeof ReadTool>) {
 
 function Grep(props: ToolProps<typeof GrepTool>) {
   return (
-    <InlineTool icon="‚ú±" pending="Searching content..." complete={props.input.pattern} part={props.part}>
+    <InlineTool icon="‚ú? pending="Searching content..." complete={props.input.pattern} part={props.part}>
       Grep "{props.input.pattern}" <Show when={props.input.path}>in {normalizePath(props.input.path)} </Show>
       <Show when={props.metadata.matches}>
         ({props.metadata.matches} {props.metadata.matches === 1 ? "match" : "matches"})
@@ -2173,7 +2173,7 @@ function WebFetch(props: ToolProps<typeof WebFetchTool>) {
 function CodeSearch(props: ToolProps<typeof CodeSearchTool>) {
   const metadata = props.metadata as { results?: number }
   return (
-    <InlineTool icon="‚óá" pending="Searching code..." complete={props.input.query} part={props.part}>
+    <InlineTool icon="‚ó? pending="Searching code..." complete={props.input.query} part={props.part}>
       Exa Code Search "{props.input.query}" <Show when={metadata.results}>({metadata.results} results)</Show>
     </InlineTool>
   )
@@ -2182,7 +2182,7 @@ function CodeSearch(props: ToolProps<typeof CodeSearchTool>) {
 function WebSearch(props: ToolProps<typeof WebSearchTool>) {
   const metadata = props.metadata as { numResults?: number }
   return (
-    <InlineTool icon="‚óà" pending="Searching web..." complete={props.input.query} part={props.part}>
+    <InlineTool icon="‚ó? pending="Searching web..." complete={props.input.query} part={props.part}>
       Web Search "{props.input.query}" <Show when={metadata.numResults}>({metadata.numResults} results)</Show>
     </InlineTool>
   )
@@ -2234,19 +2234,19 @@ function Task(props: ToolProps<typeof ActorTool>) {
 
   const content = createMemo(() => {
     if (!input.description) return ""
-    let content = [`${Locale.titlecase(input.subagent_type ?? "General")} Task ‚Äî ${input.description}`]
+    let content = [`${Locale.titlecase(input.subagent_type ?? "General")} Task ‚Ä?${input.description}`]
 
     if (isRunning() && tools().length > 0) {
       // content[0] += ` ¬∑ ${tools().length} toolcalls`
       if (current()) {
         const state = current()!.state
         const title = state.status === "running" || state.status === "completed" ? state.title : undefined
-        content.push(`‚Ü≥ ${Locale.titlecase(current()!.tool)} ${title}`)
-      } else content.push(`‚Ü≥ ${tools().length} toolcalls`)
+        content.push(`‚Ü?${Locale.titlecase(current()!.tool)} ${title}`)
+      } else content.push(`‚Ü?${tools().length} toolcalls`)
     }
 
     if (props.part.state.status === "completed") {
-      content.push(`‚îî ${tools().length} toolcalls ¬∑ ${Locale.duration(duration())}`)
+      content.push(`‚î?${tools().length} toolcalls ¬∑ ${Locale.duration(duration())}`)
     }
 
     return content.join("\n")
@@ -2254,7 +2254,7 @@ function Task(props: ToolProps<typeof ActorTool>) {
 
   return (
     <InlineTool
-      icon="‚îÇ"
+      icon="‚î?
       spinner={isRunning()}
       complete={input.description}
       pending="Delegating..."
@@ -2299,7 +2299,7 @@ function Edit(props: ToolProps<typeof EditTool>) {
   return (
     <Switch>
       <Match when={props.metadata.diff !== undefined}>
-        <BlockTool title={"‚Üê Edit " + normalizePath(props.input.filePath!)} part={props.part}>
+        <BlockTool title={"‚Ü?Edit " + normalizePath(props.input.filePath!)} part={props.part}>
           <box paddingLeft={1}>
             <diff
               diff={diffContent()}
@@ -2325,7 +2325,7 @@ function Edit(props: ToolProps<typeof EditTool>) {
         </BlockTool>
       </Match>
       <Match when={true}>
-        <InlineTool icon="‚Üê" pending="Preparing edit..." complete={props.input.filePath} part={props.part}>
+        <InlineTool icon="‚Ü? pending="Preparing edit..." complete={props.input.filePath} part={props.part}>
           Edit {normalizePath(props.input.filePath!)} {input({ replaceAll: props.input.replaceAll })}
         </InlineTool>
       </Match>
@@ -2375,8 +2375,8 @@ function ApplyPatch(props: ToolProps<typeof ApplyPatchTool>) {
   function title(file: { type: string; relativePath: string; filePath: string; deletions: number }) {
     if (file.type === "delete") return "# Deleted " + file.relativePath
     if (file.type === "add") return "# Created " + file.relativePath
-    if (file.type === "move") return "# Moved " + normalizePath(file.filePath) + " ‚Üí " + file.relativePath
-    return "‚Üê Patched " + file.relativePath
+    if (file.type === "move") return "# Moved " + normalizePath(file.filePath) + " ‚Ü?" + file.relativePath
+    return "‚Ü?Patched " + file.relativePath
   }
 
   function toggle(filePath: string) {
@@ -2461,7 +2461,7 @@ function Question(props: ToolProps<typeof QuestionTool>) {
         </BlockTool>
       </Match>
       <Match when={true}>
-        <InlineTool icon="‚Üí" pending="Asking questions..." complete={count()} part={props.part}>
+        <InlineTool icon="‚Ü? pending="Asking questions..." complete={count()} part={props.part}>
           Asked {count()} question{count() !== 1 ? "s" : ""}
         </InlineTool>
       </Match>
@@ -2471,7 +2471,7 @@ function Question(props: ToolProps<typeof QuestionTool>) {
 
 function Skill(props: ToolProps<typeof SkillTool>) {
   return (
-    <InlineTool icon="‚Üí" pending="Loading skill..." complete={props.input.name} part={props.part}>
+    <InlineTool icon="‚Ü? pending="Loading skill..." complete={props.input.name} part={props.part}>
       Skill "{props.input.name}"
     </InlineTool>
   )

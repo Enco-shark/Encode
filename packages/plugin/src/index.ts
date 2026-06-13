@@ -10,8 +10,8 @@ import type {
   Part,
   Auth,
   Config as SDKConfig,
-} from "@mimo-ai/sdk"
-import type { Provider as ProviderV2, Model as ModelV2 } from "@mimo-ai/sdk/v2"
+} from "@encode-ai/sdk"
+import type { Provider as ProviderV2, Model as ModelV2 } from "@encode-ai/sdk/v2"
 
 import type { BunShell } from "./shell.js"
 import { type ToolDefinition } from "./tool.js"
@@ -262,7 +262,7 @@ export type ActorStopBaseInput = {
   task: string
   description?: string
   finalText?: string
-  task_id?: string  // Spec â‘¡: if set, postStop hooks can validate tasks/<task_id>/progress.md
+  task_id?: string  // Spec â‘? if set, postStop hooks can validate tasks/<task_id>/progress.md
   iteration: number
 }
 
@@ -270,9 +270,9 @@ export type ActorPreStopInput = ActorStopBaseInput
 
 export type ActorPostStopInput = ActorStopBaseInput & {
   outcome: ActorOutcome
-  error?: string  // outcome === "failure" æ—¶å­˜åœ¨
-  // false â†’ the spawned agent cannot use the Write tool (read-only, e.g. explore).
-  // Absent/undefined â†’ unknown; hooks must NOT suppress on absence (fail-open).
+  error?: string  // outcome === "failure" æ—¶å­˜åœ?
+  // false â†?the spawned agent cannot use the Write tool (read-only, e.g. explore).
+  // Absent/undefined â†?unknown; hooks must NOT suppress on absence (fail-open).
   canWrite?: boolean
 }
 
@@ -420,7 +420,7 @@ export interface Hooks {
   /**
    * Fires AFTER an actor has delivered finalText to its caller. The actor stays alive
    * until the postStop chain ends. Like preStop, can return continue=true with reason
-   * to make the actor run another turn â€” but the new finalText does NOT propagate to
+   * to make the actor run another turn â€?but the new finalText does NOT propagate to
    * the caller (the caller already got finalText_locked at delivery time).
    * Default matcher excludes BUILT_IN_AGENTS.
    */

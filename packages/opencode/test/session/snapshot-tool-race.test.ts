@@ -62,7 +62,7 @@ import { ToolRegistry } from "../../src/tool"
 import { Truncate } from "../../src/tool"
 import { TaskRegistry } from "../../src/task/registry"
 import { Auth } from "../../src/auth"
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import * as CrossSpawnSpawner from "../../src/effect/cross-spawn-spawner"
 import { Ripgrep } from "../../src/file/ripgrep"
 import { Format } from "../../src/format"
@@ -287,7 +287,7 @@ it.live("tool execution produces non-empty session diff (snapshot race)", () =>
         .find((p): p is MessageV2.ToolPart => p.type === "tool" && p.tool === "bash")
       expect(tool?.state.status).toBe("completed")
 
-      // Poll for diff â€” summarize() is fire-and-forget
+      // Poll for diff â€?summarize() is fire-and-forget
       let diff: Array<{ file: string }> = []
       for (let i = 0; i < 50; i++) {
         diff = yield* summary.diff({ sessionID: session.id })

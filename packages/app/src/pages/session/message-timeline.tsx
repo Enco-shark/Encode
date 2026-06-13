@@ -2,25 +2,25 @@ import { For, createEffect, createMemo, on, onCleanup, Show, Index, type JSX, cr
 import { createStore, produce } from "solid-js/store"
 import { useNavigate } from "@solidjs/router"
 import { useMutation } from "@tanstack/solid-query"
-import { Button } from "@mimo-ai/ui/button"
-import { FileIcon } from "@mimo-ai/ui/file-icon"
-import { Icon } from "@mimo-ai/ui/icon"
-import { IconButton } from "@mimo-ai/ui/icon-button"
-import { DropdownMenu } from "@mimo-ai/ui/dropdown-menu"
-import { Dialog } from "@mimo-ai/ui/dialog"
-import { InlineInput } from "@mimo-ai/ui/inline-input"
-import { Spinner } from "@mimo-ai/ui/spinner"
-import { SessionTurn } from "@mimo-ai/ui/session-turn"
-import { ScrollView } from "@mimo-ai/ui/scroll-view"
-import { TextField } from "@mimo-ai/ui/text-field"
-import type { AssistantMessage, Message as MessageType, Part, TextPart, UserMessage } from "@mimo-ai/sdk/v2"
-import { showToast } from "@mimo-ai/ui/toast"
-import { Binary } from "@mimo-ai/shared/util/binary"
-import { getFilename } from "@mimo-ai/shared/util/path"
+import { Button } from "@encode-ai/ui/button"
+import { FileIcon } from "@encode-ai/ui/file-icon"
+import { Icon } from "@encode-ai/ui/icon"
+import { IconButton } from "@encode-ai/ui/icon-button"
+import { DropdownMenu } from "@encode-ai/ui/dropdown-menu"
+import { Dialog } from "@encode-ai/ui/dialog"
+import { InlineInput } from "@encode-ai/ui/inline-input"
+import { Spinner } from "@encode-ai/ui/spinner"
+import { SessionTurn } from "@encode-ai/ui/session-turn"
+import { ScrollView } from "@encode-ai/ui/scroll-view"
+import { TextField } from "@encode-ai/ui/text-field"
+import type { AssistantMessage, Message as MessageType, Part, TextPart, UserMessage } from "@encode-ai/sdk/v2"
+import { showToast } from "@encode-ai/ui/toast"
+import { Binary } from "@encode-ai/shared/util/binary"
+import { getFilename } from "@encode-ai/shared/util/path"
 import { Popover as KobaltePopover } from "@kobalte/core/popover"
 import { shouldMarkBoundaryGesture, normalizeWheelDelta } from "@/pages/session/message-gesture"
 import { SessionContextUsage } from "@/components/session-context-usage"
-import { useDialog } from "@mimo-ai/ui/context/dialog"
+import { useDialog } from "@encode-ai/ui/context/dialog"
 import { createResizeObserver } from "@solid-primitives/resize-observer"
 import { useLanguage } from "@/context/language"
 import { useSessionKey } from "@/pages/session/session-layout"
@@ -126,7 +126,7 @@ type TimelineStageInput = {
  * Defer-mounts small timeline windows so revealing older turns does not
  * block first paint with a large DOM mount.
  *
- * Once staging completes for a session it never re-stages â€” backfill and
+ * Once staging completes for a session it never re-stages â€?backfill and
  * new messages render immediately.
  */
 function createTimelineStaging(input: TimelineStageInput) {

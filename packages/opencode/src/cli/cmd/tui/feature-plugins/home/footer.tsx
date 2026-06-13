@@ -1,4 +1,4 @@
-import type { TuiPlugin, TuiPluginApi, TuiPluginModule } from "@mimo-ai/plugin/tui"
+import type { TuiPlugin, TuiPluginApi, TuiPluginModule } from "@encode-ai/plugin/tui"
 import { createMemo, Match, Show, Switch } from "solid-js"
 import { Global } from "@/global"
 
@@ -30,10 +30,10 @@ function Mcp(props: { api: TuiPluginApi }) {
         <text fg={theme().text}>
           <Switch>
             <Match when={err()}>
-              <span style={{ fg: theme().error }}>‚äô </span>
+              <span style={{ fg: theme().error }}>‚ä?</span>
             </Match>
             <Match when={true}>
-              <span style={{ fg: count() > 0 ? theme().success : theme().textMuted }}>‚äô </span>
+              <span style={{ fg: count() > 0 ? theme().success : theme().textMuted }}>‚ä?</span>
             </Match>
           </Switch>
           {count()} MCP

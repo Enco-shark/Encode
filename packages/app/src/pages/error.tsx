@@ -1,11 +1,11 @@
-import { TextField } from "@mimo-ai/ui/text-field"
-import { Logo } from "@mimo-ai/ui/logo"
-import { Button } from "@mimo-ai/ui/button"
+import { TextField } from "@encode-ai/ui/text-field"
+import { Logo } from "@encode-ai/ui/logo"
+import { Button } from "@encode-ai/ui/button"
 import { Component, Show } from "solid-js"
 import { createStore } from "solid-js/store"
 import { usePlatform } from "@/context/platform"
 import { useLanguage } from "@/context/language"
-import { Icon } from "@mimo-ai/ui/icon"
+import { Icon } from "@encode-ai/ui/icon"
 
 export type InitError = {
   name: string
@@ -124,7 +124,7 @@ function formatInitError(error: InitError, t: Translator): string {
     }
     case "ConfigInvalidError": {
       const issues = Array.isArray(data.issues)
-        ? data.issues.filter(isIssue).map((issue) => "â†³ " + issue.message + " " + issue.path.join("."))
+        ? data.issues.filter(isIssue).map((issue) => "â†?" + issue.message + " " + issue.path.join("."))
         : []
       const message = typeof data.message === "string" ? data.message : ""
       const path = typeof data.path === "string" ? data.path : json(data.path)

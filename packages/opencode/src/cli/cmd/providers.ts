@@ -10,10 +10,10 @@ import os from "os"
 import { Config } from "../../config"
 import { Global } from "../../global"
 import { Plugin } from "../../plugin"
-import { MimoFree } from "../../plugin/mimo-free"
+import { EncodeFree } from "../../plugin/Encode-free"
 import { t } from "../i18n"
 import { Instance } from "../../project/instance"
-import type { Hooks } from "@mimo-ai/plugin"
+import type { Hooks } from "@encode-ai/plugin"
 import { Process } from "../../util"
 import { text } from "node:stream/consumers"
 import { Effect } from "effect"
@@ -215,44 +215,44 @@ export function resolvePluginProviders(input: {
   return result
 }
 
-async function mimoFreeLogin() {
+async function EncodeFreeLogin() {
   const spinner = prompts.spinner()
-  spinner.start(t("cli.providers.mimo_free.verifying"))
+  spinner.start(t("cli.providers.Encode_free.verifying"))
   try {
-    const { fingerprint, exp } = await MimoFree.verify()
-    spinner.stop(t("cli.providers.mimo_free.ready"))
+    const { fingerprint, exp } = await EncodeFree.verify()
+    spinner.stop(t("cli.providers.Encode_free.ready"))
     const expDate = new Date(exp).toISOString()
-    prompts.log.success(t("cli.providers.mimo_free.default_set"))
+    prompts.log.success(t("cli.providers.Encode_free.default_set"))
     prompts.log.info(
       [
-        `Endpoint:    ${MimoFree.chatBaseUrl}/chat`,
-        `Fingerprint: ${fingerprint.slice(0, 12)}â€¦${fingerprint.slice(-4)}`,
+        `Endpoint:    ${EncodeFree.chatBaseUrl}/chat`,
+        `Fingerprint: ${fingerprint.slice(0, 12)}ï¿?{fingerprint.slice(-4)}`,
         `Token exp:   ${expDate}`,
       ].join("\n"),
     )
-    prompts.log.info(t("cli.providers.mimo_free.usage_hint"))
+    prompts.log.info(t("cli.providers.Encode_free.usage_hint"))
     prompts.outro("Done")
   } catch (err) {
-    spinner.stop(t("cli.providers.mimo_free.failed"), 1)
+    spinner.stop(t("cli.providers.Encode_free.failed"), 1)
     prompts.log.error(err instanceof Error ? err.message : String(err))
     prompts.outro("Done")
   }
 }
 
-async function mimoLogin() {
+async function EncodeLogin() {
   const hooks = await AppRuntime.runPromise(
     Effect.gen(function* () {
       const plugin = yield* Plugin.Service
       return yield* plugin.list()
     }),
   )
-  const mimoHook = hooks.findLast((h) => h.auth?.provider === "xiaomi")
-  if (!mimoHook?.auth) {
-    prompts.log.error("MiMo auth plugin not found")
+  const EncodeHook = hooks.findLast((h) => h.auth?.provider === "Encode")
+  if (!EncodeHook?.auth) {
+    prompts.log.error("Encode auth plugin not found")
     return
   }
 
-  const method = mimoHook.auth.methods[0]
+  const method = EncodeHook.auth.methods[0]
   if (method.type !== "oauth") return
 
   const authorize = await method.authorize()
@@ -268,7 +268,7 @@ async function mimoLogin() {
 
     if (raceResult.source === "browser") {
       if (raceResult.data.type === "success" && "key" in raceResult.data) {
-        await put("xiaomi", {
+        await put("Encode", {
           type: "api",
           key: raceResult.data.key,
           ...(raceResult.data.metadata ? { metadata: raceResult.data.metadata } : {}),
@@ -284,7 +284,7 @@ async function mimoLogin() {
 
     const callbackResult = await authorize.callback(raceResult.input)
     if (callbackResult.type === "success" && "key" in callbackResult) {
-      await put("xiaomi", {
+      await put("Encode", {
         type: "api",
         key: callbackResult.key,
         ...(callbackResult.metadata ? { metadata: callbackResult.metadata } : {}),
@@ -296,9 +296,9 @@ async function mimoLogin() {
 
     const remaining = MAX_RETRIES - attempt - 1
     if (remaining > 0) {
-      prompts.log.error(t("cli.providers.mimo_login.decrypt_retry", { remaining }))
+      prompts.log.error(t("cli.providers.Encode_login.decrypt_retry", { remaining }))
     } else {
-      prompts.log.error(t("cli.providers.mimo_login.decrypt_exhausted"))
+      prompts.log.error(t("cli.providers.Encode_login.decrypt_exhausted"))
     }
   }
 }
@@ -405,7 +405,7 @@ export const ProvidersLoginCommand = cmd({
   builder: (yargs) =>
     yargs
       .positional("url", {
-        describe: "mimocode auth provider",
+        describe: "encode auth provider",
         type: "string",
       })
       .option("provider", {
@@ -517,11 +517,8 @@ export const ProvidersLoginCommand = cmd({
         ]
 
         let provider: string
-        if (args.provider === "xiaomi") {
-          await mimoLogin()
-          return
-        } else if (args.provider === "mimo" || args.provider === "mimo-free") {
-          await mimoFreeLogin()
+        if (args.provider === "Encode" || args.provider === "Encode-free") {
+          await EncodeFreeLogin()
           return
         } else if (args.provider) {
           const input = args.provider
@@ -537,20 +534,14 @@ export const ProvidersLoginCommand = cmd({
           const choice = await prompts.select({
             message: t("cli.providers.select"),
             options: [
-              { label: "MiMo", value: "xiaomi", hint: t("cli.providers.mimo.recommended_hint") },
-              { label: "MiMo Auto (free)", value: "mimo-free", hint: t("cli.providers.mimo_free.hint") },
+              { label: "Encode Auto (free)", value: "Encode-free", hint: t("cli.providers.Encode_free.hint") },
               { label: t("cli.providers.other"), value: "__other__" },
             ],
           })
           if (prompts.isCancel(choice)) throw new UI.CancelledError()
 
-          if (choice === "xiaomi") {
-            await mimoLogin()
-            return
-          }
-
-          if (choice === "mimo-free") {
-            await mimoFreeLogin()
+          if (choice === "Encode-free") {
+            await EncodeFreeLogin()
             return
           }
 
@@ -590,7 +581,7 @@ export const ProvidersLoginCommand = cmd({
           }
 
           prompts.log.warn(
-            `This only stores a credential for ${provider} - you will need configure it in mimocode.json, check the docs for examples.`,
+            `This only stores a credential for ${provider} - you will need configure it in encode.json, check the docs for examples.`,
           )
         }
 
@@ -599,7 +590,7 @@ export const ProvidersLoginCommand = cmd({
             "Amazon Bedrock authentication priority:\n" +
               "  1. Bearer token (AWS_BEARER_TOKEN_BEDROCK or /connect)\n" +
               "  2. AWS credential chain (profile, access keys, IAM roles, EKS IRSA)\n\n" +
-              "Configure via mimocode.json options (profile, region, endpoint) or\n" +
+              "Configure via encode.json options (profile, region, endpoint) or\n" +
               "AWS environment variables (AWS_PROFILE, AWS_REGION, AWS_ACCESS_KEY_ID, AWS_WEB_IDENTITY_TOKEN_FILE).",
           )
         }
@@ -679,18 +670,18 @@ export const ProvidersWhoamiCommand = cmd({
     const info = await AppRuntime.runPromise(
       Effect.gen(function* () {
         const auth = yield* Auth.Service
-        return yield* auth.get("xiaomi")
+        return yield* auth.get("Encode")
       }),
     )
     if (!info) {
-      prompts.log.error("Not logged in. Run `mimo auth login` to log in.")
+      prompts.log.error("Not logged in. Run `Encode auth login` to log in.")
       return
     }
     if (info.type === "api" && info.metadata) {
-      prompts.log.info(`Provider: MiMo`)
+      prompts.log.info(`Provider: Encode`)
       prompts.log.info(`User ID: ${info.metadata.uid ?? "unknown"}`)
     } else {
-      prompts.log.info(`Provider: MiMo`)
+      prompts.log.info(`Provider: Encode`)
       prompts.log.info(`Type: ${info.type}`)
     }
     prompts.outro("")

@@ -88,8 +88,8 @@ describe("reconcileMemory cross-root", () => {
     provideTmpdirInstance(() =>
       Effect.gen(function* () {
         const memory = yield* Memory.Service
-        const mimoRoot = yield* memory.root()
-        yield* Effect.promise(() => fs.rm(mimoRoot, { recursive: true, force: true }))
+        const EncodeRoot = yield* memory.root()
+        yield* Effect.promise(() => fs.rm(EncodeRoot, { recursive: true, force: true }))
 
         const ccBase = yield* Effect.promise(() => tmpCcBase())
         const slug = "-x"
@@ -104,7 +104,7 @@ metadata:
 Body about cache.`
         yield* Effect.promise(() => fs.writeFile(path.join(ccDir, "feedback_cache_ttl.md"), fb))
 
-        yield* Effect.promise(() => reconcileMemory({ mimo: mimoRoot, cc: ccBase }))
+        yield* Effect.promise(() => reconcileMemory({ Encode: EncodeRoot, cc: ccBase }))
 
         const rows = Database.use((db) =>
           db.select().from(MemoryFtsTable).where(eq(MemoryFtsTable.scope, "cc")).all(),
@@ -118,21 +118,21 @@ Body about cache.`
     ),
   )
 
-  itLive.live("MEMORY.md â†’ type='free'", () =>
+  itLive.live("MEMORY.md â†?type='free'", () =>
     provideTmpdirInstance(() =>
       Effect.gen(function* () {
         const memory = yield* Memory.Service
-        const mimoRoot = yield* memory.root()
-        yield* Effect.promise(() => fs.rm(mimoRoot, { recursive: true, force: true }))
+        const EncodeRoot = yield* memory.root()
+        yield* Effect.promise(() => fs.rm(EncodeRoot, { recursive: true, force: true }))
 
         const ccBase = yield* Effect.promise(() => tmpCcBase())
         const ccDir = path.join(ccBase, "-y", "memory")
         yield* Effect.promise(() => fs.mkdir(ccDir, { recursive: true }))
         yield* Effect.promise(() =>
-          fs.writeFile(path.join(ccDir, "MEMORY.md"), "- [Title](file.md) â€” line"),
+          fs.writeFile(path.join(ccDir, "MEMORY.md"), "- [Title](file.md) â€?line"),
         )
 
-        yield* Effect.promise(() => reconcileMemory({ mimo: mimoRoot, cc: ccBase }))
+        yield* Effect.promise(() => reconcileMemory({ Encode: EncodeRoot, cc: ccBase }))
 
         const rows = Database.use((db) =>
           db.select().from(MemoryFtsTable).where(eq(MemoryFtsTable.scope, "cc")).all(),
@@ -143,14 +143,14 @@ Body about cache.`
     ),
   )
 
-  itLive.live("union prune: deleting one CC file leaves mimo rows untouched", () =>
+  itLive.live("union prune: deleting one CC file leaves Encode rows untouched", () =>
     provideTmpdirInstance(() =>
       Effect.gen(function* () {
         const memory = yield* Memory.Service
-        const mimoRoot = yield* memory.root()
-        yield* Effect.promise(() => fs.rm(mimoRoot, { recursive: true, force: true }))
-        yield* Effect.promise(() => fs.mkdir(path.join(mimoRoot, "global"), { recursive: true }))
-        yield* Effect.promise(() => fs.writeFile(path.join(mimoRoot, "global", "m.md"), "mimo body"))
+        const EncodeRoot = yield* memory.root()
+        yield* Effect.promise(() => fs.rm(EncodeRoot, { recursive: true, force: true }))
+        yield* Effect.promise(() => fs.mkdir(path.join(EncodeRoot, "global"), { recursive: true }))
+        yield* Effect.promise(() => fs.writeFile(path.join(EncodeRoot, "global", "m.md"), "Encode body"))
 
         const ccBase = yield* Effect.promise(() => tmpCcBase())
         const ccDir = path.join(ccBase, "-z", "memory")
@@ -167,16 +167,16 @@ cc body`,
           ),
         )
 
-        yield* Effect.promise(() => reconcileMemory({ mimo: mimoRoot, cc: ccBase }))
+        yield* Effect.promise(() => reconcileMemory({ Encode: EncodeRoot, cc: ccBase }))
         expect(Database.use((db) => db.select().from(MemoryFtsTable).all()).length).toBe(2)
 
         // Delete CC file off disk; reconcile.
         yield* Effect.promise(() => fs.rm(ccFile))
-        yield* Effect.promise(() => reconcileMemory({ mimo: mimoRoot, cc: ccBase }))
+        yield* Effect.promise(() => reconcileMemory({ Encode: EncodeRoot, cc: ccBase }))
 
         const rows = Database.use((db) => db.select().from(MemoryFtsTable).all())
         expect(rows.length).toBe(1)
-        expect(rows[0].scope).toBe("global") // mimo row preserved
+        expect(rows[0].scope).toBe("global") // Encode row preserved
       }),
     ),
   )
@@ -185,8 +185,8 @@ cc body`,
     provideTmpdirInstance(() =>
       Effect.gen(function* () {
         const memory = yield* Memory.Service
-        const mimoRoot = yield* memory.root()
-        yield* Effect.promise(() => fs.rm(mimoRoot, { recursive: true, force: true }))
+        const EncodeRoot = yield* memory.root()
+        yield* Effect.promise(() => fs.rm(EncodeRoot, { recursive: true, force: true }))
 
         const ccBase = yield* Effect.promise(() => tmpCcBase())
         const ccDir = path.join(ccBase, "-q", "memory")
@@ -202,16 +202,16 @@ body`,
           ),
         )
 
-        // First reconcile WITH cc root â€” row indexed.
-        yield* Effect.promise(() => reconcileMemory({ mimo: mimoRoot, cc: ccBase }))
+        // First reconcile WITH cc root â€?row indexed.
+        yield* Effect.promise(() => reconcileMemory({ Encode: EncodeRoot, cc: ccBase }))
         expect(
           Database.use((db) =>
             db.select().from(MemoryFtsTable).where(eq(MemoryFtsTable.scope, "cc")).all(),
           ).length,
         ).toBe(1)
 
-        // Second reconcile WITHOUT cc root â€” row pruned.
-        yield* Effect.promise(() => reconcileMemory({ mimo: mimoRoot }))
+        // Second reconcile WITHOUT cc root â€?row pruned.
+        yield* Effect.promise(() => reconcileMemory({ Encode: EncodeRoot }))
         expect(
           Database.use((db) =>
             db.select().from(MemoryFtsTable).where(eq(MemoryFtsTable.scope, "cc")).all(),
@@ -225,11 +225,11 @@ body`,
     provideTmpdirInstance(() =>
       Effect.gen(function* () {
         const memory = yield* Memory.Service
-        const mimoRoot = yield* memory.root()
-        yield* Effect.promise(() => fs.rm(mimoRoot, { recursive: true, force: true }))
+        const EncodeRoot = yield* memory.root()
+        yield* Effect.promise(() => fs.rm(EncodeRoot, { recursive: true, force: true }))
 
         const result = yield* Effect.promise(() =>
-          reconcileMemory({ mimo: mimoRoot, cc: "/definitely/not/a/real/path/abc123" }),
+          reconcileMemory({ Encode: EncodeRoot, cc: "/definitely/not/a/real/path/abc123" }),
         )
         expect(result.indexed).toBe(0)
         expect(result.pruned).toBe(0)

@@ -1,21 +1,21 @@
 import path from "path"
 import { Filesystem } from "@/util"
-import { Glob } from "@mimo-ai/shared/util/glob"
+import { Glob } from "@encode-ai/shared/util/glob"
 
 // Resolve a guest-supplied relative path against the workspace root, refusing
 // any path that escapes the root by LEXICAL means (parent traversal `..`, or an
 // escaping-absolute path). The jail is the sandbox boundary for the orchestrator
-// script's own file IO â€” distinct from the file-tool boundary of the agents it
+// script's own file IO â€?distinct from the file-tool boundary of the agents it
 // spawns (which have the same lexical posture, so this grants no new reach).
 //
-// LIMITATION (by design, experimental): the check is NAME-based, not realpath â€”
+// LIMITATION (by design, experimental): the check is NAME-based, not realpath â€?
 // `Filesystem.contains` is purely lexical and does NOT resolve symlinks. A
 // pre-existing symlink INSIDE the workspace that points OUTSIDE it (e.g. a pnpm
 // store link under node_modules) is therefore NOT caught: a path through it
 // resolves to an in-root lexical string, passes this check, and the underlying
 // fs op follows the link out of the jail. Hardening to a true boundary means
 // realpath-ing the resolved path (and, for writeFile, the leaf's parent) before
-// the contains check â€” deferred until the feature graduates off the flag.
+// the contains check â€?deferred until the feature graduates off the flag.
 export function resolveInWorkspace(root: string, rel: string): string {
   const abs = path.resolve(root, rel)
   if (abs !== root && !Filesystem.contains(root, abs)) {
@@ -44,9 +44,9 @@ export function makeFileHooks(root: string) {
     },
     async glob(pattern: unknown): Promise<string[]> {
       // Determinism: fan-out order derives from this list and the journal's
-      // occurrence index keys on call order, so the result MUST be stable â€”
+      // occurrence index keys on call order, so the result MUST be stable â€?
       // sort lexicographically. Returns paths relative to the workspace root
-      // (the guest never sees absolute host paths). include "all" â†’ files + dirs
+      // (the guest never sees absolute host paths). include "all" â†?files + dirs
       // (sub-project units like crates are dirs). dot:true matches existing callers.
       const abs = await Glob.scan(String(pattern), {
         cwd: root,
@@ -54,7 +54,7 @@ export function makeFileHooks(root: string) {
         include: "all",
         dot: true,
       })
-      // Jail: Glob.scan's `cwd` does NOT confine matches â€” a guest pattern with `..`
+      // Jail: Glob.scan's `cwd` does NOT confine matches â€?a guest pattern with `..`
       // or an absolute path escapes the workspace. The other file fns re-jail via
       // resolveInWorkspace; glob must filter its RESULTS. A match outside root maps to
       // a relative path starting with `..` (or an absolute path on some inputs), so

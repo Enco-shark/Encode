@@ -17,7 +17,7 @@ import { Question } from "../../src/question"
 import { Todo } from "../../src/session/todo"
 import { Session } from "../../src/session"
 import { LLM } from "../../src/session/llm"
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import { SessionPrune } from "../../src/session/prune"
 import { SessionSummary } from "../../src/session/summary"
 import { Instruction } from "../../src/session/instruction"
@@ -342,7 +342,7 @@ describe("Actor.cancel cascade", () => {
         })
         yield* reg.updateStatus(parent.id, "general-2", { status: "running" })
 
-        // Cancel the root â€” should cascade to children
+        // Cancel the root â€?should cascade to children
         yield* actor.cancel(parent.id, "explore-1", "graceful")
 
         // Assert all 3 are idle with cancelled outcome (new schema)

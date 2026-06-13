@@ -130,7 +130,7 @@ export function DialogSessionList() {
         }
 
         let footer = ""
-        if (Flag.MIMOCODE_EXPERIMENTAL_WORKSPACES) {
+        if (Flag.ENCODE_EXPERIMENTAL_WORKSPACES) {
           if (x.workspaceID) {
             let desc = "unknown"
             if (workspace) {
@@ -145,7 +145,7 @@ export function DialogSessionList() {
                     fg: workspaceStatus === "connected" ? theme.success : theme.error,
                   }}
                 >
-                  ‚óè
+                  ‚ó?
                 </span>
               </>
             )
@@ -258,7 +258,7 @@ export function DialogSessionList() {
           keybind: Keybind.parse("ctrl+w")[0],
           title: "new workspace",
           side: "right",
-          disabled: !Flag.MIMOCODE_EXPERIMENTAL_WORKSPACES,
+          disabled: !Flag.ENCODE_EXPERIMENTAL_WORKSPACES,
           onTrigger: () => {
             createWorkspace()
           },

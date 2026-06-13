@@ -28,7 +28,7 @@ import { Provider } from "@/provider"
 import { errors } from "../../error"
 import { lazy } from "@/util/lazy"
 import { Bus } from "@/bus"
-import { NamedError } from "@mimo-ai/shared/util/error"
+import { NamedError } from "@encode-ai/shared/util/error"
 import { jsonRequest, runRequest } from "./trace"
 
 const log = Log.create({ service: "server" })
@@ -971,12 +971,12 @@ export const SessionRoutes = lazy(() =>
         c.header("Content-Type", "application/json")
         return stream(c, async (stream) => {
           const body = c.req.valid("json")
-          // If the HTTP client gives up (TUI exits, driver kills its `mimo run`
+          // If the HTTP client gives up (TUI exits, driver kills its `Encode run`
           // client on its own per-turn timeout, network drop), we have to drive
           // the server-side runner to Idle ourselves. Otherwise the prompt
           // fiber keeps running with no consumer, and any next POST attaches
           // to the same dead Deferred via SessionRunState.ensureRunning's
-          // `Running` branch â€” every subsequent turn then hangs waiting on a
+          // `Running` branch â€?every subsequent turn then hangs waiting on a
           // result that will never arrive. SessionPrompt.cancel interrupts
           // the fiber, which lets the runner transition Running -> Idle
           // through Runner.cancel, freeing the next POST to start a fresh run.

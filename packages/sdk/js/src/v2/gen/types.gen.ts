@@ -402,7 +402,7 @@ export type QuestionInfo = {
    */
   key?: string
   /**
-   * Template parameters for i18n interpolation (e.g. { plan: '.mimocode/plans/...' })
+   * Template parameters for i18n interpolation (e.g. { plan: '.encode/plans/...' })
    */
   params?: {
     [key: string]: string
@@ -1559,7 +1559,7 @@ export type GlobalEvent = {
 export type LogLevel = "DEBUG" | "INFO" | "WARN" | "ERROR"
 
 /**
- * Server configuration for mimo serve and web commands
+ * Server configuration for Encode serve and web commands
  */
 export type ServerConfig = {
   /**
@@ -2145,7 +2145,7 @@ export type Config = {
       open_notes?: number
     }
     /**
-     * Number of days after task done/abandoned before it's filtered out of `list({include_archived: false})`. Rows are NOT deleted â€” see v9 for true GC. Default: 7.
+     * Number of days after task done/abandoned before it's filtered out of `list({include_archived: false})`. Rows are NOT deleted â€?see v9 for true GC. Default: 7.
      */
     task_archive_days?: number
     /**
@@ -4448,7 +4448,7 @@ export type SessionPromptErrors = {
    */
   404: NotFoundError
   /**
-   * Conflict â€” session resource is busy
+   * Conflict â€?session resource is busy
    */
   409: ConflictError
 }

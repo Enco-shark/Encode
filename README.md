@@ -1,8 +1,4 @@
-<h1 align="center">MiMoCode</h1>
-
-<p align="center">
-  <img src="assets/readme/mimocode-banner.png" alt="MiMoCode" width="700">
-</p>
+<h1 align="center">Encode</h1>
 
 <p align="center"><strong>An open-source AI coding agent with cross-session memory.</strong></p>
 
@@ -10,15 +6,11 @@
   <a href="README.zh.md">中文</a> | English
 </p>
 
-<p align="center">
-  <a href="https://mimo.xiaomi.com/en/mimocode">Website</a> | <a href="https://mimo.xiaomi.com/en/blog/mimo-code-long-horizon">Blog</a>
-</p>
-
 ---
 
-MiMoCode is a terminal-native AI coding assistant. It can read and write code, run commands, manage Git, and use a persistent memory system to keep a deep understanding of your project across sessions while continuously improving itself.
+Encode is a terminal-native AI coding assistant. It can read and write code, run commands, manage Git, and use a persistent memory system to keep a deep understanding of your project across sessions while continuously improving itself.
 
-MiMo Auto is built in as a free-for-limited-time channel, so you can start with zero configuration. MiMoCode also supports connecting to any mainstream LLM provider API.
+Encode supports connecting to any mainstream LLM provider API.
 
 ---
 
@@ -26,17 +18,15 @@ MiMo Auto is built in as a free-for-limited-time channel, so you can start with 
 
 ```bash
 # One-line install
-curl -fsSL https://mimo.xiaomi.com/install | bash
+curl -fsSL https://encode.ai/install | bash
 
 # Or install via npm
-npm install -g @mimo-ai/cli
+npm install -g @encode-ai/cli
 ```
 
 The first launch guides you through configuration automatically. Supported options:
-- **MiMo Auto (free for a limited time)** — anonymous channel, zero configuration
-- **Xiaomi MiMo Platform** — OAuth login
-- **Import from Claude Code** — migrate existing authentication in one step
 - **Custom Provider** — add any OpenAI-compatible API in the TUI
+- **Import from Claude Code** — migrate existing authentication in one step
 
 ---
 
@@ -85,10 +75,6 @@ The `/goal` command sets a stopping condition for a session. When the agent trie
 
 Compose mode provides a structured workflow for specs-driven development. It includes built-in skills for planning, execution, code review, TDD, debugging, verification, and merging — orchestrating the full lifecycle from spec to shipped code.
 
-### Voice Input
-
-Real-time streaming voice input powered by TenVAD and MiMo ASR. Activate with `/voice`, then speak — audio is segmented by pauses and transcribed incrementally into the input. Available for MiMo logged-in users.
-
 ### Dream & Distill
 
 - **`/dream`** — scans recent session traces, extracts persistent knowledge into project memory, and removes outdated entries
@@ -98,7 +84,7 @@ Real-time streaming voice input powered by TenVAD and MiMo ASR. Activate with `/
 
 ## Configuration
 
-MiMoCode is configured via `.mimocode/mimocode.json` in the project directory (or `~/.config/mimocode/mimocode.json` globally). Key options include:
+Encode is configured via `.encode/encode.json` in the project directory (or `~/.config/encode/encode.json` globally). Key options include:
 
 - Provider and model selection
 - Agent permissions and custom agents
@@ -122,26 +108,10 @@ bun turbo typecheck      # Type check
 
 ## Relationship to OpenCode
 
-MiMoCode is built as a fork of [OpenCode](https://github.com/anomalyco/opencode). It keeps all core OpenCode capabilities (multiple providers, TUI, LSP, MCP, plugins) and adds persistent memory, intelligent context management, subagent orchestration, goal-driven autonomous loops, compose workflows, and self-improvement via dream/distill.
-
----
-
-## Community
-
-Scan the QR code to join the community group chat:
-
-<p align="center">
-  <img src="assets/readme/community-qrcode-1.jpg" alt="Community group chat QR code 1" width="240">
-  &nbsp;&nbsp;
-  <img src="assets/readme/community-qrcode-2.jpg" alt="Community group chat QR code 2" width="240">
-</p>
+Encode is built as a fork of [OpenCode](https://github.com/anomalyco/opencode). It keeps all core OpenCode capabilities (multiple providers, TUI, LSP, MCP, plugins) and adds persistent memory, intelligent context management, subagent orchestration, goal-driven autonomous loops, compose workflows, and self-improvement via dream/distill.
 
 ---
 
 ## License
 
 Source code is licensed under the [MIT License](./LICENSE).
-
-Use of MiMoCode is also subject to the [Use Restrictions](./USE_RESTRICTIONS.md).
-Use of Xiaomi MiMo-hosted services is subject to the [MiMo Terms of Service](https://platform.xiaomimimo.com/docs/terms/user-agreement).
-Use of the MiMo name, logo, and trademarks is subject to the MiMo Trademark Policy.

@@ -1,4 +1,4 @@
-import { Tooltip } from "@mimo-ai/ui/tooltip"
+import { Tooltip } from "@encode-ai/ui/tooltip"
 import { createResizeObserver } from "@solid-primitives/resize-observer"
 import {
   children,
@@ -102,7 +102,7 @@ export function ServerRow(props: ServerRowProps) {
                     <span class="text-text-weaker">{language.t("server.row.noUsername")}</span>
                   )}
                 </span>
-                {conn().http.password && <span class="text-text-weak">••••••••</span>}
+                {conn().http.password && <span class="text-text-weak">•••••••�?/span>}
               </div>
             )}
           </Show>

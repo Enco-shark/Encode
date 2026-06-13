@@ -10,9 +10,9 @@ function send(event: EventType, sessionID: string, body: Record<string, unknown>
 }
 
 export const subscribe = Effect.fn("Metrics.subscribe")(function* () {
-  if (!Flag.MIMOCODE_ENABLE_ANALYSIS) return
+  if (!Flag.ENCODE_ENABLE_ANALYSIS) return
   // Touch installation_id so the file exists on first launch even before any
-  // event fires. The value is intentionally NOT included in wire payloads â€”
+  // event fires. The value is intentionally NOT included in wire payloads â€?
   // H.instance_id is a fresh random UUID per report.
   yield* Effect.promise(() => getInstallationID().catch(() => ""))
 

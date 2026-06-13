@@ -20,7 +20,7 @@ let lastDistillSpawnTime = 0
 export const DREAM_TASK = [
   "Run one automatic dream memory consolidation pass for the current project.",
   "",
-  "Use the memory files as the working index and the raw mimocode trajectory database as the source of truth.",
+  "Use the memory files as the working index and the raw encode trajectory database as the source of truth.",
   "Use bash for read-only SQLite and filesystem inspection. Do not modify the database.",
   "Consolidate only durable, verified information into project memory.",
 ].join("\n")
@@ -29,7 +29,7 @@ export const DISTILL_TASK = [
   "Run one automatic distill pass for the current project.",
   "",
   "Review the past month of sessions and identify repeated manual workflows worth packaging.",
-  "Use the raw mimocode trajectory database as the source of truth and memory files to spot cross-session patterns.",
+  "Use the raw encode trajectory database as the source of truth and memory files to spot cross-session patterns.",
   "Inventory existing skills, agents, and commands first so you reuse or extend instead of duplicating.",
   "Use bash for read-only SQLite and filesystem inspection. Do not modify the database.",
   "Produce a compact shortlist, then create only the high-confidence missing assets.",
@@ -76,7 +76,7 @@ function shouldAutoRun(input: {
         ),
       )
       if (!earliest || now - earliest.time_created < intervalMs) {
-        log.info(`auto-${input.label} skipped â€” project too young`, {
+        log.info(`auto-${input.label} skipped â€?project too young`, {
           projectAge: earliest ? Math.round((now - earliest.time_created) / DAY_MS) + "d" : "empty",
           interval: input.intervalDays + "d",
         })
@@ -85,7 +85,7 @@ function shouldAutoRun(input: {
     }
 
     if (elapsed < intervalMs) {
-      log.info(`auto-${input.label} skipped â€” last run too recent`, {
+      log.info(`auto-${input.label} skipped â€?last run too recent`, {
         lastRunAgo: Math.round(elapsed / DAY_MS) + "d",
         interval: input.intervalDays + "d",
       })

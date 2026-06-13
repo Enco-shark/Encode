@@ -90,17 +90,17 @@ describe("WorkflowRuntime concurrency + resilience", () => {
         // A 400 is a non-retryable client error (see llm.retryable): the child
         // that receives it finishes with no assistant text, so its AgentOutcome
         // carries no finalText and agent() resolves to null. The other child gets
-        // "ok". agent() must NEVER throw the failure into the guest â€” both the run
+        // "ok". agent() must NEVER throw the failure into the guest â€?both the run
         // and the sibling agent must still complete. Assertions are
         // order-independent, so the FIFO race over which child lands first is
         // benign. (Each agent() is a subagent sharing the run's session, so
-        // result isolation rides on the agent-scoped lastAssistant fix â€” each
+        // result isolation rides on the agent-scoped lastAssistant fix â€?each
         // child's outcome is extracted by its own agentID, so concurrent
-        // same-session children do not cross-contaminate â€” see runtime.ts.)
+        // same-session children do not cross-contaminate â€?see runtime.ts.)
         yield* llm.error(400, { error: { message: "bad request" } })
         yield* llm.text("ok")
         // A failed agent() resolves to a nullish value in the guest (the host
-        // returns null; the sandbox marshals host null â†’ guest undefined). Treat
+        // returns null; the sandbox marshals host null â†?guest undefined). Treat
         // both as the failure sentinel.
         const script = [
           `export const meta = { name: "t", description: "d" }`,
@@ -120,7 +120,7 @@ describe("WorkflowRuntime concurrency + resilience", () => {
 })
 
 describe("WorkflowRuntime convergence (scout drives fan-out)", () => {
-  // The scout is an ordinary agent() call with a schema â†’ it returns structured
+  // The scout is an ordinary agent() call with a schema â†?it returns structured
   // data. The mock LLM answers its turn with a StructuredOutput tool call; the
   // runtime spawns it under format:{type:"json_schema"} (runtime.ts:199) and
   // agent() resolves to the validated object (runtime.ts:205).
@@ -133,7 +133,7 @@ describe("WorkflowRuntime convergence (scout drives fan-out)", () => {
 
   // Drives the real runtime with a mock LLM: scout reports `todo`, the script
   // fans out one worker per todo. Asserts the run result and the run's cumulative
-  // agent-spawn tally (agentCount = +1 per agent() call, never decremented â€”
+  // agent-spawn tally (agentCount = +1 per agent() call, never decremented â€?
   // runtime.ts:301), the deterministic observable immune to LLM-queue races.
   const runWithTodo = (todo: string[], expectedAgentCount: number) =>
     provideTmpdirServer(
@@ -145,9 +145,9 @@ describe("WorkflowRuntime convergence (scout drives fan-out)", () => {
           permission: [{ permission: "*", pattern: "*", action: "allow" }],
         })
         // Scout turn FIRST: it is awaited before the fan-out, so it consumes this
-        // StructuredOutput reply before any worker dequeues â€” ordering is stable.
+        // StructuredOutput reply before any worker dequeues â€?ordering is stable.
         yield* llm.push(reply().tool("StructuredOutput", { todo }))
-        // One plain text reply per worker (no schema â†’ finalText, runtime.ts:205).
+        // One plain text reply per worker (no schema â†?finalText, runtime.ts:205).
         for (let i = 0; i < todo.length; i++) yield* llm.text("done")
         const script = [
           `export const meta = { name: "t", description: "d" }`,
@@ -161,16 +161,16 @@ describe("WorkflowRuntime convergence (scout drives fan-out)", () => {
         expect(outcome.status).toBe("completed")
         expect((outcome as { result: number }).result).toBe(todo.length)
         // The load-bearing assertion: scout's reported todo count drives the
-        // worker fan-out â†’ 1 scout + N workers spawned.
+        // worker fan-out â†?1 scout + N workers spawned.
         const snap = yield* runtime.status({ runID })
         expect(snap.agentCount).toBe(expectedAgentCount)
       }),
       { git: true, config: providerCfg },
     )
 
-  it.live("4 todo â†’ 1 scout + 4 workers spawned", () => runWithTodo(["a", "b", "c", "d"], 5))
+  it.live("4 todo â†?1 scout + 4 workers spawned", () => runWithTodo(["a", "b", "c", "d"], 5))
 
-  it.live("2 todo â†’ 1 scout + 2 workers spawned (a re-run with fewer undone units does less work)", () =>
+  it.live("2 todo â†?1 scout + 2 workers spawned (a re-run with fewer undone units does less work)", () =>
     runWithTodo(["a", "b"], 3),
   )
 })
@@ -180,8 +180,8 @@ describe("WorkflowRuntime schema contract (schema'd agent never returns prose)",
   // prose, exhausting the format.retryCount=2 retries) MUST resolve to `null`, NOT
   // the prose finalText. Returning prose breaks scripts that do `r.fields.map(...)`
   // (the prose is a truthy non-object) and our pipeline's catch then injects a bare
-  // null that bypasses the script's own `r ? â€¦ : []` guard â€” exactly the full-tree
-  // Phase-0 Verify crash. So: schema requested + structured-output failed â‡’ null.
+  // null that bypasses the script's own `r ? â€?: []` guard â€?exactly the full-tree
+  // Phase-0 Verify crash. So: schema requested + structured-output failed â‡?null.
   const fieldsSchema = {
     type: "object",
     additionalProperties: false,
@@ -204,7 +204,7 @@ describe("WorkflowRuntime schema contract (schema'd agent never returns prose)",
         yield* llm.text("Still prose, no tool call.")
         yield* llm.text("Prose again.")
         // The script returns typeof the agent result. With the fix it must be
-        // "object" (null is typeof "object") and specifically === null â€” NOT "string".
+        // "object" (null is typeof "object") and specifically === null â€?NOT "string".
         const script = [
           `export const meta = { name: "t", description: "d" }`,
           `const r = await agent("classify", { schema: ${JSON.stringify(fieldsSchema)} })`,
@@ -215,7 +215,7 @@ describe("WorkflowRuntime schema contract (schema'd agent never returns prose)",
         expect(outcome.status).toBe("completed")
         const result = (outcome as { result: { isFailure: boolean; isProse: boolean } }).result
         expect(result.isProse).toBe(false) // never the prose string
-        expect(result.isFailure).toBe(true) // schema-fail â‡’ null/undefined sentinel
+        expect(result.isFailure).toBe(true) // schema-fail â‡?null/undefined sentinel
       }),
       { git: true, config: providerCfg },
     ),
@@ -224,7 +224,7 @@ describe("WorkflowRuntime schema contract (schema'd agent never returns prose)",
 
 describe("WorkflowRuntime error visibility", () => {
   // A script-logic error (a TypeError downstream of a never-throw agent()) must
-  // fail the run with a VISIBLE error â€” the real guest message â€” not the opaque
+  // fail the run with a VISIBLE error â€?the real guest message â€?not the opaque
   // Effect wrapper. Bare Effect.tryPromise wraps the sandbox rejection as an
   // UnknownError whose .message is literally "An error occurred in
   // Effect.tryPromise" (the real error is buried in .cause), so runtime.ts:547's
@@ -242,7 +242,7 @@ describe("WorkflowRuntime error visibility", () => {
           permission: [{ permission: "*", pattern: "*", action: "allow" }],
         })
         yield* llm.text("ok")
-        // agent("a") â†’ "ok"; r = ["ok"]; r.map(x => x.nope.deeper) derefs a
+        // agent("a") â†?"ok"; r = ["ok"]; r.map(x => x.nope.deeper) derefs a
         // property of undefined downstream of the (now never-catching) parallel.
         const script = [
           `export const meta = { name: "t", description: "d" }`,
@@ -291,21 +291,21 @@ describe("WorkflowRuntime cancel cascade", () => {
     15000,
   )
 
-  // MR104 #2 â€” orphan-on-cancel race. The bug: spawnShared added the child's
+  // MR104 #2 â€?orphan-on-cancel race. The bug: spawnShared added the child's
   // actorID to the run's reclaim set (entry.childActorIDs) only AFTER actor.spawn
   // RESOLVED across the quickjs Promise bridge. A cancel landing during that gap
-  // reclaimed a STALE (empty) set, then interrupted the workflow fiber â€” but each
+  // reclaimed a STALE (empty) set, then interrupted the workflow fiber â€?but each
   // child runs DETACHED in the actor scope (background:true + forkIn), so the
   // interrupt never reaches it. Result: registered children that reclaim never
-  // cancels â€” orphans holding subscriptions/tokens/worktrees. Fix: register the id
+  // cancels â€?orphans holding subscriptions/tokens/worktrees. Fix: register the id
   // INSIDE the spawn Effect (onActorID), before the work fiber detaches.
   //
   // Observable: reclaim graceful-cancels every id in childActorIDs, and
   // Actor.cancel writes lastOutcome="cancelled" on each (registry.test cancel
   // cascade). So immediately after cancel returns, EVERY spawned child must carry
-  // lastOutcome="cancelled" â€” proof that reclaim saw it. Pre-fix the set is empty
+  // lastOutcome="cancelled" â€?proof that reclaim saw it. Pre-fix the set is empty
   // at reclaim time, so the children are never cancelled (lastOutcome stays unset).
-  // NOTE: we assert at the instant cancel returns, BEFORE any further sleep â€” a
+  // NOTE: we assert at the instant cancel returns, BEFORE any further sleep â€?a
   // graceful-cancelled child can be re-driven by the auto-answering test LLM and
   // bounce back to running:success later, which is a mock artifact unrelated to
   // the orphan bug; the cancel-stamp at t0 is the stable signal.
@@ -319,7 +319,7 @@ describe("WorkflowRuntime cancel cascade", () => {
           title: "wf cancel no-orphan",
           permission: [{ permission: "*", pattern: "*", action: "allow" }],
         })
-        yield* llm.hang // every child hangs at the LLM â†’ in-flight at cancel time
+        yield* llm.hang // every child hangs at the LLM â†?in-flight at cancel time
         // A wide fan-out keeps spawns resolving across the bridge so the cancel
         // lands while children are registered but the post-resolve add (the bug)
         // has not run.
@@ -379,10 +379,10 @@ describe("WorkflowRuntime concurrency clamp", () => {
 })
 
 describe("WorkflowRuntime per-agent timeout (straggler-abort)", () => {
-  // A single hung agent (e.g. a persistent mimo TTFT wall) must not stall the whole
+  // A single hung agent (e.g. a persistent Encode TTFT wall) must not stall the whole
   // parallel/pipeline barrier indefinitely. With agentTimeoutMs set, the hung agent
   // is gracefully cancelled and resolves to the never-throw null sentinel, so the
-  // sibling's "ok" and the run COMPLETE â€” bounded by the per-agent timeout, NOT the
+  // sibling's "ok" and the run COMPLETE â€?bounded by the per-agent timeout, NOT the
   // far-larger global scriptDeadline (a PASS proves the per-agent path fired).
   it.live("a hung agent times out to null under agentTimeoutMs; the run completes", () =>
     provideTmpdirServer(
@@ -395,8 +395,8 @@ describe("WorkflowRuntime per-agent timeout (straggler-abort)", () => {
         })
         // Queue ONE hang. The two agents race to dequeue it: whichever pulls it hangs
         // forever; the other finds the queue empty and gets the server's auto-"ok".
-        // So exactly 1 hangs (â†’ times out â†’ null) and 1 returns "ok", regardless of
-        // FIFO order â€” the assertion counts totals, so it's order-independent.
+        // So exactly 1 hangs (â†?times out â†?null) and 1 returns "ok", regardless of
+        // FIFO order â€?the assertion counts totals, so it's order-independent.
         yield* llm.hang
         const script = [
           `export const meta = { name: "t", description: "d" }`,
@@ -427,7 +427,7 @@ describe("WorkflowRuntime lifecycle cap", () => {
   // Hitting the lifecycle agent cap is an EXPECTED steady-state for a large
   // fan-out (lifetime-classify caps its own verify sample to stay under it), not
   // a programming error. So an over-cap agent() must return the never-throw null
-  // sentinel (graceful degradation) â€” NOT throw, which post-NC-1 (combinators no
+  // sentinel (graceful degradation) â€?NOT throw, which post-NC-1 (combinators no
   // longer catch) would reject the whole batch and waste every completed agent.
   // maxLifecycleAgents parameterizes the cap so this is unit-testable at cap=2.
   it.live("over-cap agent() returns null; the run still completes (cap=2, fan-out 3)", () =>
@@ -440,7 +440,7 @@ describe("WorkflowRuntime lifecycle cap", () => {
           permission: [{ permission: "*", pattern: "*", action: "allow" }],
         })
         // The check-then-increment is synchronous (no await between), so exactly 2
-        // of the 3 spawn (count 0â†’1, 1â†’2) and the 3rd sees count 2 â‰¥ cap â†’ null.
+        // of the 3 spawn (count 0â†?, 1â†?) and the 3rd sees count 2 â‰?cap â†?null.
         // Two replies for the two that spawn; the 3rd never reaches the LLM.
         yield* llm.text("done")
         yield* llm.text("done")
@@ -557,7 +557,7 @@ describe("WorkflowRuntime list + resume", () => {
         const out1 = yield* runtime.wait({ runID })
         expect(out1.status).toBe("completed")
         // Resume: agent("x") is journaled, so it replays from cache. No reply is
-        // queued â€” and even if a stray spawn happened the test server would
+        // queued â€?and even if a stray spawn happened the test server would
         // auto-"ok", so agentCount (not queue state) is the assertion that matters.
         const resumed = yield* runtime.resume({ runID })
         expect(resumed.runID).toBe(runID) // SAME runID
@@ -566,7 +566,7 @@ describe("WorkflowRuntime list + resume", () => {
         expect(out.status).toBe("completed")
         expect((out as { result: unknown }).result).toBe("done") // replayed cached value
         const st = yield* runtime.status({ runID })
-        expect(st.agentCount).toBe(0) // resume spawned nothing â€” pure replay
+        expect(st.agentCount).toBe(0) // resume spawned nothing â€?pure replay
       }),
       { git: true, config: providerCfg },
     ),
@@ -590,10 +590,10 @@ describe("WorkflowRuntime list + resume", () => {
     ),
   )
 
-  // MR104 P2-1 â€” in-process double-resume race. The bug: resume()'s live-guard
+  // MR104 P2-1 â€?in-process double-resume race. The bug: resume()'s live-guard
   // (runs.get(runID).status === "running") is a check-then-act, not atomic. Two
   // concurrent resume(sameRunID) of a COMPLETED run BOTH read status "completed",
-  // BOTH pass the guard, BOTH launch() â€” and launch does runs.set(runID, entry),
+  // BOTH pass the guard, BOTH launch() â€?and launch does runs.set(runID, entry),
   // so the second clobbers the first (orphaned fiber, raced counter flush) and
   // both fibers append to the SAME .jsonl journal (interleaved).
   //
@@ -604,12 +604,12 @@ describe("WorkflowRuntime list + resume", () => {
   //
   // DISCRIMINATING ASSERTION: with the lock, EXACTLY ONE of the two concurrent
   // resumes returns resumed:true (the other resumed:false). Unlocked, BOTH pass
-  // the guard and BOTH re-launch â†’ resumed:true twice. This is the direct, clean
+  // the guard and BOTH re-launch â†?resumed:true twice. This is the direct, clean
   // signal that the launch ran once, not twice, and it is DETERMINISTIC: Effect.all
   // forks both resumes; both reach resume's first yield before either reaches
   // launch, so unlocked they both observe status "completed" and both relaunch.
   // (Verified empirically: against the unlocked code this assertion fails with
-  // Received: 2, fast and repeatably â€” not flaky.)
+  // Received: 2, fast and repeatably â€?not flaky.)
   it.live("two concurrent resumes of the same completed run launch exactly once (no double-launch)", () =>
     provideTmpdirServer(
       Effect.fnUntraced(function* ({ llm }) {
@@ -629,12 +629,12 @@ describe("WorkflowRuntime list + resume", () => {
 
         // Fire two resume(sameRunID) concurrently. Without the lock both pass the
         // live-guard (status is "completed") and both re-launch. With the lock the
-        // second serializes behind the first and sees status "running" â†’ resumed:false.
+        // second serializes behind the first and sees status "running" â†?resumed:false.
         const results = yield* Effect.all([runtime.resume({ runID }), runtime.resume({ runID })], {
           concurrency: "unbounded",
         })
 
-        // PRIMARY (and discriminating): exactly one re-launch happened â€” locked: 1
+        // PRIMARY (and discriminating): exactly one re-launch happened â€?locked: 1
         // true + 1 false; unlocked: 2 true (double-launch).
         expect(results.filter((r) => r.resumed).length).toBe(1)
         expect(results.filter((r) => !r.resumed).length).toBe(1)
@@ -644,7 +644,7 @@ describe("WorkflowRuntime list + resume", () => {
         expect(out.status).toBe("completed")
         expect((out as { result: unknown }).result).toBe("done") // replayed cached value
 
-        // SANITY: the surviving entry is a pure cache replay (no spawn) â€” a double-
+        // SANITY: the surviving entry is a pure cache replay (no spawn) â€?a double-
         // launch that re-spawned would show agentCount > 0.
         const st = yield* runtime.status({ runID })
         expect(st.agentCount).toBe(0)
@@ -653,7 +653,7 @@ describe("WorkflowRuntime list + resume", () => {
         // AFTER Deferred.succeed, so wait() returns before the fiber is fully done)
         // before the tmpdir fixture's Instance.disposeAll() tears the layer scope
         // down. Without this drain, disposeAll can interrupt the fiber mid-tail and
-        // hang teardown â€” a PRE-EXISTING resume teardown flake (the upstream single-
+        // hang teardown â€?a PRE-EXISTING resume teardown flake (the upstream single-
         // resume test exhibits it in isolation too), independent of the P2-1 lock.
         yield* Effect.sleep("300 millis")
       }),
@@ -723,7 +723,7 @@ describe("WorkflowRuntime replay journal", () => {
         const st1 = yield* runtime.status({ runID: first.runID })
         expect(st1.agentCount).toBe(3)
 
-        // Resume the SAME runID. The journal must replay all 3 â€” assert via
+        // Resume the SAME runID. The journal must replay all 3 â€?assert via
         // agentCount (the spawn counter), NOT via queue starvation (the test
         // server auto-"ok"s an unqueued request, so a stray spawn would silently
         // succeed). We queue nothing to keep intent clear.
@@ -785,7 +785,7 @@ describe("WorkflowRuntime replay journal", () => {
     ),
   )
 
-  // MR104 P1-2 â€” script-change invalidation. The journal keys results by
+  // MR104 P1-2 â€?script-change invalidation. The journal keys results by
   // {prompt,agentType,model,schema,phase}+occ but NOT by the script body. If the
   // user edits the workflow script between resume cycles, replaying the OLD journal
   // onto NEW code is silent divergence. Fix: recordStart stamps sha256(script body)
@@ -793,8 +793,8 @@ describe("WorkflowRuntime replay journal", () => {
   // MISMATCH the stale journal is cleared and the run re-spawns fresh (re-stamping
   // the new sha so a SUBSEQUENT resume of the now-current script replays correctly).
   //
-  // DISCRIMINATOR vs the same-script resume test above: same body â†’ sha matches â†’
-  // replay â†’ agentCount 0. Changed body â†’ sha differs â†’ fresh â†’ agentCount > 0, and
+  // DISCRIMINATOR vs the same-script resume test above: same body â†?sha matches â†?
+  // replay â†?agentCount 0. Changed body â†?sha differs â†?fresh â†?agentCount > 0, and
   // the old journal lines are gone (cleared, not interleaved with the new pass).
   it.live("resume with an EDITED script discards the stale journal and re-spawns fresh", () =>
     provideTmpdirServer(
@@ -821,10 +821,10 @@ describe("WorkflowRuntime replay journal", () => {
 
         // Edit the persisted script: overwrite <runID>.js with a DIFFERENT body
         // (resume reads its script from this file). Same prompts but a changed body
-        // â†’ a different sha â†’ the stored journal must be discarded.
+        // â†?a different sha â†?the stored journal must be discarded.
         const scriptB = [
           `export const meta = { name: "t", description: "d" }`,
-          `// edited between resume cycles â€” a different body changes the sha`,
+          `// edited between resume cycles â€?a different body changes the sha`,
           `const r = await parallel([() => agent("a"), () => agent("b")])`,
           `return r`,
         ].join("\n")
@@ -850,7 +850,7 @@ describe("WorkflowRuntime replay journal", () => {
         const out3 = yield* runtime.wait({ runID: first.runID })
         expect(out3.status).toBe("completed")
         const st3 = yield* runtime.status({ runID: first.runID })
-        expect(st3.agentCount).toBe(0) // sha now matches â†’ pure replay
+        expect(st3.agentCount).toBe(0) // sha now matches â†?pure replay
       }),
       { git: true, config: providerCfg },
     ),
@@ -859,15 +859,15 @@ describe("WorkflowRuntime replay journal", () => {
 })
 
 // agent() collapses every failure path to bare null, but operators need to know
-// the REASON to triage (mimo TTFT timeout vs spawn-reject vs over-cap). The
+// the REASON to triage (Encode TTFT timeout vs spawn-reject vs over-cap). The
 // WorkflowAgentFailed bus event carries the reason without changing agent()'s
-// null contract â€” these tests pin both invariants: the script still sees null,
+// null contract â€?these tests pin both invariants: the script still sees null,
 // AND the bus carries one event per failed agent with the right reason.
 describe("WorkflowRuntime agent failure event (Gap 3)", () => {
-  it.live("a 400 client error â†’ reason='no-deliverable'; success sibling â†’ no event", () =>
+  it.live("a 400 client error â†?reason='no-deliverable'; success sibling â†?no event", () =>
     // The actor outcome is status:"success" (agent finished its turn cleanly),
-    // but the failed-LLM call produced no assistant text â†’ no finalText/structured
-    // to extract â†’ deliverable is null â†’ reason="no-deliverable". This matches the
+    // but the failed-LLM call produced no assistant text â†?no finalText/structured
+    // to extract â†?deliverable is null â†?reason="no-deliverable". This matches the
     // existing "a failing child yields null" test's mechanism (line 79).
     provideTmpdirServer(
       Effect.fnUntraced(function* ({ llm }) {
@@ -905,7 +905,7 @@ describe("WorkflowRuntime agent failure event (Gap 3)", () => {
     ),
   )
 
-  it.live("a hung agent under timeoutMs â†’ reason='timeout'", () =>
+  it.live("a hung agent under timeoutMs â†?reason='timeout'", () =>
     provideTmpdirServer(
       Effect.fnUntraced(function* ({ llm }) {
         const runtime = yield* WorkflowRuntime.Service
@@ -928,7 +928,7 @@ describe("WorkflowRuntime agent failure event (Gap 3)", () => {
         const outcome = yield* runtime.wait({ runID })
         expect(outcome.status).toBe("completed")
         // The script returned the null deliverable directly: it must be null
-        // (sandbox marshals host null â†’ guest undefined; equate the two).
+        // (sandbox marshals host null â†?guest undefined; equate the two).
         const v = (outcome as { result: unknown }).result
         expect(v === null || v === undefined).toBe(true)
         yield* Effect.sleep("100 millis")
@@ -953,7 +953,7 @@ describe("WorkflowRuntime agent failure event (Gap 3)", () => {
           title: "wf overcap",
           permission: [{ permission: "*", pattern: "*", action: "allow" }],
         })
-        // 4 agents try to spawn, cap is 2 â†’ 2 succeed, 2 hit over-cap â†’ null.
+        // 4 agents try to spawn, cap is 2 â†?2 succeed, 2 hit over-cap â†?null.
         for (let i = 0; i < 2; i++) yield* llm.text("done")
         const script = [
           `export const meta = { name: "t", description: "d" }`,
@@ -1008,7 +1008,7 @@ describe("WorkflowRuntime PRNG seeding (cross-run divergence)", () => {
         expect(bo.status).toBe("completed")
         const av = (ao as { result: number[] }).result
         const bv = (bo as { result: number[] }).result
-        expect(av).not.toEqual(bv) // different runIDs â†’ different seeds â†’ different sequences
+        expect(av).not.toEqual(bv) // different runIDs â†?different seeds â†?different sequences
         expect(av[0]).toBeGreaterThanOrEqual(0)
         expect(av[0]).toBeLessThan(1)
       }),
@@ -1020,7 +1020,7 @@ describe("WorkflowRuntime PRNG seeding (cross-run divergence)", () => {
 // agent_timeout_ms is persisted on the workflow_run row at start time so a
 // resume that doesn't supply its own override (e.g. the TUI's /workflows resume
 // command, which currently passes only runID) inherits the original timeout
-// instead of silently dropping to unbounded â€” which used to let a wedged mimo
+// instead of silently dropping to unbounded â€?which used to let a wedged Encode
 // TTFT stall the resumed run forever. This test pins the "implicit-resume
 // inherits the persisted timeout" contract end-to-end via the persistence layer.
 describe("WorkflowRuntime persists agentTimeoutMs across resume (TUI-style)", () => {

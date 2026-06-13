@@ -18,7 +18,7 @@ import { win32DisableProcessedInput, win32InstallCtrlCGuard } from "./win32"
 import { Flag } from "@/flag/flag"
 import semver from "semver"
 import { DialogProvider, useDialog } from "@tui/ui/dialog"
-import { DialogMimoLogin } from "@tui/component/dialog-mimo-login"
+import { DialogEncodeLogin } from "@tui/component/dialog-encode-login"
 import { ErrorComponent } from "@tui/component/error-component"
 import { PluginRouteMissing } from "@tui/component/plugin-route-missing"
 import { ProjectProvider } from "@tui/context/project"
@@ -73,7 +73,7 @@ import type { EventSource } from "./context/sdk"
 import { DialogVariant } from "./component/dialog-variant"
 
 function rendererConfig(_config: TuiConfig.Info, plainTerminal: boolean): CliRendererConfig {
-  const mouseEnabled = !plainTerminal && !Flag.MIMOCODE_DISABLE_MOUSE && (_config.mouse ?? true)
+  const mouseEnabled = !plainTerminal && !Flag.ENCODE_DISABLE_MOUSE && (_config.mouse ?? true)
 
   return {
     externalOutputMode: "passthrough",
@@ -150,7 +150,7 @@ export function tui(input: {
 
     const plainTerminal = isPlainTerminal()
     const renderer = await createCliRenderer(rendererConfig(input.config, plainTerminal))
-    // 默认使用 dark 模式(不跟随终端背景);用户手动切换后会被 theme_mode_lock 记住并优先。
+    // 默认使用 dark 模式(不跟随终端背�?;用户手动切换后会�?theme_mode_lock 记住并优先�?
     const mode = "dark"
 
     await render(() => {
@@ -279,7 +279,7 @@ function App(props: { onSnapshot?: () => Promise<string[]> }) {
     })
 
   useKeyboard((evt) => {
-    if (!Flag.MIMOCODE_EXPERIMENTAL_DISABLE_COPY_ON_SELECT) return
+    if (!Flag.ENCODE_EXPERIMENTAL_DISABLE_COPY_ON_SELECT) return
     const sel = renderer.getSelection()
     if (!sel) return
 
@@ -327,17 +327,17 @@ function App(props: { onSnapshot?: () => Promise<string[]> }) {
 
   // Update terminal window title based on current route and session
   createEffect(() => {
-    if (!terminalTitleEnabled() || Flag.MIMOCODE_DISABLE_TERMINAL_TITLE) return
+    if (!terminalTitleEnabled() || Flag.ENCODE_DISABLE_TERMINAL_TITLE) return
 
     if (route.data.type === "home") {
-      renderer.setTerminalTitle("MiMoCode")
+      renderer.setTerminalTitle("ENCODE")
       return
     }
 
     if (route.data.type === "session") {
       const session = sync.session.get(route.data.sessionID)
       if (!session || SessionApi.isDefaultTitle(session.title)) {
-        renderer.setTerminalTitle("MiMoCode")
+        renderer.setTerminalTitle("ENCODE")
         return
       }
 
@@ -444,7 +444,7 @@ function App(props: { onSnapshot?: () => Promise<string[]> }) {
       title: t("tui.command.workflow.list.title"),
       value: "workflow.list",
       category: "session",
-      enabled: Flag.MIMOCODE_EXPERIMENTAL_WORKFLOW_TOOL,
+      enabled: Flag.ENCODE_EXPERIMENTAL_WORKFLOW_TOOL,
       slash: {
         name: "workflows",
       },
@@ -614,7 +614,7 @@ function App(props: { onSnapshot?: () => Promise<string[]> }) {
         name: "login",
       },
       onSelect: () => {
-        dialog.replace(() => <DialogMimoLogin />)
+        dialog.replace(() => <DialogEncodeLogin />)
       },
       category: "provider",
     },
@@ -626,7 +626,7 @@ function App(props: { onSnapshot?: () => Promise<string[]> }) {
         name: "connect",
       },
       onSelect: () => {
-        dialog.replace(() => <DialogMimoLogin />)
+        dialog.replace(() => <DialogEncodeLogin />)
       },
       category: "provider",
     },
@@ -637,7 +637,7 @@ function App(props: { onSnapshot?: () => Promise<string[]> }) {
         name: "logout",
       },
       onSelect: async () => {
-        await sdk.client.auth.remove({ providerID: "xiaomi" })
+        await sdk.client.auth.remove({ providerID: "Encode" })
         await sdk.client.instance.dispose()
         await sync.bootstrap()
         toast.show({ message: t("tui.command.logout.toast"), variant: "info" })
@@ -773,7 +773,7 @@ function App(props: { onSnapshot?: () => Promise<string[]> }) {
         aliases: ["docs"],
       },
       onSelect: () => {
-        open("https://mimo.xiaomi.com/coder/docs").catch(() => {})
+        open("https://encode.ai/docs").catch(() => {})
         dialog.clear()
       },
       category: "system",
@@ -998,7 +998,7 @@ function App(props: { onSnapshot?: () => Promise<string[]> }) {
     await DialogAlert.show(
       dialog,
       "Update Complete",
-      `Successfully updated to MiMoCode v${result.data.version}. Please restart the application.`,
+      `Successfully updated to ENCODE v${result.data.version}. Please restart the application.`,
     )
 
     void exit()
@@ -1045,7 +1045,7 @@ function App(props: { onSnapshot?: () => Promise<string[]> }) {
         renderer.requestRender()
       }
 
-      // Send result back to the server — if this fails, agent hangs forever, so retry once
+      // Send result back to the server �?if this fails, agent hangs forever, so retry once
       const url = `${sdk.url}/bash-interactive/${id}/reply`
       const body = JSON.stringify({ output, exitCode })
       const doReply = () =>
@@ -1091,7 +1091,7 @@ function App(props: { onSnapshot?: () => Promise<string[]> }) {
         // When copy-on-mousedown is enabled, prefer copying an active selection;
         // fall through to paste when there is nothing selected.
         if (
-          Flag.MIMOCODE_EXPERIMENTAL_DISABLE_COPY_ON_SELECT &&
+          Flag.ENCODE_EXPERIMENTAL_DISABLE_COPY_ON_SELECT &&
           Selection.copy(renderer, toast, t("tui.toast.copied_to_clipboard"))
         ) {
           evt.preventDefault()
@@ -1104,12 +1104,12 @@ function App(props: { onSnapshot?: () => Promise<string[]> }) {
         evt.stopPropagation()
       }}
       onMouseUp={
-        Flag.MIMOCODE_EXPERIMENTAL_DISABLE_COPY_ON_SELECT
+        Flag.ENCODE_EXPERIMENTAL_DISABLE_COPY_ON_SELECT
           ? undefined
           : () => Selection.copy(renderer, toast, t("tui.toast.copied_to_clipboard"))
       }
     >
-      <Show when={Flag.MIMOCODE_SHOW_TTFD}>
+      <Show when={Flag.ENCODE_SHOW_TTFD}>
         <TimeToFirstDraw />
       </Show>
       <Show when={ready()}>

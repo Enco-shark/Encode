@@ -1,4 +1,4 @@
-import type { TuiPlugin, TuiPluginApi, TuiPluginModule } from "@mimo-ai/plugin/tui"
+import type { TuiPlugin, TuiPluginApi, TuiPluginModule } from "@encode-ai/plugin/tui"
 import { createMemo, For, Show, createSignal } from "solid-js"
 
 const id = "internal:sidebar-lsp"
@@ -13,7 +13,7 @@ function View(props: { api: TuiPluginApi }) {
     <box>
       <box flexDirection="row" gap={1} onMouseDown={() => list().length > 2 && setOpen((x) => !x)}>
         <Show when={list().length > 2}>
-          <text fg={theme().text}>{open() ? "â–¼" : "â–¶"}</text>
+          <text fg={theme().text}>{open() ? "â–? : "â–?}</text>
         </Show>
         <text fg={theme().text}>
           <b>LSP</b>
@@ -34,7 +34,7 @@ function View(props: { api: TuiPluginApi }) {
                   fg: item.status === "connected" ? theme().success : theme().error,
                 }}
               >
-                â€¢
+                â€?
               </text>
               <text fg={theme().textMuted}>
                 {item.id} {item.root}

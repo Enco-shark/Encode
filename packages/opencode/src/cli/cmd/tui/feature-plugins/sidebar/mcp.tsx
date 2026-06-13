@@ -1,4 +1,4 @@
-import type { TuiPlugin, TuiPluginApi, TuiPluginModule } from "@mimo-ai/plugin/tui"
+import type { TuiPlugin, TuiPluginApi, TuiPluginModule } from "@encode-ai/plugin/tui"
 import { createMemo, For, Match, Show, Switch, createSignal } from "solid-js"
 
 const id = "internal:sidebar-mcp"
@@ -31,7 +31,7 @@ function View(props: { api: TuiPluginApi }) {
       <box>
         <box flexDirection="row" gap={1} onMouseDown={() => list().length > 2 && setOpen((x) => !x)}>
           <Show when={list().length > 2}>
-            <text fg={theme().text}>{open() ? "â–¼" : "â–¶"}</text>
+            <text fg={theme().text}>{open() ? "â–? : "â–?}</text>
           </Show>
           <text fg={theme().text}>
             <b>MCP</b>
@@ -53,7 +53,7 @@ function View(props: { api: TuiPluginApi }) {
                     fg: dot(item.status),
                   }}
                 >
-                  â€¢
+                  â€?
                 </text>
                 <text fg={theme().text} wrapMode="word">
                   {item.name}{" "}

@@ -183,7 +183,7 @@ function withInstance(
     await using tmp = await tmpdir({
       init: async (dir) => {
         await Bun.write(
-          `${dir}/mimocode.json`,
+          `${dir}/encode.json`,
           JSON.stringify({
             $schema: "https://opencode.ai/config.json",
             mcp: config,
@@ -387,7 +387,7 @@ test(
 
 test(
   "add() closes the old client when replacing a server",
-  // Don't put the server in config â€” add it dynamically so we control
+  // Don't put the server in config â€?add it dynamically so we control
   // exactly which client instance is "first" vs "second".
   withInstance({}, (mcp) =>
     Effect.gen(function* () {
@@ -685,7 +685,7 @@ test("McpOAuthCallback.cancelPending is keyed by mcpName but pendingAuths uses o
   const oauthState = "abc123hexstate"
   const callbackPromise = McpOAuthCallback.waitForCallback(oauthState, "my-mcp-server")
 
-  // cancelPending is called with mcpName â€” should find the entry via reverse index
+  // cancelPending is called with mcpName â€?should find the entry via reverse index
   McpOAuthCallback.cancelPending("my-mcp-server")
 
   // The callback should still be pending because cancelPending looked up
@@ -742,7 +742,7 @@ test(
 )
 
 // ========================================================================
-// Test: transport leak â€” local stdio timeout (#19168)
+// Test: transport leak â€?local stdio timeout (#19168)
 // ========================================================================
 
 test(
@@ -769,7 +769,7 @@ test(
 )
 
 // ========================================================================
-// Test: transport leak â€” remote timeout (#19168)
+// Test: transport leak â€?remote timeout (#19168)
 // ========================================================================
 
 test(
@@ -796,7 +796,7 @@ test(
 )
 
 // ========================================================================
-// Test: transport leak â€” failed remote transports not closed (#19168)
+// Test: transport leak â€?failed remote transports not closed (#19168)
 // ========================================================================
 
 test(

@@ -11,7 +11,7 @@ import { createTwoFilesPatch, diffLines } from "diff"
 import { assertWriteAllowed } from "./external-directory"
 import { trimDiff } from "./edit"
 import { LSP } from "../lsp"
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import DESCRIPTION from "./apply_patch.txt"
 import { File } from "../file"
 import { Format } from "../format"
@@ -194,7 +194,7 @@ export const ApplyPatchTool = Tool.define(
       )
       // NOTE: permissionChanges already excludes memory-tree paths (filtered at
       // the `permissionChanges` definition above), so this ask never fires for
-      // memory writes â€” the askEditUnlessMemory deferral used by write.ts/edit.ts
+      // memory writes â€?the askEditUnlessMemory deferral used by write.ts/edit.ts
       // is structurally already satisfied here. Left as a direct ctx.ask.
       if (permissionChanges.length > 0) {
         const relativePaths = permissionChanges.map((c) => path.relative(Instance.worktree, c.filePath).replaceAll("\\", "/"))

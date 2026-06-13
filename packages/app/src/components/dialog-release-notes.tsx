@@ -1,7 +1,7 @@
 import { createSignal } from "solid-js"
-import { Dialog } from "@mimo-ai/ui/dialog"
-import { Button } from "@mimo-ai/ui/button"
-import { useDialog } from "@mimo-ai/ui/context/dialog"
+import { Dialog } from "@encode-ai/ui/dialog"
+import { Button } from "@encode-ai/ui/button"
+import { useDialog } from "@encode-ai/ui/context/dialog"
 import { useLanguage } from "@/context/language"
 import { useSettings } from "@/context/settings"
 

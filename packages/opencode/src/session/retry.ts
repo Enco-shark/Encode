@@ -1,4 +1,4 @@
-import type { NamedError } from "@mimo-ai/shared/util/error"
+import type { NamedError } from "@encode-ai/shared/util/error"
 import { Cause, Clock, Duration, Effect, Schedule } from "effect"
 import { MessageV2 } from "./message-v2"
 import { iife } from "@/util/iife"
@@ -25,8 +25,8 @@ const RETRYABLE_HTTP_STATUS = new Set([429, 500, 502, 503, 504, 529])
  * - `retryable()` below (processor-level Effect.retry policy via SessionRetry.policy)
  * - `isTransientCapacityError()` in llm.ts (LLM-internal retry around streamText)
  *
- * Both call sites previously had divergent logic â€” this hung sessions on
- * SSE timeouts that one path retried but the other dropped. See Spec â‘¢.
+ * Both call sites previously had divergent logic â€?this hung sessions on
+ * SSE timeouts that one path retried but the other dropped. See Spec â‘?
  */
 export function isRetryableTransientError(error: unknown): boolean {
   if (!(error instanceof Error)) return false
@@ -89,7 +89,7 @@ export function retryable(error: Err) {
   // Catch raw Error / network / SSE-timeout BEFORE APIError narrowing.
   // SessionRetry.policy unwraps Cause<unknown> via opts.parse, but raw
   // Error instances slip past the APIError check below. Adding this
-  // branch closes that gap. See Spec â‘¢ P2.
+  // branch closes that gap. See Spec â‘?P2.
   if (isRetryableTransientError(error as unknown)) {
     const msg = (error as unknown as Error).message
     return msg || "Transient network error"

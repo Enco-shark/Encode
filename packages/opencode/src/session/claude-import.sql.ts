@@ -8,6 +8,6 @@ export const ClaudeImportTable = sqliteTable("claude_import", {
   source_mtime: integer().notNull(),
   time_imported: integer().notNull(),
   // Message rows this import created, so a re-sync only removes its own rows and
-  // never destroys mimocode-native continuation messages in the same session.
+  // never destroys encode-native continuation messages in the same session.
   message_ids: text({ mode: "json" }).$type<MessageID[]>(),
 })

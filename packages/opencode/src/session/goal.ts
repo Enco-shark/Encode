@@ -17,7 +17,7 @@ import { MessageV2 } from "./message-v2"
  * Per-session stop-condition goal. `/goal`: once a goal
  * is set, the main runLoop refuses to stop until an independent judge model
  * decides the condition is satisfied (or genuinely impossible). The judge is a
- * separate model call that only reads the transcript â€” it does not do the work,
+ * separate model call that only reads the transcript â€?it does not do the work,
  * so its verdict stays cold relative to the working agent's optimism.
  *
  * State lives in InstanceState (per project instance), keyed by sessionID, and
@@ -38,7 +38,7 @@ export const Verdict = z.object({
 export type Verdict = z.infer<typeof Verdict>
 
 /**
- * Broadcast whenever a session's goal changes â€” set, judged, or cleared. The
+ * Broadcast whenever a session's goal changes â€?set, judged, or cleared. The
  * TUI mirrors this into its sync store to render the active-goal indicator and
  * the latest judge verdict. `goal` undefined means there is no active goal
  * (cleared / satisfied / impossible). Mirrors session/status.ts's Event.Status.
@@ -51,7 +51,7 @@ export const Event = {
       goal: z.object({ condition: z.string() }).optional(),
       lastVerdict: Verdict.extend({
         attempt: z.number(),
-        /** The assistant message the judge evaluated â€” anchors the verdict to a turn. */
+        /** The assistant message the judge evaluated â€?anchors the verdict to a turn. */
         messageID: z.string().optional(),
         error: z.boolean().optional(),
       }).optional(),
@@ -61,7 +61,7 @@ export const Event = {
 
 // ---- Judge prompts  ----
 
-const JUDGE_SYSTEM = `You are evaluating a stop-condition hook in Mimo Code. Read the conversation transcript carefully, then judge whether the user-provided condition is satisfied.
+const JUDGE_SYSTEM = `You are evaluating a stop-condition hook in Encode. Read the conversation transcript carefully, then judge whether the user-provided condition is satisfied.
 
 Your response must be a JSON object with one of these shapes:
 - {"ok": true, "reason": "<quote evidence from the transcript that satisfies the condition>"}
@@ -70,7 +70,7 @@ Your response must be a JSON object with one of these shapes:
 
 Always include a "reason" field, quoting specific text from the transcript whenever possible. If the transcript does not contain clear evidence that the condition is satisfied, return {"ok": false, "reason": "insufficient evidence in transcript"}.
 
-Only use {"ok": false, "impossible": true} when the condition is genuinely unachievable in this session â€” for example: the condition is self-contradictory, it depends on a resource or capability that is unavailable, or the assistant has explicitly tried, exhausted reasonable approaches, and stated it cannot be done. Apply your own judgment when deciding this â€” the assistant claiming the goal is impossible is evidence, not proof; independently confirm the condition is genuinely unachievable rather than deferring to the assistant's self-assessment. Do not use it just because the goal has not been reached yet or because progress is slow. When in doubt, return {"ok": false} without "impossible".`
+Only use {"ok": false, "impossible": true} when the condition is genuinely unachievable in this session â€?for example: the condition is self-contradictory, it depends on a resource or capability that is unavailable, or the assistant has explicitly tried, exhausted reasonable approaches, and stated it cannot be done. Apply your own judgment when deciding this â€?the assistant claiming the goal is impossible is evidence, not proof; independently confirm the condition is genuinely unachievable rather than deferring to the assistant's self-assessment. Do not use it just because the goal has not been reached yet or because progress is slow. When in doubt, return {"ok": false} without "impossible".`
 
 // The closing question appended after the full conversation.
 const judgeUser = (condition: string) =>
@@ -157,12 +157,12 @@ export const layer = Layer.effect(
       const isOpenaiOauth = input.model.providerID === "openai" && authInfo?.type === "oauth"
 
       // Convert the conversation to native model messages so the judge sees the
-      // real tool calls/results/images â€” same context the working agent had.
+      // real tool calls/results/images â€?same context the working agent had.
       const conversation = yield* MessageV2.toModelMessagesEffect(input.msgs, resolved)
 
       // Diagnostic: dump the FULL message array sent to the judge. Long strings
       // (e.g. base64 image data) are clipped with a length marker so the log
-      // stays readable. Debug-level â€” it dumps the whole transcript on every
+      // stays readable. Debug-level â€?it dumps the whole transcript on every
       // judge call, so it stays out of production info logs.
       const clip = (_key: string, value: unknown) =>
         typeof value === "string" && value.length > 500

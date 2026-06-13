@@ -60,7 +60,7 @@ test("build agent has correct default properties", async () => {
   })
 })
 
-test("plan agent denies edits except .mimocode/plans/*", async () => {
+test("plan agent denies edits except .encode/plans/*", async () => {
   await using tmp = await tmpdir()
   await Instance.provide({
     directory: tmp.path,
@@ -70,7 +70,7 @@ test("plan agent denies edits except .mimocode/plans/*", async () => {
       // Wildcard is denied
       expect(evalPerm(plan, "edit")).toBe("deny")
       // But specific path is allowed
-      expect(Permission.evaluate("edit", ".mimocode/plans/foo.md", plan!.permission).action).toBe("allow")
+      expect(Permission.evaluate("edit", ".encode/plans/foo.md", plan!.permission).action).toBe("allow")
     },
   })
 })
@@ -559,7 +559,7 @@ test("skill directories are allowed for external_directory", async () => {
   await using tmp = await tmpdir({
     git: true,
     init: async (dir) => {
-      const skillDir = path.join(dir, ".mimocode", "skill", "perm-skill")
+      const skillDir = path.join(dir, ".encode", "skill", "perm-skill")
       await Bun.write(
         path.join(skillDir, "SKILL.md"),
         `---
@@ -583,7 +583,7 @@ description: Permission skill.
       directory: tmp.path,
       fn: async () => {
         const build = await load(tmp.path, (svc) => svc.get("build"))
-        const skillDir = path.join(tmp.path, ".mimocode", "skill", "perm-skill")
+        const skillDir = path.join(tmp.path, ".encode", "skill", "perm-skill")
         const target = path.join(skillDir, "reference", "notes.md")
         expect(Permission.evaluate("external_directory", target, build!.permission).action).toBe("allow")
       },
@@ -767,7 +767,7 @@ test("checkpoint-writer inherits default permission (no bespoke block); memory w
       // The writer no longer declares its own "*":"deny" + per-tool allows.
       // It inherits `defaults` (which is "*":"allow") + user config, identical
       // to how any default agent resolves. Tool-visibility parity with the
-      // parent is what restores prompt-cache hits â€” at runtime the fork passes
+      // parent is what restores prompt-cache hits â€?at runtime the fork passes
       // the PARENT's permission to handle.process (see prompt.ts fork branch),
       // and memory writes are governed by memory-path-guard (askEditUnlessMemory),
       // so an inherited edit:deny never blocks the writer's own checkpoint files.
@@ -775,7 +775,7 @@ test("checkpoint-writer inherits default permission (no bespoke block); memory w
       expect(Permission.evaluate("edit", "any/path", cp!.permission).action).toBe("allow")
       expect(Permission.evaluate("write", "any/path", cp!.permission).action).toBe("allow")
       expect(Permission.evaluate("read", "any/path", cp!.permission).action).toBe("allow")
-      // bash is no longer force-disabled by a "*":"deny" block â€” it inherits the
+      // bash is no longer force-disabled by a "*":"deny" block â€?it inherits the
       // default allow, matching the parent's visible tool schema (prompt-cache parity).
       const disabled = Permission.disabled(["read", "write", "edit", "bash", "webfetch"], cp!.permission)
       expect(disabled.has("bash")).toBe(false)
@@ -815,10 +815,10 @@ test("checkpoint-writer inherits provider system prompt (prefix-cache alignment)
   })
 })
 
-// agent registry â€” spawnable filter (F24)
+// agent registry â€?spawnable filter (F24)
 //
 // title/summary/checkpoint-writer are internal infrastructure agents that
-// never run as primary entry points â€” they're spawned programmatically.
+// never run as primary entry points â€?they're spawned programmatically.
 // The "primary" + "hidden" combo was a workaround that produced correct
 // UI behavior but mis-classified their semantic role. Switch to "subagent"
 // + keep "hidden: true" so the actor tool's describeTask filter (which

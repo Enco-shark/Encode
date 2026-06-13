@@ -18,7 +18,7 @@ import { Todo } from "../../src/session/todo"
 import { Session } from "../../src/session"
 import { LLM } from "../../src/session/llm"
 import { MessageV2 } from "../../src/session/message-v2"
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import { SessionPrune } from "../../src/session/prune"
 import { SessionSummary } from "../../src/session/summary"
 import { Instruction } from "../../src/session/instruction"
@@ -338,7 +338,7 @@ describe("Tool whitelist (Task 14)", () => {
         })
 
         // The bash tool should NOT be rejected here. We don't actually run a
-        // bash command â€” instead we just send a text reply so the loop exits
+        // bash command â€?instead we just send a text reply so the loop exits
         // and verify there is no rejected tool part.
         yield* llm.text("done")
 

@@ -4,7 +4,7 @@ import { Portal, useKeyboard, useRenderer, useTerminalDimensions, type JSX } fro
 import type { TextareaRenderable } from "@opentui/core"
 import { useKeybind } from "../../context/keybind"
 import { useTheme, selectedForeground } from "../../context/theme"
-import type { PermissionRequest } from "@mimo-ai/sdk/v2"
+import type { PermissionRequest } from "@encode-ai/sdk/v2"
 import { useSDK } from "../../context/sdk"
 import { SplitBorder } from "../../component/border"
 import { useSync } from "../../context/sync"
@@ -160,11 +160,11 @@ export function PermissionPrompt(props: { request: PermissionRequest }) {
           body={
             <Switch>
               <Match when={props.request.always.length === 1 && props.request.always[0] === "*"}>
-                <TextBody title={"This will allow " + props.request.permission + " until MiMoCode is restarted."} />
+                <TextBody title={"This will allow " + props.request.permission + " until Encode is restarted."} />
               </Match>
               <Match when={true}>
                 <box paddingLeft={1} gap={1}>
-                  <text fg={theme.textMuted}>This will allow the following patterns until MiMoCode is restarted</text>
+                  <text fg={theme.textMuted}>This will allow the following patterns until Encode is restarted</text>
                   <box>
                     <For each={props.request.always}>
                       {(pattern) => (
@@ -215,7 +215,7 @@ export function PermissionPrompt(props: { request: PermissionRequest }) {
               const raw = props.request.metadata?.filepath
               const filepath = typeof raw === "string" ? raw : ""
               return {
-                icon: "‚Üí",
+                icon: "‚Ü?,
                 title: `Edit ${normalizePath(filepath)}`,
                 body: <EditBody request={props.request} />,
               }
@@ -225,7 +225,7 @@ export function PermissionPrompt(props: { request: PermissionRequest }) {
               const raw = data.filePath
               const filePath = typeof raw === "string" ? raw : ""
               return {
-                icon: "‚Üí",
+                icon: "‚Ü?,
                 title: `Read ${normalizePath(filePath)}`,
                 body: (
                   <Show when={filePath}>
@@ -240,7 +240,7 @@ export function PermissionPrompt(props: { request: PermissionRequest }) {
             if (permission === "glob") {
               const pattern = typeof data.pattern === "string" ? data.pattern : ""
               return {
-                icon: "‚ú±",
+                icon: "‚ú?,
                 title: `Glob "${pattern}"`,
                 body: (
                   <Show when={pattern}>
@@ -255,7 +255,7 @@ export function PermissionPrompt(props: { request: PermissionRequest }) {
             if (permission === "grep") {
               const pattern = typeof data.pattern === "string" ? data.pattern : ""
               return {
-                icon: "‚ú±",
+                icon: "‚ú?,
                 title: `Grep "${pattern}"`,
                 body: (
                   <Show when={pattern}>
@@ -271,7 +271,7 @@ export function PermissionPrompt(props: { request: PermissionRequest }) {
               const raw = data.path
               const dir = typeof raw === "string" ? raw : ""
               return {
-                icon: "‚Üí",
+                icon: "‚Ü?,
                 title: `List ${normalizePath(dir)}`,
                 body: (
                   <Show when={dir}>
@@ -309,7 +309,7 @@ export function PermissionPrompt(props: { request: PermissionRequest }) {
                 body: (
                   <Show when={desc}>
                     <box paddingLeft={1}>
-                      <text fg={theme.text}>{"‚óâ " + desc}</text>
+                      <text fg={theme.text}>{"‚ó?" + desc}</text>
                     </box>
                   </Show>
                 ),
@@ -334,7 +334,7 @@ export function PermissionPrompt(props: { request: PermissionRequest }) {
             if (permission === "websearch") {
               const query = typeof data.query === "string" ? data.query : ""
               return {
-                icon: "‚óà",
+                icon: "‚ó?,
                 title: `Web Search "${query}"`,
                 body: (
                   <Show when={query}>
@@ -349,7 +349,7 @@ export function PermissionPrompt(props: { request: PermissionRequest }) {
             if (permission === "codesearch") {
               const query = typeof data.query === "string" ? data.query : ""
               return {
-                icon: "‚óá",
+                icon: "‚ó?,
                 title: `Exa Code Search "${query}"`,
                 body: (
                   <Show when={query}>
@@ -374,7 +374,7 @@ export function PermissionPrompt(props: { request: PermissionRequest }) {
               const patterns = (props.request.patterns ?? []).filter((p): p is string => typeof p === "string")
 
               return {
-                icon: "‚Üê",
+                icon: "‚Ü?,
                 title: `Access external directory ${dir}`,
                 body: (
                   <Show when={patterns.length > 0}>
@@ -391,7 +391,7 @@ export function PermissionPrompt(props: { request: PermissionRequest }) {
 
             if (permission === "doom_loop") {
               return {
-                icon: "‚ü≥",
+                icon: "‚ü?,
                 title: "Continue after repeated failures",
                 body: (
                   <box paddingLeft={1}>
@@ -402,7 +402,7 @@ export function PermissionPrompt(props: { request: PermissionRequest }) {
             }
 
             return {
-              icon: "‚öô",
+              icon: "‚ö?,
               title: `Call tool ${permission}`,
               body: (
                 <box paddingLeft={1}>
@@ -417,7 +417,7 @@ export function PermissionPrompt(props: { request: PermissionRequest }) {
           const header = () => (
             <box flexDirection="column" gap={0}>
               <box flexDirection="row" gap={1} flexShrink={0}>
-                <text fg={theme.warning}>{"‚ñ≥"}</text>
+                <text fg={theme.warning}>{"‚ñ?}</text>
                 <text fg={theme.text}>Permission required</text>
               </box>
               <box flexDirection="row" gap={1} paddingLeft={2} flexShrink={0}>
@@ -500,11 +500,11 @@ function RejectPrompt(props: { onConfirm: (message: string) => void; onCancel: (
     >
       <box gap={1} paddingLeft={1} paddingRight={3} paddingTop={1} paddingBottom={1}>
         <box flexDirection="row" gap={1} paddingLeft={1}>
-          <text fg={theme.error}>{"‚ñ≥"}</text>
+          <text fg={theme.error}>{"‚ñ?}</text>
           <text fg={theme.text}>Reject permission</text>
         </box>
         <box paddingLeft={1}>
-          <text fg={theme.textMuted}>Tell MiMoCode what to do differently</text>
+          <text fg={theme.textMuted}>Tell Encode what to do differently</text>
         </box>
       </box>
       <box
@@ -623,7 +623,7 @@ function Prompt<const T extends Record<string, string>>(props: {
           when={props.header}
           fallback={
             <box flexDirection="row" gap={1} paddingLeft={1} flexShrink={0}>
-              <text fg={theme.warning}>{"‚ñ≥"}</text>
+              <text fg={theme.warning}>{"‚ñ?}</text>
               <text fg={theme.text}>{props.title}</text>
             </box>
           }
@@ -673,7 +673,7 @@ function Prompt<const T extends Record<string, string>>(props: {
             </text>
           </Show>
           <text fg={theme.text}>
-            {"‚áÜ"} <span style={{ fg: theme.textMuted }}>select</span>
+            {"‚á?} <span style={{ fg: theme.textMuted }}>select</span>
           </text>
           <text fg={theme.text}>
             enter <span style={{ fg: theme.textMuted }}>confirm</span>

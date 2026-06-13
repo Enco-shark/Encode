@@ -147,27 +147,27 @@ describe("ProviderTransform.maxOutputTokens", () => {
     release_date: "2026-01-01",
   }
 
-  test("uses 128K for mimo provider models", () => {
+  test("uses 128K for Encode provider models", () => {
     expect(
       ProviderTransform.maxOutputTokens({
         ...baseModel,
-        id: ModelID.make("mimo-auto"),
-        providerID: ProviderID.make("mimo"),
+        id: ModelID.make("Encode-auto"),
+        providerID: ProviderID.make("Encode"),
       }),
     ).toBe(128_000)
   })
 
-  test("uses 128K for xiaomi provider models", () => {
+  test("uses 128K for Encode provider models", () => {
     expect(
       ProviderTransform.maxOutputTokens({
         ...baseModel,
-        id: ModelID.make("mimo-coder"),
-        providerID: ProviderID.make("xiaomi"),
+        id: ModelID.make("Encoder"),
+        providerID: ProviderID.make("Encode"),
       }),
     ).toBe(128_000)
   })
 
-  test("keeps the default cap for non-mimo models", () => {
+  test("keeps the default cap for non-Encode models", () => {
     expect(ProviderTransform.maxOutputTokens({ ...baseModel, limit: { context: 1_000_000, output: 64_000 } })).toBe(
       32_000,
     )
@@ -1635,7 +1635,7 @@ describe("ProviderTransform.message - strip openai metadata when store=false", (
       providerID: "opencode",
       api: {
         id: "opencode-test",
-        url: "https://api.mimocode.ai",
+        url: "https://api.encode.ai",
         npm: "@ai-sdk/openai-compatible",
       },
     }
@@ -1669,7 +1669,7 @@ describe("ProviderTransform.message - strip openai metadata when store=false", (
       providerID: "opencode",
       api: {
         id: "opencode-test",
-        url: "https://api.mimocode.ai",
+        url: "https://api.encode.ai",
         npm: "@ai-sdk/openai-compatible",
       },
     }
@@ -2149,10 +2149,10 @@ describe("ProviderTransform.message - cache control on gateway", () => {
 
   test("openai-compatible with claude in model id does NOT trigger caching", () => {
     const model = createModel({
-      id: "mimorouter/claude-opus-4-8",
+      id: "Encoderouter/claude-opus-4-8",
       providerID: "custom",
       api: {
-        id: "mimorouter/claude-opus-4-8",
+        id: "Encoderouter/claude-opus-4-8",
         url: "https://proxy.example.com/v1",
         npm: "@ai-sdk/openai-compatible",
       },
@@ -3265,7 +3265,7 @@ describe("ProviderTransform.variants", () => {
 // Regression: OpenAI's function-calling validator rejects discriminated-union
 // tools with "schema must have type 'object' and not have 'oneOf'/'anyOf'/
 // 'allOf'/'enum'/'not' at the top level." Adding `type: "object"` to a root
-// anyOf is NOT enough â€” the union itself must be removed from the top level.
+// anyOf is NOT enough ï¿?the union itself must be removed from the top level.
 // The transform flattens variants into a single object, with the discriminator
 // becoming an enum and per-variant required encoded in its description.
 describe("ProviderTransform.schema - openai discriminated-union flatten", () => {
@@ -3300,7 +3300,7 @@ describe("ProviderTransform.schema - openai discriminated-union flatten", () => 
     ],
   } as any
 
-  test("openai providerID â€” flattens to single object, no oneOf/anyOf at root", () => {
+  test("openai providerID ï¿?flattens to single object, no oneOf/anyOf at root", () => {
     const result = ProviderTransform.schema({ providerID: "openai", api: { id: "gpt-4" } } as any, anyOfSchema) as any
     expect(result.type).toBe("object")
     expect(result.anyOf).toBeUndefined()
@@ -3309,7 +3309,7 @@ describe("ProviderTransform.schema - openai discriminated-union flatten", () => 
     expect(result.additionalProperties).toBe(false)
   })
 
-  test("openai â€” merges variant properties at root", () => {
+  test("openai ï¿?merges variant properties at root", () => {
     const result = ProviderTransform.schema({ providerID: "openai", api: { id: "gpt-4" } } as any, anyOfSchema) as any
     // All non-discriminator properties merged in (the flatten adds an
     // "(only when action=...)" prefix to descriptions; assert structurally).
@@ -3321,7 +3321,7 @@ describe("ProviderTransform.schema - openai discriminated-union flatten", () => 
     expect(result.properties.id.minLength).toBe(1)
   })
 
-  test("openai â€” annotates each property with which actions own it", () => {
+  test("openai ï¿?annotates each property with which actions own it", () => {
     const result = ProviderTransform.schema({ providerID: "openai", api: { id: "gpt-4" } } as any, anyOfSchema) as any
     // parent_id only appears in the "create" variant
     expect(result.properties.parent_id.description).toContain('only when action="create"')
@@ -3331,7 +3331,7 @@ describe("ProviderTransform.schema - openai discriminated-union flatten", () => 
     expect(result.properties.summary.description).toContain('only when action="create"|"rename"')
   })
 
-  test("openai â€” discriminator becomes enum with per-variant required hints", () => {
+  test("openai ï¿?discriminator becomes enum with per-variant required hints", () => {
     const result = ProviderTransform.schema({ providerID: "openai", api: { id: "gpt-4" } } as any, anyOfSchema) as any
     expect(result.properties.action.type).toBe("string")
     expect(result.properties.action.enum).toEqual(["create", "list", "rename"])
@@ -3340,12 +3340,12 @@ describe("ProviderTransform.schema - openai discriminated-union flatten", () => 
     expect(result.properties.action.description).toContain("rename: requires id, summary")
   })
 
-  test("openai â€” only discriminator is required at root", () => {
+  test("openai ï¿?only discriminator is required at root", () => {
     const result = ProviderTransform.schema({ providerID: "openai", api: { id: "gpt-4" } } as any, anyOfSchema) as any
     expect(result.required).toEqual(["action"])
   })
 
-  test("@ai-sdk/openai-compatible npm â€” also flattens", () => {
+  test("@ai-sdk/openai-compatible npm ï¿?also flattens", () => {
     const result = ProviderTransform.schema(
       { providerID: "custom-router", api: { id: "x", npm: "@ai-sdk/openai-compatible" } } as any,
       anyOfSchema,
@@ -3354,13 +3354,13 @@ describe("ProviderTransform.schema - openai discriminated-union flatten", () => 
     expect(result.anyOf).toBeUndefined()
   })
 
-  test("azure providerID â€” also flattens", () => {
+  test("azure providerID ï¿?also flattens", () => {
     const result = ProviderTransform.schema({ providerID: "azure", api: { id: "gpt-4" } } as any, anyOfSchema) as any
     expect(result.type).toBe("object")
     expect(result.anyOf).toBeUndefined()
   })
 
-  test("anthropic â€” also flattens anyOf-rooted schema (bedrock proxy compatibility)", () => {
+  test("anthropic ï¿?also flattens anyOf-rooted schema (bedrock proxy compatibility)", () => {
     const result = ProviderTransform.schema(
       { providerID: "anthropic", api: { id: "claude", npm: "@ai-sdk/anthropic" } } as any,
       anyOfSchema,
@@ -3369,7 +3369,7 @@ describe("ProviderTransform.schema - openai discriminated-union flatten", () => 
     expect(result.anyOf).toBeUndefined()
   })
 
-  test("openai â€” passes through schemas that are already type: object", () => {
+  test("openai ï¿?passes through schemas that are already type: object", () => {
     const flat = { type: "object", properties: { a: { type: "string" } }, required: ["a"] } as any
     const result = ProviderTransform.schema({ providerID: "openai", api: { id: "gpt-4" } } as any, flat) as any
     expect(result.type).toBe("object")

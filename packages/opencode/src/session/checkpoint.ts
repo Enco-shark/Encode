@@ -104,13 +104,13 @@ async function ensureNotesTemplate(notesFile: string): Promise<void> {
 // Tail preservation budget (token-budgeted boundary).
 // Session-memory compact: minimum guarantees the LLM has enough
 // recent-context anchor (avoids the agent-Read-loop failure mode from
-// v4 ‚Üí v5 spec rationale); maximum is a SOFT ceiling on backward
-// expansion ‚Äî i.e. when the natural tail is below the floor we expand
+// v4 ‚Ü?v5 spec rationale); maximum is a SOFT ceiling on backward
+// expansion ‚Ä?i.e. when the natural tail is below the floor we expand
 // backward UP TO maxTokens, but if the natural tail already exceeds
 // maxTokens we leave it alone. Single-message-granularity cap would
 // break tool_use/result pairing.
 //
-// 20K is the empirical sweet spot ‚Äî observed compact output is ~20K,
+// 20K is the empirical sweet spot ‚Ä?observed compact output is ~20K,
 // not the 40K nominal default. The 40K appears in source as fallback,
 // but the upstream config likely tunes it lower in production.
 const TAIL_MIN_TOKENS = 10_000
@@ -149,7 +149,7 @@ function estimateMessageTokens(m: { parts: Array<{ type: string; [k: string]: un
     // JSON.stringify throws on circular structures. Parser-produced parts are
     // plain POJOs, but a plugin-injected part could contain a cycle. Fall back
     // to a conservative NON-ZERO estimate so a bad part is never counted as
-    // "free" ‚Äî a 0 here would let the tail-boundary algorithm swallow the part
+    // "free" ‚Ä?a 0 here would let the tail-boundary algorithm swallow the part
     // for nothing and skew the budget. The constant overstates a typical part,
     // which is the safe direction (boundary walks back, never forward).
     try {
@@ -178,7 +178,7 @@ function hasTextBlocks(m: { parts: Array<{ type: string }> }): boolean {
  *    as the candidate tail (preserves spec 2 starting point so reasonable
  *    tails are unchanged).
  * 2. If tail tokens already >= TAIL_MAX_TOKENS: leave boundary as-is and
- *    return. Do NOT pull boundary forward ‚Äî message-granularity truncation
+ *    return. Do NOT pull boundary forward ‚Ä?message-granularity truncation
  *    would split tool_use/tool_result pairs (downstream
  *    adjustBoundaryForApiInvariants would just walk back, net no-op + risk
  *    of thinking-block breaks). The cap is a SOFT ceiling on backward
@@ -191,7 +191,7 @@ function hasTextBlocks(m: { parts: Array<{ type: string }> }): boolean {
  *
  * The downstream adjustBoundaryForApiInvariants call (in
  * tryStartCheckpointWriter) handles tool_use/tool_result pairing and
- * thinking-block atomicity ‚Äî this function does NOT need to.
+ * thinking-block atomicity ‚Ä?this function does NOT need to.
  *
  * Edge cases:
  * - msgs.length === 0: return "" (matches old behavior).
@@ -221,12 +221,12 @@ export function computeBoundary(
   }
 
   // Natural tail already >= cap: leave it alone (soft ceiling; do NOT pull
-  // boundary forward ‚Äî see jsdoc rationale).
+  // boundary forward ‚Ä?see jsdoc rationale).
   if (tailSum >= TAIL_MAX_TOKENS) {
     return msgs[startIdx].info.id
   }
 
-  // Tail too small ‚Äî pull boundary earlier (include more history)
+  // Tail too small ‚Ä?pull boundary earlier (include more history)
   // until both floors met, capped at TAIL_MAX_TOKENS.
   while (
     startIdx > 0 &&
@@ -243,7 +243,7 @@ export function computeBoundary(
 function renderSectionBudgets(budgets: Record<string, number>): string {
   const entries = Object.entries(budgets)
   if (entries.length === 0) {
-    throw new Error("CHECKPOINT_SECTION_BUDGETS is empty ‚Äî F43 substitution would produce an empty prompt block")
+    throw new Error("CHECKPOINT_SECTION_BUDGETS is empty ‚Ä?F43 substitution would produce an empty prompt block")
   }
   const cols = 3
   const lines: string[] = ["Section budgets (~tokens):"]
@@ -262,7 +262,7 @@ function renderSectionBudgets(budgets: Record<string, number>): string {
  *
  * The body wraps PROMPT_CHECKPOINT_WRITER with an ABSOLUTE-PATHS preamble
  * that pins CHECKPOINT_PATH/MEMORY_PATH/TASK_MEM_DIR to the current session's
- * dirs ‚Äî without this, the model frequently invents legacy `/data/checkpoints/`
+ * dirs ‚Ä?without this, the model frequently invents legacy `/data/checkpoints/`
  * style paths from training-data lookalikes.
  */
 function composeWriterPrompt(input: {
@@ -271,14 +271,14 @@ function composeWriterPrompt(input: {
   taskMemDir: string
   notesFile: string
   rangeDesc: string
-  progressDiff: string  // Spec ‚ë° Chain 2: empty string when nothing to reconcile
+  progressDiff: string  // Spec ‚ë?Chain 2: empty string when nothing to reconcile
 }): string {
   return [
     "<system-reminder>",
     "You are now operating in checkpoint-writer mode. Ignore the general coding-assistant framing in the system prompt above. The read, write, edit, glob, grep, and task tools are available; do not invoke others.",
     "",
     "========================================================================",
-    "ABSOLUTE PATHS ‚Äî USE THESE VERBATIM. NEVER COMPUTE, INFER, OR MODIFY.",
+    "ABSOLUTE PATHS ‚Ä?USE THESE VERBATIM. NEVER COMPUTE, INFER, OR MODIFY.",
     "========================================================================",
     "",
     `CHECKPOINT_PATH = ${input.checkpointFile}`,
@@ -290,7 +290,7 @@ function composeWriterPrompt(input: {
     "absolute paths (or for task narrative, TASK_MEM_DIR + '/' + task_id +",
     "'/progress.md' or '/notes.md'). Do NOT abbreviate. Do NOT change",
     "parent directories. Do NOT insert paths from memory of similar projects.",
-    "If you find yourself typing '/data/checkpoints/' as a parent, STOP ‚Äî that",
+    "If you find yourself typing '/data/checkpoints/' as a parent, STOP ‚Ä?that",
     "is the legacy v2 layout and is wrong. The current parent for the",
     "checkpoint file is the directory portion of CHECKPOINT_PATH above.",
     "========================================================================",
@@ -361,11 +361,11 @@ export type TryStartCheckpointWriterInput = {
  * - "started": no writer was running for this session, a fresh one was forked.
  * - "queued":  a writer is already running. The new request is held in the
  *              1-slot pending queue and will fire once the current writer
- *              settles. If a pending request already exists it's evicted ‚Äî
+ *              settles. If a pending request already exists it's evicted ‚Ä?
  *              newest wins because its range is a strict superset of the
  *              older pending range, so the older one would just duplicate
  *              work. (F40)
- * - "skipped": the request was rejected outright ‚Äî empty session, system-
+ * - "skipped": the request was rejected outright ‚Ä?empty session, system-
  *              spawned subagent, or Actor service unavailable. No writer
  *              will fire for this request now or later.
  */
@@ -380,7 +380,7 @@ export interface Interface {
 
   /**
    * Await all in-flight writers across sessions up to `timeoutMs`. Used by
-   * the CLI shutdown path so headless `mimo run` invocations don't exit
+   * the CLI shutdown path so headless `Encode run` invocations don't exit
    * while a forked checkpoint writer is still waiting on its LLM round-trip.
    * Returns the count of writers that completed vs. still pending when the
    * timeout fired.
@@ -396,7 +396,7 @@ export interface Interface {
    * Returns true when the session has any memory artifacts:
    * either a populated `<data>/memory/sessions/<sid>/` directory, or
    * any tasks recorded in the task registry. Used by the per-user-message
-   * recall reminder so it fires whenever there is anything to recall ‚Äî
+   * recall reminder so it fires whenever there is anything to recall ‚Ä?
    * not only when classic v2 checkpoints exist.
    */
   readonly hasMemoryOrTasks: (sessionID: SessionID) => Effect.Effect<boolean>
@@ -425,7 +425,7 @@ export interface Interface {
    * an empty string if no checkpoints exist. When checkpoints exist but all
    * Learning sections are empty, emits "(no prior learnings)" placeholder;
    * when the latest checkpoint has no Snapshot section, emits
-   * "(latest checkpoint has no Snapshot section)" placeholder ‚Äî the full
+   * "(latest checkpoint has no Snapshot section)" placeholder ‚Ä?the full
    * structure is always produced so the verify-before-act reminder is
    * consistently visible.
    */
@@ -470,7 +470,7 @@ interface WriterState {
   writing: Deferred.Deferred<AgentOutcome>
   // F40: 1-slot pending queue. When set, holds the input for a writer that
   // should fire as soon as `writing` settles. Newer requests evict older
-  // pending values ‚Äî the newest range is always a strict superset of the
+  // pending values ‚Ä?the newest range is always a strict superset of the
   // older one, so older pending checkpoints would only duplicate work.
   pending?: TryStartCheckpointWriterInput
 }
@@ -494,7 +494,7 @@ export const layer: Layer.Layer<
     const bus = yield* Bus.Service
     const scope = yield* Scope.Scope
 
-    // Plain Map in the layer closure ‚Äî same approach as compaction.ts
+    // Plain Map in the layer closure ‚Ä?same approach as compaction.ts
     const writers = new Map<SessionID, WriterState>()
 
     const tryStartCheckpointWriter: (
@@ -503,7 +503,7 @@ export const layer: Layer.Layer<
       input: TryStartCheckpointWriterInput,
     ) {
       // F40: writer1 still running. Evict any prior pending and queue this
-      // request ‚Äî newest wins because its range is a strict superset of the
+      // request ‚Ä?newest wins because its range is a strict superset of the
       // older pending range, so older pending checkpoints would only
       // duplicate the work.
       const existing = writers.get(input.sessionID)
@@ -545,7 +545,7 @@ export const layer: Layer.Layer<
       // (Task 16): role-aware adjustment to ensure tool_use/tool_result pairs
       // and same-message.id thinking blocks aren't split. OpenCode's ToolPart
       // carries both use (input) and result (output) on the SAME message, so
-      // we project each ToolPart to both a tool_use and a tool_result block ‚Äî
+      // we project each ToolPart to both a tool_use and a tool_result block ‚Ä?
       // pairing is intrinsically satisfied today and the algorithm acts as a
       // no-op. Wiring is in place so future tool_result extraction
       // (separate user message) will walk the boundary correctly
@@ -571,7 +571,7 @@ export const layer: Layer.Layer<
 
       // v5 paths: single checkpoint.md per session, single memory.md per
       // project (carries across sessions in the same repo), task narrative
-      // under <sid>/tasks/<id>/. Resolve projectID once HERE ‚Äî Instance.current
+      // under <sid>/tasks/<id>/. Resolve projectID once HERE ‚Ä?Instance.current
       // is ALS-bound and lost once the writer subagent fiber detaches.
       const projectID =
         (yield* Effect.try({
@@ -590,7 +590,7 @@ export const layer: Layer.Layer<
       yield* Effect.promise(() => fs.mkdir(taskMemDir, { recursive: true }))
       yield* Effect.promise(() => fs.mkdir(projectMemDir, { recursive: true }))
 
-      // Migrate legacy lowercase memory.md ‚Üí MEMORY.md before templating/reading.
+      // Migrate legacy lowercase memory.md ‚Ü?MEMORY.md before templating/reading.
       yield* Effect.promise(() => migrateProjectMemory(projectID))
 
       // Bootstrap checkpoint.md, memory.md, and notes.md from templates if missing.
@@ -615,23 +615,23 @@ export const layer: Layer.Layer<
       const progressDiff = yield* Effect.promise(() => buildProgressDiff(input.sessionID))
       const promptText = composeWriterPrompt({ checkpointFile, memoryFile, taskMemDir, notesFile, rangeDesc, progressDiff })
 
-      // v6: spawn writer as subagent ‚Äî shared sessionID, automatic
+      // v6: spawn writer as subagent ‚Ä?shared sessionID, automatic
       // ActorRegistry registration, automatic tool whitelist enforcement
       // via permission system. Replaces the legacy session.create + manual
       // forkDetach + WriterState tracking that lived here pre-Task-27.
       //
       // Resolved via spawnRef rather than `yield* Actor.Service` to break the
-      // (Actor ‚Üí SessionPrompt ‚Üí SessionCheckpoint ‚Üí Actor) layer cycle.
+      // (Actor ‚Ü?SessionPrompt ‚Ü?SessionCheckpoint ‚Ü?Actor) layer cycle.
       const actor = spawnRef.current
       if (!actor) {
-        log.warn("tryStartCheckpointWriter skipping ‚Äî Actor service unavailable", { sessionID: input.sessionID })
+        log.warn("tryStartCheckpointWriter skipping ‚Ä?Actor service unavailable", { sessionID: input.sessionID })
         return "skipped" as const
       }
 
       // Axis B: branch forkContext shape on config.checkpoint.fork.
-      // - true  ‚Üí preserve existing prefix-cache parent-fork behavior
+      // - true  ‚Ü?preserve existing prefix-cache parent-fork behavior
       //          (parent agent's system + tools, full slice up to watermark).
-      // - false ‚Üí cold-start: writer's own system + tools, delta slice since
+      // - false ‚Ü?cold-start: writer's own system + tools, delta slice since
       //          last_checkpoint_message_id (aligned past tool_use/tool_result).
       // See spec 2026-06-09-checkpoint-writer-child-session-and-no-fork-fallback-design.md ¬ß3.
       //
@@ -657,8 +657,8 @@ export const layer: Layer.Layer<
       // Hoisted watermark + delta computation: must run BEFORE session.create
       // so an empty-delta fork:false call short-circuits to "skipped" without
       // creating a child session or invoking actor.spawn. Pre-fix, the
-      // empty-delta path fell through to spawn ‚Üí runLoop's
-      // `isForkAgent && !forkCtx ‚Üí break` ‚Üí settle watcher resolved success ‚Üí
+      // empty-delta path fell through to spawn ‚Ü?runLoop's
+      // `isForkAgent && !forkCtx ‚Ü?break` ‚Ü?settle watcher resolved success ‚Ü?
       // parent's last_checkpoint_message_id advanced silently (stale checkpoint).
       const watermarkIdx = msgs.findIndex((m) => m.info.id === endMessageID)
       if (watermarkIdx < 0) {
@@ -685,7 +685,7 @@ export const layer: Layer.Layer<
         // Empty delta under fork:false signals either (a) a degenerate
         // session, or (b) a bug elsewhere advanced last_checkpoint_message_id
         // past the watermark. Either way, spawning a writer would be a
-        // silent no-op that would still advance the watermark on settle ‚Äî
+        // silent no-op that would still advance the watermark on settle ‚Ä?
         // skip visibly so it's observable in logs.
         log.warn("tryStartCheckpointWriter: empty delta under fork:false, skipping", {
           sessionID: input.sessionID,
@@ -699,7 +699,7 @@ export const layer: Layer.Layer<
       // See docs/superpowers/specs/2026-05-26-fork-agent-prefix-cache-design.md
       //
       // prefixCaptureRef is populated by SessionPrompt.layer to break the
-      // (ToolRegistry ‚Üí SessionCheckpoint ‚Üí ToolRegistry) layer cycle.
+      // (ToolRegistry ‚Ü?SessionCheckpoint ‚Ü?ToolRegistry) layer cycle.
       const buildPrefix = prefixCaptureRef.current
       if (!buildPrefix) {
         log.warn("tryStartCheckpointWriter: prefixCaptureRef not set, spawning without forkContext", {
@@ -710,19 +710,19 @@ export const layer: Layer.Layer<
         ? Effect.gen(function* () {
             const watermarkMsg = msgs[watermarkIdx]
             const parentAgentName = (watermarkMsg.info as { agent?: string }).agent
-            // NOTE: parentAgentName guard is scoped to the forkMode:true branch only ‚Äî
+            // NOTE: parentAgentName guard is scoped to the forkMode:true branch only ‚Ä?
             // fork:false is agent-name-independent (always passes "checkpoint-writer"
             // to buildPrefix), so a missing parent agent field must not gate it.
 
             if (forkMode) {
               if (!parentAgentName) {
                 log.warn(
-                  "tryStartCheckpointWriter: watermark has no agent, fork:true requires parent agent ‚Äî falling back to no forkContext",
+                  "tryStartCheckpointWriter: watermark has no agent, fork:true requires parent agent ‚Ä?falling back to no forkContext",
                   { sessionID: input.sessionID, endMessageID },
                 )
                 return undefined as ForkContext | undefined
               }
-              // fork:true ‚Äî preserve existing prefix-cache parent-fork behavior.
+              // fork:true ‚Ä?preserve existing prefix-cache parent-fork behavior.
               // Build system + tools + inheritedMessages snapshot via capture ref
               // using the parent agent's identity and the full slice up to watermark.
               // The closure inside SessionPrompt.layer resolves Agent.Info and Provider.Model.
@@ -747,7 +747,7 @@ export const layer: Layer.Layer<
               } satisfies ForkContext
             }
 
-            // fork:false ‚Äî cold-start: use the writer's own system + tools and
+            // fork:false ‚Ä?cold-start: use the writer's own system + tools and
             // a delta slice since the last checkpoint. capture() resolves the
             // checkpoint-writer agent's own definition when agentName is
             // "checkpoint-writer", so a single call returns:
@@ -814,7 +814,7 @@ export const layer: Layer.Layer<
         // Axis A: writer runs under child session, but its checkpoint.md /
         // memory.md / progress paths AND CheckpointContext entries are keyed
         // on the PARENT. The splitover plugin reads these via actor.preStop
-        // and must see parentSessionID to re-derive the right paths ‚Äî without
+        // and must see parentSessionID to re-derive the right paths ‚Ä?without
         // it, checkpointPath(child) returns an empty file and the plugin
         // emits a false topic-missing reflection that loops the writer up to
         // MAX_PRE_REACT.
@@ -838,7 +838,7 @@ export const layer: Layer.Layer<
       // and register the per-actor context entry BEFORE the writer's first
       // turn so the splitover plugin's preStop hook can read it. The set
       // runs in microseconds; the writer's first LLM round-trip takes
-      // seconds ‚Äî no race in practice. See spec ¬ß6.1.
+      // seconds ‚Ä?no race in practice. See spec ¬ß6.1.
       const priorTitles = yield* Effect.promise(() => loadPriorDiscoveredTitles(input.sessionID))
       CheckpointContext.set(input.sessionID, actorID, {
         priorTitles,
@@ -850,7 +850,7 @@ export const layer: Layer.Layer<
       // Bookkeeping: the parent's last_checkpoint_message_id advances when the
       // writer settles. Fork into the layer's scope so the watcher survives
       // tryStartCheckpointWriter returning (background: true semantics) but is still tied
-      // to the layer's lifetime ‚Äî no orphan fiber on shutdown.
+      // to the layer's lifetime ‚Ä?no orphan fiber on shutdown.
       yield* Effect.gen(function* () {
         const outcome = yield* Deferred.await(result.outcome)
         yield* Effect.sync(() =>
@@ -891,7 +891,7 @@ export const layer: Layer.Layer<
           .pipe(Effect.ignore)
 
         // F40: drain pending. If a queued request exists, fire a fresh writer
-        // for it. Errors are swallowed ‚Äî the queued writer's failure should
+        // for it. Errors are swallowed ‚Ä?the queued writer's failure should
         // not interrupt the original writer's settlement watcher.
         if (pending) {
           log.info("draining pending writer", { sessionID: input.sessionID })
@@ -913,8 +913,8 @@ export const layer: Layer.Layer<
 
       // v2 writers manage 3 file types and frequently take 60-180s; pad to
       // 5min so a long-but-honest writer is not mistaken for a failure by
-      // the prune retry watcher. AgentOutcome ‚Üí WriterOutcome translation:
-      // success ‚Üí "success", failure / cancelled ‚Üí "failure".
+      // the prune retry watcher. AgentOutcome ‚Ü?WriterOutcome translation:
+      // success ‚Ü?"success", failure / cancelled ‚Ü?"failure".
       const outcome = yield* Deferred.await(state.writing).pipe(
         Effect.timeout(300_000),
         Effect.catch(() => Effect.succeed<AgentOutcome>({ status: "failure", error: "timeout" })),
@@ -1012,12 +1012,12 @@ export const layer: Layer.Layer<
       // renderRebuildContext is for the user-facing main agent's context rebuild.
       // Subagent-mode actors (system-spawned writers, model-spawned subagents)
       // share the parent's session but don't have their own checkpoint state to
-      // render ‚Äî return empty so the rebuild path is a no-op for them.
+      // render ‚Ä?return empty so the rebuild path is a no-op for them.
       // Note: agentID === "main" must pass through. After F49+F50 the main
       // agent's lastUser.agentID is "main" (DB row‚Üíinfo reconstruction in
       // message-v2.ts populates info.agentID from agent_id column), and the
       // runLoop calls this with that value. Treating "main" as subagent here
-      // would skip rebuild ‚Üí fall through to F39 compaction ‚Üí context loss.
+      // would skip rebuild ‚Ü?fall through to F39 compaction ‚Ü?context loss.
       if (opts?.agentID && opts.agentID !== "main") return ""
 
       const inFlight = writers.get(sessionID)
@@ -1026,7 +1026,7 @@ export const layer: Layer.Layer<
         yield* Effect.race(
           Deferred.await(inFlight.writing).pipe(Effect.as("done" as const)),
           Effect.sleep("60 seconds").pipe(
-            Effect.tap(() => Effect.sync(() => log.warn("writer wait timeout ‚Äî using on-disk checkpoint", { sessionID }))),
+            Effect.tap(() => Effect.sync(() => log.warn("writer wait timeout ‚Ä?using on-disk checkpoint", { sessionID }))),
             Effect.as("timeout" as const),
           ),
         ).pipe(Effect.catch(() => Effect.succeed("error" as const)))
@@ -1039,7 +1039,7 @@ export const layer: Layer.Layer<
       const sessMemDir = path.join(memoryRoot, "sessions", sessionID)
 
       // Resolve current project ID once. Used by Section 7 (project memory
-      // read) and Section 8 (FTS scope filter). ALS-bound ‚Äî must be resolved
+      // read) and Section 8 (FTS scope filter). ALS-bound ‚Ä?must be resolved
       // before any deferred work.
       const currentProjectID = yield* Effect.try({
         try: () => Instance.current?.project?.id as ProjectID | undefined,
@@ -1089,7 +1089,7 @@ export const layer: Layer.Layer<
       // F17: Explicit "already loaded" header. Anchors the active recall
       // protocol's "look for this header" instruction in buildMemoryInstructions.
       lines.push(
-        "The following blocks are auto-loaded from your session memory. They are already in your context ‚Äî do not Read them as whole files. Use Grep for specific facts instead.",
+        "The following blocks are auto-loaded from your session memory. They are already in your context ‚Ä?do not Read them as whole files. Use Grep for specific facts instead.",
       )
       lines.push("")
 
@@ -1107,10 +1107,10 @@ export const layer: Layer.Layer<
           byParent.set(t.parent_task_id, bucket)
         }
         const statusIcon = (s: string) =>
-          ({ open: "üîµ", in_progress: "üîÑ", blocked: "üü°", done: "‚úÖ", abandoned: "‚ùå" })[s] ?? s
+          ({ open: "üîµ", in_progress: "üîÑ", blocked: "üü°", done: "‚ú?, abandoned: "‚ù? })[s] ?? s
         const ledgerLines: string[] = []
         for (const t of topLevel) {
-          ledgerLines.push(`- ${t.id} ${t.status} ‚Äî ${t.summary}`)
+          ledgerLines.push(`- ${t.id} ${t.status} ‚Ä?${t.summary}`)
           const subs = byParent.get(t.id) ?? []
           if (subs.length === 0) continue
           const sublist = subs
@@ -1134,7 +1134,7 @@ export const layer: Layer.Layer<
         lines.push("## Active actors")
         let actorBudget = caps.actor_ledger ?? 500
         for (const a of actors) {
-          const line = `- ${a.actorID} ‚Äî ${a.status}, "${a.description}" (agent=${a.agent})`
+          const line = `- ${a.actorID} ‚Ä?${a.status}, "${a.description}" (agent=${a.agent})`
           const cost = Token.estimate(line)
           if (actorBudget - cost < 0) break
           lines.push(line)
@@ -1224,7 +1224,7 @@ export const layer: Layer.Layer<
       )
       lines.push("")
       lines.push(
-        "Recent messages are preserved verbatim below ‚Äî the assistant turn (and any tool results) you'll see is real history, not pseudo-content. Continue your task by responding to the most recent state.",
+        "Recent messages are preserved verbatim below ‚Ä?the assistant turn (and any tool results) you'll see is real history, not pseudo-content. Continue your task by responding to the most recent state.",
       )
       lines.push("")
       lines.push(
@@ -1232,9 +1232,9 @@ export const layer: Layer.Layer<
       )
 
       // Section 11: tail-aware system reminder. Picks the appropriate nudge
-      // based on how the preserved tail ends: tool-calls ‚Üí continue loop,
-      // stop ‚Üí check task spec before stopping again, tool ‚Üí process results,
-      // user ‚Üí no addendum needed.
+      // based on how the preserved tail ends: tool-calls ‚Ü?continue loop,
+      // stop ‚Ü?check task spec before stopping again, tool ‚Ü?process results,
+      // user ‚Ü?no addendum needed.
       const info = opts?.lastMessageInfo
       if (info) {
         const reminder = (() => {
@@ -1347,9 +1347,9 @@ export const layer: Layer.Layer<
       // Microcompact: messages strictly newer than the boundary will survive
       // into the rebuild context. Clear tool_result content for compactable
       // tools so the first uncached request after rebuild is smaller. tool_use
-      // is preserved ‚Äî LLM still sees what action was taken; result body
+      // is preserved ‚Ä?LLM still sees what action was taken; result body
       // becomes "[Old tool result content cleared]" via the converter at
-      // message-v2.ts (ToolStateCompleted ‚Üí output).
+      // message-v2.ts (ToolStateCompleted ‚Ü?output).
       // See docs/superpowers/specs/2026-06-03-rebuild-tail-microcompact-design.md.
       //
       // boundaryTime resolution (fail-closed):
@@ -1358,7 +1358,7 @@ export const layer: Layer.Layer<
       //    longer in their filterCompactedEffect slice).
       // 2. Else look up input.boundary in allMsgs (full DB, includes
       //    pre-marker history).
-      // 3. Else SKIP ‚Äî the previous fallback of 0 would clear EVERY
+      // 3. Else SKIP ‚Ä?the previous fallback of 0 would clear EVERY
       //    completed compactable tool result in the entire session,
       //    corrupting future checkpoint writer input. Log a warning.
       const allMsgs = yield* session.messages({ sessionID: input.sessionID, agentID: "*" })
@@ -1417,7 +1417,7 @@ export const layer: Layer.Layer<
 // `defaultLayer` no longer requires `Actor.Service`: SessionCheckpoint reaches
 // the Actor implementation through the late-bound `spawnRef` (see
 // `actor/spawn-ref.ts`). This deliberately breaks the otherwise-unresolvable
-// layer cycle Actor ‚Üí SessionPrompt ‚Üí SessionCheckpoint ‚Üí Actor. The AppLayer
+// layer cycle Actor ‚Ü?SessionPrompt ‚Ü?SessionCheckpoint ‚Ü?Actor. The AppLayer
 // constructs `Actor.defaultLayer` separately; its initialiser populates
 // `spawnRef`, which `tryStartCheckpointWriter` reads at call time.
 export const defaultLayer = Layer.suspend(() =>

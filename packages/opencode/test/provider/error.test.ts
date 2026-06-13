@@ -3,8 +3,7 @@ import { APICallError } from "ai"
 import { parseAPICallError } from "../../src/provider/error"
 import { ProviderID } from "../../src/provider/schema"
 
-const xiaomi = ProviderID.make("xiaomi")
-const mimo = ProviderID.make("mimo")
+const Encode = ProviderID.make("Encode")
 const openai = ProviderID.make("openai")
 
 function apiError(opts: { message: string; statusCode?: number; responseBody?: string }) {
@@ -20,9 +19,9 @@ function apiError(opts: { message: string; statusCode?: number; responseBody?: s
 }
 
 describe("provider error message", () => {
-  test("maps MiMo 421 moderation block (HTTP 400) to a friendly message with param detail", () => {
+  test("maps Encode 421 moderation block (HTTP 400) to a friendly message with param detail", () => {
     const parsed = parseAPICallError({
-      providerID: xiaomi,
+      providerID: Encode,
       error: apiError({
         message: "Moderation Block",
         statusCode: 400,
@@ -36,9 +35,9 @@ describe("provider error message", () => {
     expect(parsed.message).toBe("Request blocked by content moderation: 敏感内容")
   })
 
-  test("maps MiMo 441 risk control to a friendly message", () => {
+  test("maps Encode 441 risk control to a friendly message", () => {
     const parsed = parseAPICallError({
-      providerID: xiaomi,
+      providerID: Encode,
       error: apiError({
         message: "Severe Violation",
         statusCode: 400,
@@ -48,9 +47,9 @@ describe("provider error message", () => {
     expect(parsed.message).toBe("Request blocked by risk control")
   })
 
-  test("applies friendly gateway mapping for the free mimo provider too", () => {
+  test("applies friendly gateway mapping for the free Encode provider too", () => {
     const parsed = parseAPICallError({
-      providerID: mimo,
+      providerID: Encode,
       error: apiError({
         message: "Moderation Block",
         statusCode: 400,
@@ -62,7 +61,7 @@ describe("provider error message", () => {
 
   test("appends param detail when message is generic (Param Incorrect)", () => {
     const parsed = parseAPICallError({
-      providerID: xiaomi,
+      providerID: Encode,
       error: apiError({
         message: "Param Incorrect",
         statusCode: 400,
@@ -76,7 +75,7 @@ describe("provider error message", () => {
 
   test("does not duplicate when param equals message", () => {
     const parsed = parseAPICallError({
-      providerID: xiaomi,
+      providerID: Encode,
       error: apiError({
         message: "Invalid Token",
         statusCode: 401,
@@ -95,7 +94,7 @@ describe("provider error message", () => {
         responseBody: JSON.stringify({ error: { code: "421", message: "Moderation Block", param: "x" } }),
       }),
     })
-    // gateway-specific code mapping and param enrichment are scoped to MiMo
+    // gateway-specific code mapping and param enrichment are scoped to Encode
     expect(parsed.message).toBe("Moderation Block")
   })
 
@@ -113,7 +112,7 @@ describe("provider error message", () => {
 
   test("non-JSON response body does not corrupt a distinct SDK message", () => {
     const parsed = parseAPICallError({
-      providerID: xiaomi,
+      providerID: Encode,
       error: apiError({ message: "Connection failed", statusCode: 500, responseBody: "upstream timeout" }),
     })
     expect(parsed.type).toBe("api_error")
@@ -122,7 +121,7 @@ describe("provider error message", () => {
 
   test("uses the body message + param when SDK message is the generic status text", () => {
     const parsed = parseAPICallError({
-      providerID: xiaomi,
+      providerID: Encode,
       error: apiError({
         message: "Bad Request",
         statusCode: 400,
@@ -134,7 +133,7 @@ describe("provider error message", () => {
 
   test("still detects context overflow from error.code", () => {
     const parsed = parseAPICallError({
-      providerID: xiaomi,
+      providerID: Encode,
       error: apiError({
         message: "Request failed",
         statusCode: 400,
@@ -146,7 +145,7 @@ describe("provider error message", () => {
 
   test("empty SDK message falls back to structured body message", () => {
     const parsed = parseAPICallError({
-      providerID: xiaomi,
+      providerID: Encode,
       error: apiError({
         message: "",
         statusCode: 402,

@@ -1,5 +1,5 @@
 /**
- * Fork-agent inbox compat test â€” Plan 4 / Task 5
+ * Fork-agent inbox compat test â€?Plan 4 / Task 5
  *
  * Key invariant (from docs/superpowers/specs/2026-05-26-fork-agent-prefix-cache-design.md):
  *   When a fork agent (contextMode="full") receives an inbox message, the
@@ -8,7 +8,7 @@
  *   the inherited prefix is untouched.
  *
  * Acceptance tier: structural (tier 2) + slice-routing (tier 3).
- *   - Tier 2: getForkContext() before and after drain â€” inheritedMessages identical.
+ *   - Tier 2: getForkContext() before and after drain â€?inheritedMessages identical.
  *   - Tier 3: drained synthetic message lands in fork's slice, NOT main's slice.
  */
 
@@ -31,7 +31,7 @@ import { Question } from "../../src/question"
 import { Todo } from "../../src/session/todo"
 import { Session } from "../../src/session"
 import { LLM } from "../../src/session/llm"
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import { SessionPrune } from "../../src/session/prune"
 import { SessionSummary } from "../../src/session/summary"
 import { Instruction } from "../../src/session/instruction"
@@ -256,7 +256,7 @@ describe("Fork-agent inbox compat (Plan 4 / Task 5)", () => {
           permission: [{ permission: "*", pattern: "*", action: "allow" }],
         })
 
-        // Seed two synthetic "inherited" messages in the forkContext â€” these
+        // Seed two synthetic "inherited" messages in the forkContext â€?these
         // represent the parent's conversation history that a fork agent would
         // inherit at spawn time.
         const inheritedMessages: MessageV2.Info[] = [
@@ -293,7 +293,7 @@ describe("Fork-agent inbox compat (Plan 4 / Task 5)", () => {
           model: ref,
         }
 
-        // Hang the LLM â€” fork agent runs in background, we only need the registry
+        // Hang the LLM â€?fork agent runs in background, we only need the registry
         // entry and forkContexts map to be populated, not the actual LLM call.
         yield* llm.hang
 
@@ -311,7 +311,7 @@ describe("Fork-agent inbox compat (Plan 4 / Task 5)", () => {
 
         const forkActorID = result.actorID
 
-        // Tier 2 â€” structural: capture forkContext BEFORE inbox send.
+        // Tier 2 â€?structural: capture forkContext BEFORE inbox send.
         const forkCtxBefore = yield* actor.getForkContext(forkActorID)
         expect(forkCtxBefore).toBeDefined()
         expect(forkCtxBefore?.system).toEqual(["inherited-system-prompt"])
@@ -347,18 +347,18 @@ describe("Fork-agent inbox compat (Plan 4 / Task 5)", () => {
           content: "inbox-message-for-fork",
         })
 
-        // Tier 3 â€” slice routing: drain it manually.
+        // Tier 3 â€?slice routing: drain it manually.
         const drained = yield* inbox.drain(parent.id, forkActorID)
         expect(drained).toBe(1)
 
-        // Tier 2 â€” structural: forkContext must still have the exact same
+        // Tier 2 â€?structural: forkContext must still have the exact same
         // inheritedMessages snapshot. Drain must not touch forkContexts.
         const forkCtxAfter = yield* actor.getForkContext(forkActorID)
         expect(forkCtxAfter).toBeDefined()
         expect(forkCtxAfter?.inheritedMessages).toStrictEqual(forkCtxBefore?.inheritedMessages)
         expect(forkCtxAfter?.system).toEqual(["inherited-system-prompt"])
 
-        // Tier 3 â€” slice routing: the synthetic user message must appear in the
+        // Tier 3 â€?slice routing: the synthetic user message must appear in the
         // fork's own slice (agentID = forkActorID), not in main's slice.
         const forkMsgs = yield* session.messages({ sessionID: parent.id, agentID: forkActorID })
         const mainMsgs = yield* session.messages({ sessionID: parent.id, agentID: "main" })

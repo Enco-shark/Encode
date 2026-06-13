@@ -7,7 +7,7 @@ import { InstallationVersion } from "../../installation/version"
 
 export const UpgradeCommand = {
   command: "upgrade [target]",
-  describe: "upgrade mimocode to the latest or a specific version",
+  describe: "upgrade encode to the latest or a specific version",
   builder: (yargs: Argv) => {
     return yargs
       .positional("target", {
@@ -54,7 +54,7 @@ export const UpgradeCommand = {
       return
     }
 
-    prompts.log.info(`From ${InstallationVersion} â†’ ${target}`)
+    prompts.log.info(`From ${InstallationVersion} â†?${target}`)
     const spinner = prompts.spinner()
     spinner.start("Upgrading...")
     const err = await AppRuntime.runPromise(Installation.Service.use((svc) => svc.upgrade(method, target))).catch(

@@ -2,7 +2,7 @@ import { Layer, ManagedRuntime } from "effect"
 import { attach } from "./run-service"
 import * as Observability from "./observability"
 
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import { Bus } from "@/bus"
 import { Auth } from "@/auth"
 import { Account } from "@/account/account"
@@ -61,7 +61,7 @@ import * as BashInteractive from "@/tool/bash-interactive"
 import { memoMap } from "./memo-map"
 
 // Wrapped in Layer.suspend so the cross-module `.defaultLayer` reads defer to
-// first use instead of running at module load â€” same TDZ fix as Actor.defaultLayer.
+// first use instead of running at module load â€?same TDZ fix as Actor.defaultLayer.
 export const AppLayer = Layer.suspend(() =>
   Layer.mergeAll(
     Npm.defaultLayer,

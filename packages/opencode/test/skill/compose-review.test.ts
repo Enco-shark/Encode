@@ -110,7 +110,7 @@ describe("compose spec-anchored review contract", () => {
     })
   })
 
-  describe("dispatch vocabulary uses mimocode's actor tool, not Claude Code's", () => {
+  describe("dispatch vocabulary uses encode's actor tool, not Claude Code's", () => {
     const allContent = () =>
       Object.values(bundle).flatMap((files) => Object.values(files))
 
@@ -125,7 +125,7 @@ describe("compose spec-anchored review contract", () => {
 
     test("dispatch templates name the real actor tool + general subagent type", () => {
       // The reviewer/implementer prompt templates that dispatch a subagent should
-      // name the `actor` tool and the `general` subagent type in prose â€” and must
+      // name the `actor` tool and the `general` subagent type in prose â€?and must
       // NOT embed actor's call syntax (operation/discriminator), which lives
       // authoritatively in the actor tool's own description (actor.txt). Embedding
       // a pseudo call block produced malformed calls in a live run.

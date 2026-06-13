@@ -109,9 +109,9 @@ const renameOperation = z.strictObject({
 })
 
 const parameters = z.strictObject({
-  // .meta({ type: "object" }) is REQUIRED â€” without it, the emitted JSON
+  // .meta({ type: "object" }) is REQUIRED â€?without it, the emitted JSON
   // schema's `operation` node has only `anyOf`, no `type`. Some models
-  // (notably mimo-v2.5-pro) then stringify the entire envelope, producing
+  // (notably encode-v2.5-pro) then stringify the entire envelope, producing
   // {"operation":"{\"action\":\"create\",...}"} which fails zod validation.
   // See research-tool-call-schema/REPORT.md Â§2.5 "success-nested" warning.
   operation: z
@@ -162,8 +162,8 @@ function parseTaskScript(script: string): Effect.Effect<TaskOperation[], unknown
 
 // Recover a shell-mode task call shaped like the JSON args (no `script`):
 // a stringified/nested `operation`, or the common bare `{summary}` create.
-// Conservative â€” only the unambiguous create-from-summary is synthesized;
-// anything else passes through (nested) or returns undefined (â†’ teach JSON).
+// Conservative â€?only the unambiguous create-from-summary is synthesized;
+// anything else passes through (nested) or returns undefined (â†?teach JSON).
 export function recoverTaskArgs(rawArgs: unknown): TaskOperation | undefined {
   if (rawArgs == null || typeof rawArgs !== "object") return undefined
   let obj = rawArgs as Record<string, unknown>
@@ -188,7 +188,7 @@ export function recoverTaskArgs(rawArgs: unknown): TaskOperation | undefined {
 // boolean presence flags from a verb's args, leaving positionals in `rest`.
 // Synchronous (task's mapVerb is sync, unlike actor's Effect-returning extractor).
 // A value flag with no value (`--session` at end, or `--session=`) sets `error`
-// rather than silently dropping â€” mirrors actor's extractNamedFlags contract so a
+// rather than silently dropping â€?mirrors actor's extractNamedFlags contract so a
 // dangling flag never swallows a positional into a confusing arity error.
 function extractTaskFlags(
   args: string[],
@@ -360,7 +360,7 @@ export const TaskTool = Tool.define<typeof parameters, Metadata, TaskRegistry.Se
           tasks.length === 0
             ? ["No tasks."]
             : tasks.map((t) => {
-                return `${t.id} ${t.status} â€” ${t.summary}`
+                return `${t.id} ${t.status} â€?${t.summary}`
               })
         return {
           title: `Tasks: ${tasks.length}`,
@@ -388,7 +388,7 @@ export const TaskTool = Tool.define<typeof parameters, Metadata, TaskRegistry.Se
         const result = yield* reg.start({ session_id: sessionID, id: op.id, owner: ctx.actorID ?? ctx.agent, event_summary: op.event_summary })
         return {
           title: `Task ${op.id}: ${result.status}`,
-          output: `start â†’ ${result.status}`,
+          output: `start â†?${result.status}`,
           metadata: { id: result.id, status: result.status } as Metadata,
         }
       }
@@ -397,7 +397,7 @@ export const TaskTool = Tool.define<typeof parameters, Metadata, TaskRegistry.Se
         const result = yield* reg.block({ session_id: sessionID, id: op.id, event_summary: op.event_summary })
         return {
           title: `Task ${op.id}: blocked`,
-          output: `block â†’ ${result.status}`,
+          output: `block â†?${result.status}`,
           metadata: { id: result.id, status: result.status } as Metadata,
         }
       }
@@ -406,7 +406,7 @@ export const TaskTool = Tool.define<typeof parameters, Metadata, TaskRegistry.Se
         const result = yield* reg.unblock({ session_id: sessionID, id: op.id, event_summary: op.event_summary })
         return {
           title: `Task ${op.id}: ${result.status}`,
-          output: `unblock â†’ ${result.status}`,
+          output: `unblock â†?${result.status}`,
           metadata: { id: result.id, status: result.status } as Metadata,
         }
       }
@@ -415,7 +415,7 @@ export const TaskTool = Tool.define<typeof parameters, Metadata, TaskRegistry.Se
         const result = yield* reg.done({ session_id: sessionID, id: op.id, event_summary: op.event_summary })
         return {
           title: `Task ${op.id}: done`,
-          output: `done â†’ ${result.status}`,
+          output: `done â†?${result.status}`,
           metadata: { id: result.id, status: result.status } as Metadata,
         }
       }
@@ -424,7 +424,7 @@ export const TaskTool = Tool.define<typeof parameters, Metadata, TaskRegistry.Se
         const result = yield* reg.abandon({ session_id: sessionID, id: op.id, event_summary: op.event_summary })
         return {
           title: `Task ${op.id}: abandoned`,
-          output: `abandon â†’ ${result.status}`,
+          output: `abandon â†?${result.status}`,
           metadata: { id: result.id, status: result.status } as Metadata,
         }
       }
@@ -433,7 +433,7 @@ export const TaskTool = Tool.define<typeof parameters, Metadata, TaskRegistry.Se
         const result = yield* reg.rename({ session_id: sessionID, id: op.id, summary: op.summary })
         return {
           title: `Task ${op.id}: renamed`,
-          output: `rename â†’ "${result.summary}"`,
+          output: `rename â†?"${result.summary}"`,
           metadata: { id: result.id, status: result.status } as Metadata,
         }
       }

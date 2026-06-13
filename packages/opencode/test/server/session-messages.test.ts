@@ -36,13 +36,13 @@ afterEach(async () => {
 
 async function withoutWatcher<T>(fn: () => Promise<T>) {
   if (process.platform !== "win32") return fn()
-  const prev = process.env.MIMOCODE_EXPERIMENTAL_DISABLE_FILEWATCHER
-  process.env.MIMOCODE_EXPERIMENTAL_DISABLE_FILEWATCHER = "true"
+  const prev = process.env.ENCODE_EXPERIMENTAL_DISABLE_FILEWATCHER
+  process.env.ENCODE_EXPERIMENTAL_DISABLE_FILEWATCHER = "true"
   try {
     return await fn()
   } finally {
-    if (prev === undefined) delete process.env.MIMOCODE_EXPERIMENTAL_DISABLE_FILEWATCHER
-    else process.env.MIMOCODE_EXPERIMENTAL_DISABLE_FILEWATCHER = prev
+    if (prev === undefined) delete process.env.ENCODE_EXPERIMENTAL_DISABLE_FILEWATCHER
+    else process.env.ENCODE_EXPERIMENTAL_DISABLE_FILEWATCHER = prev
   }
 }
 
@@ -166,19 +166,19 @@ describe("session messages endpoint", () => {
 
           const app = Server.Default().app
 
-          // Default â€” main slice only (the bug we're fixing).
+          // Default â€?main slice only (the bug we're fixing).
           const def = await app.request(`/session/${session.id}/message`)
           expect(def.status).toBe(200)
           const defBody = (await def.json()) as MessageV2.WithParts[]
           expect(defBody.map((m) => m.info.id)).toEqual([...main, ...more])
 
-          // ?agent_id=<id> â€” that subagent's slice only.
+          // ?agent_id=<id> â€?that subagent's slice only.
           const sub = await app.request(`/session/${session.id}/message?agent_id=checkpoint-writer-1`)
           expect(sub.status).toBe(200)
           const subBody = (await sub.json()) as MessageV2.WithParts[]
           expect(subBody.map((m) => m.info.id)).toEqual(writer)
 
-          // ?agent_id=* â€” all slices, preserves the legacy "no filter" behavior
+          // ?agent_id=* â€?all slices, preserves the legacy "no filter" behavior
           // for callers that explicitly opt in.
           const all = await app.request(`/session/${session.id}/message?agent_id=*`)
           expect(all.status).toBe(200)

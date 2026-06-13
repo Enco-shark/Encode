@@ -18,7 +18,7 @@ import { Question } from "../../src/question"
 import { Todo } from "../../src/session/todo"
 import { Session } from "../../src/session"
 import { LLM } from "../../src/session/llm"
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import { SessionPrune } from "../../src/session/prune"
 import { SessionSummary } from "../../src/session/summary"
 import { Instruction } from "../../src/session/instruction"
@@ -277,7 +277,7 @@ describe("spawn no-deadlock (F56)", () => {
           expect(result).toBeDefined()
           expect(result!.actorID).toBeDefined()
 
-          // Wait for outcome and assert it resolved (success or failure â€” either is fine).
+          // Wait for outcome and assert it resolved (success or failure â€?either is fine).
           const outcome = yield* Deferred.await(result!.outcome)
           expect(["success", "failure"]).toContain(outcome.status)
         }),
@@ -296,13 +296,13 @@ describe("spawn no-deadlock (F56)", () => {
 
           // Session asks for everything. A non-system agent would block here
           // waiting for a human reply; a system-spawned checkpoint-writer must
-          // fail the ask clean (interactive:false â†’ DeniedError) and settle.
+          // fail the ask clean (interactive:false â†?DeniedError) and settle.
           const parent = yield* session.create({
             title: "writer no-deadlock under ask",
             permission: [{ permission: "*", pattern: "*", action: "ask" }],
           })
 
-          // Turn 1: the writer attempts a write to a NON-memory path â†’ triggers
+          // Turn 1: the writer attempts a write to a NON-memory path â†?triggers
           // ctx.ask({permission:"edit"}). Under "*":"ask" this would hang for a
           // normal agent; the fix denies it clean. Turn 2: a final text so that
           // if the tool-call path somehow returns control, the loop can end.
@@ -312,7 +312,7 @@ describe("spawn no-deadlock (F56)", () => {
           // context:"none" keeps the test self-contained (no ForkContext capture).
           // The actor is NOT a fork, but its tool calls STILL route through
           // prompt.ts's ask closure, which sets interactive based on
-          // SYSTEM_SPAWNED_AGENT_TYPES.has("checkpoint-writer") â†’ false â†’ the
+          // SYSTEM_SPAWNED_AGENT_TYPES.has("checkpoint-writer") â†?false â†?the
           // hang-killer (Piece 1) is exercised for this agentType.
           const result = yield* actor
             .spawn({

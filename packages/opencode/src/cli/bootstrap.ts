@@ -15,12 +15,12 @@ export async function bootstrap<T>(directory: string, cb: () => Promise<T>) {
         return await cb()
       } finally {
         // Give detached background checkpoint writers a chance to finish
-        // before teardown. Headless `mimo run` would otherwise exit right
+        // before teardown. Headless `Encode run` would otherwise exit right
         // after the main response, killing any forked writer mid-LLM-call
         // and leaving zero checkpoint files on disk.
         //
         // Up to 120s for ALL pending writers collectively. Writers that
-        // don't settle in time are abandoned â€” the runtime teardown will
+        // don't settle in time are abandoned â€?the runtime teardown will
         // kill them anyway, and their thresholds stay marked so the next
         // process invocation can observe the gap via fireCheckpoints.
         await AppRuntime.runPromise(

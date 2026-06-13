@@ -10,12 +10,12 @@ import { errorMessage } from "@/util/error"
 import { withTimeout } from "@/util/timeout"
 import { withNetworkOptions, resolveNetworkOptionsNoConfig } from "@/cli/network"
 import { Filesystem } from "@/util"
-import type { GlobalEvent } from "@mimo-ai/sdk/v2"
+import type { GlobalEvent } from "@encode-ai/sdk/v2"
 import type { EventSource } from "./context/sdk"
 import { win32DisableProcessedInput, win32InstallCtrlCGuard } from "./win32"
 import { writeHeapSnapshot } from "v8"
 import { TuiConfig } from "./config/tui"
-import { MIMOCODE_PROCESS_ROLE, MIMOCODE_RUN_ID, ensureRunID, sanitizedProcessEnv } from "@/util/mimo-process"
+import { ENCODE_PROCESS_ROLE, ENCODE_RUN_ID, ensureRunID, sanitizedProcessEnv } from "@/util/Encode-process"
 
 declare global {
   const OPENCODE_WORKER_PATH: string
@@ -67,12 +67,12 @@ async function input(value?: string) {
 
 export const TuiThreadCommand = cmd({
   command: "$0 [project]",
-  describe: "start mimocode tui",
+  describe: "start ENCODE tui",
   builder: (yargs) =>
     withNetworkOptions(yargs)
       .positional("project", {
         type: "string",
-        describe: "path to start mimocode in",
+        describe: "path to start ENCODE in",
       })
       .option("model", {
         type: "string",
@@ -104,7 +104,7 @@ export const TuiThreadCommand = cmd({
       .option("never-ask-questions", {
         type: "boolean",
         describe:
-          "start in never-ask mode â€” never prompt you; pick the best option autonomously (toggle at runtime with /never-ask-questions)",
+          "start in never-ask mode â€?never prompt you; pick the best option autonomously (toggle at runtime with /never-ask-questions)",
         default: false,
       }),
   handler: async (args) => {
@@ -112,7 +112,7 @@ export const TuiThreadCommand = cmd({
     // (Important when running under `bun run` wrappers on Windows.)
     const unguard = win32InstallCtrlCGuard()
     try {
-      // Must be the very first thing â€” disables CTRL_C_EVENT before any Worker
+      // Must be the very first thing â€?disables CTRL_C_EVENT before any Worker
       // spawn or async work so the OS cannot kill the process group.
       win32DisableProcessedInput()
 
@@ -137,8 +137,8 @@ export const TuiThreadCommand = cmd({
       }
       const cwd = Filesystem.resolve(process.cwd())
       const env = sanitizedProcessEnv({
-        [MIMOCODE_PROCESS_ROLE]: "worker",
-        [MIMOCODE_RUN_ID]: ensureRunID(),
+        [ENCODE_PROCESS_ROLE]: "worker",
+        [ENCODE_RUN_ID]: ensureRunID(),
       })
 
       const worker = new Worker(file, {

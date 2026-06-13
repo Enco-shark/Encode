@@ -14,15 +14,15 @@ import { SessionID } from "../../src/session/schema"
 
 async function withTmpHome<T>(fn: (sid: SessionID) => Promise<T>): Promise<T> {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), "progress-reconcile-test-"))
-  const prevHome = process.env.MIMOCODE_HOME
-  process.env.MIMOCODE_HOME = dir
+  const prevHome = process.env.ENCODE_HOME
+  process.env.ENCODE_HOME = dir
   try {
     const sid = SessionID.make("ses_test_" + Date.now())
     await fs.mkdir(tasksDir(sid), { recursive: true })
     return await fn(sid)
   } finally {
-    if (prevHome === undefined) delete process.env.MIMOCODE_HOME
-    else process.env.MIMOCODE_HOME = prevHome
+    if (prevHome === undefined) delete process.env.ENCODE_HOME
+    else process.env.ENCODE_HOME = prevHome
     await fs.rm(dir, { recursive: true, force: true })
   }
 }
@@ -68,7 +68,7 @@ describe("parseReconciledMap", () => {
   test("parses multiple markers", () => {
     const main =
       "ðŸ”µ T1 a (progress: tasks/T1/progress.md, last-reconciled-written-at: 100)\n" +
-      "âœ… T2 b (progress: tasks/T2/progress.md, last-reconciled-written-at: 200)\n"
+      "âœ?T2 b (progress: tasks/T2/progress.md, last-reconciled-written-at: 200)\n"
     const m = parseReconciledMap(main)
     expect(m.get("T1")).toBe(100)
     expect(m.get("T2")).toBe(200)
@@ -76,7 +76,7 @@ describe("parseReconciledMap", () => {
   test("ignores lines without full marker", () => {
     const main =
       "ðŸ”µ T1 a (progress: tasks/T1/progress.md)\n" +
-      "âœ… T2 b (progress: tasks/T2/progress.md, last-reconciled-written-at: 200)\n"
+      "âœ?T2 b (progress: tasks/T2/progress.md, last-reconciled-written-at: 200)\n"
     const m = parseReconciledMap(main)
     expect(m.size).toBe(1)
     expect(m.get("T2")).toBe(200)
@@ -84,7 +84,7 @@ describe("parseReconciledMap", () => {
 })
 
 describe("renderProgressDiffBlock", () => {
-  test("empty items â†’ empty string", () => {
+  test("empty items â†?empty string", () => {
     expect(renderProgressDiffBlock([])).toBe("")
   })
   test("single NEW item", () => {
@@ -101,7 +101,7 @@ describe("renderProgressDiffBlock", () => {
 })
 
 describe("buildProgressDiffItems", () => {
-  test("empty tasks dir â†’ no items", async () => {
+  test("empty tasks dir â†?no items", async () => {
     await withTmpHome(async (sid) => {
       const items = await buildProgressDiffItems(sid)
       expect(items).toEqual([])
@@ -158,7 +158,7 @@ describe("buildProgressDiffItems", () => {
           "ðŸ”µ T3 (progress: tasks/T3/progress.md, last-reconciled-written-at: 200)\n",
       )
       await writeProgress(sid, "T1", "---\nwritten-at: 10\n---\nNEW")
-      await writeProgress(sid, "T2", "---\nwritten-at: 100\n---\nCHANGED 50â†’100")
+      await writeProgress(sid, "T2", "---\nwritten-at: 100\n---\nCHANGED 50â†?00")
       await writeProgress(sid, "T3", "---\nwritten-at: 200\n---\nUNCHANGED")
       await writeProgress(sid, "T4", "## Â§1 no frontmatter\n")
       const items = await buildProgressDiffItems(sid)

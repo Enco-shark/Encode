@@ -12,7 +12,7 @@ import { useToast } from "../ui/toast"
 import os from "os"
 import path from "path"
 
-export function DialogMimoLogin() {
+export function DialogEncodeLogin() {
   const dialog = useDialog()
   const sdk = useSDK()
   const sync = useSync()
@@ -26,12 +26,12 @@ export function DialogMimoLogin() {
       skipFilter
       options={[
         {
-          title: t("tui.dialog.login.xiaomi"),
-          value: "xiaomi",
-          description: t("tui.dialog.login.xiaomi.desc"),
+          title: t("tui.dialog.login.Encode_free"),
+          value: "Encode-free",
+          description: t("tui.dialog.login.Encode_free.desc"),
           onSelect: async () => {
             const result = await sdk.client.provider.oauth.authorize({
-              providerID: "xiaomi",
+              providerID: "Encode",
               method: 0,
             })
             if (result.error) {
@@ -40,24 +40,24 @@ export function DialogMimoLogin() {
               return
             }
             dialog.replace(() => (
-              <MimoOAuthFlow url={result.data!.url} instructions={result.data!.instructions} />
+              <EncodeOAuthFlow url={result.data!.url} instructions={result.data!.instructions} />
             ))
           },
         },
         {
-          title: t("tui.dialog.login.mimo_free"),
-          value: "mimo-free",
-          description: t("tui.dialog.login.mimo_free.desc"),
+          title: t("tui.dialog.login.Encode_free"),
+          value: "Encode-free",
+          description: t("tui.dialog.login.Encode_free.desc"),
           onSelect: async () => {
             await sync.bootstrap()
-            const mimo = sync.data.provider.find((p) => p.id === "mimo")
-            if (!mimo || !("mimo-auto" in mimo.models)) {
-              toast.show({ message: t("tui.dialog.login.mimo_free.unavailable"), variant: "error" })
+            const Encode = sync.data.provider.find((p) => p.id === "Encode")
+            if (!Encode || !("Encode-auto" in Encode.models)) {
+              toast.show({ message: t("tui.dialog.login.Encode_free.unavailable"), variant: "error" })
               dialog.clear()
               return
             }
-            local.model.set({ providerID: "mimo", modelID: "mimo-auto" }, { recent: true })
-            toast.show({ message: t("tui.dialog.login.mimo_free.success"), variant: "info" })
+            local.model.set({ providerID: "Encode", modelID: "Encode-auto" }, { recent: true })
+            toast.show({ message: t("tui.dialog.login.Encode_free.success"), variant: "info" })
             dialog.clear()
           },
         },
@@ -154,7 +154,7 @@ export function DialogMimoLogin() {
   )
 }
 
-function MimoOAuthFlow(props: { url: string; instructions: string }) {
+function EncodeOAuthFlow(props: { url: string; instructions: string }) {
   const dialog = useDialog()
   const sdk = useSDK()
   const sync = useSync()
@@ -167,17 +167,17 @@ function MimoOAuthFlow(props: { url: string; instructions: string }) {
   async function onLoginSuccess() {
     await sdk.client.instance.dispose()
     await sync.bootstrap()
-    const xiaomi = sync.data.provider.find((p) => p.id === "xiaomi")
-    const defaultModel = xiaomi && "mimo-v2.5-pro" in xiaomi.models ? "mimo-v2.5-pro" : xiaomi ? Object.keys(xiaomi.models)[0] : undefined
+    const EncodeProvider = sync.data.provider.find((p) => p.id === "Encode")
+    const defaultModel = EncodeProvider && "encode-v2.5-pro" in EncodeProvider.models ? "encode-v2.5-pro" : EncodeProvider ? Object.keys(EncodeProvider.models)[0] : undefined
     if (defaultModel) {
-      local.model.set({ providerID: "xiaomi", modelID: defaultModel }, { recent: true })
+      local.model.set({ providerID: "Encode", modelID: defaultModel }, { recent: true })
     }
     dialog.clear()
   }
 
   onMount(async () => {
     const callbackResult = await sdk.client.provider.oauth.callback({
-      providerID: "xiaomi",
+      providerID: "Encode",
       method: 0,
     })
     if (callbackResult.error) return
@@ -206,7 +206,7 @@ function MimoOAuthFlow(props: { url: string; instructions: string }) {
         if (!value) return
         setBusy(true)
         const { error: err } = await sdk.client.provider.oauth.callback({
-          providerID: "xiaomi",
+          providerID: "Encode",
           method: 0,
           code: value.trim(),
         })

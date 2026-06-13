@@ -18,7 +18,7 @@ import { Question } from "../../src/question"
 import { Todo } from "../../src/session/todo"
 import { Session } from "../../src/session"
 import { LLM } from "../../src/session/llm"
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import { SessionPrune } from "../../src/session/prune"
 import { SessionSummary } from "../../src/session/summary"
 import { Instruction } from "../../src/session/instruction"
@@ -326,7 +326,7 @@ describe("Actor.spawn inbox notifications (Plan 3 / Task 2)", () => {
 
         yield* Deferred.await(result.outcome)
 
-        // Inbox table must be empty â€” checkpoint-writer is gated out.
+        // Inbox table must be empty â€?checkpoint-writer is gated out.
         const rows = yield* Effect.sync(() =>
           Database.use((db) =>
             db
@@ -357,7 +357,7 @@ describe("Actor.spawn inbox notifications (Plan 3 / Task 2)", () => {
         // Auto-respond so the foreground spawn completes.
         yield* llm.text("**Status**: success\n**Summary**: done")
 
-        // background: false â€” foreground spawn, caller awaits via Fiber.join.
+        // background: false â€?foreground spawn, caller awaits via Fiber.join.
         const result = yield* actor.spawn({
           mode: "subagent",
           sessionID: parent.id,
@@ -374,7 +374,7 @@ describe("Actor.spawn inbox notifications (Plan 3 / Task 2)", () => {
         // outcome Deferred is also resolved; await it for safety.
         yield* Deferred.await(result.outcome)
 
-        // No inbox row should exist â€” foreground path skips inbox.send.
+        // No inbox row should exist â€?foreground path skips inbox.send.
         const rows = yield* Effect.sync(() =>
           Database.use((db) =>
             db

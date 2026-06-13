@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test"
-import type { NamedError } from "@mimo-ai/shared/util/error"
+import type { NamedError } from "@encode-ai/shared/util/error"
 import { APICallError, RetryError } from "ai"
 import { setTimeout as sleep } from "node:timers/promises"
 import { Effect, Schedule } from "effect"
@@ -300,7 +300,7 @@ describe("session.message-v2.fromError unwraps AI_RetryError", () => {
   const apiCall = (statusCode: number) =>
     new APICallError({
       message: "No available channel for model claude-sonnet-4.6 under group default",
-      url: "http://mimorouter.llmcore.ai.srv/v1/messages",
+      url: "http://Encoderouter.llmcore.ai.srv/v1/messages",
       requestBodyValues: {},
       statusCode,
       responseHeaders: { "content-type": "application/json" },
@@ -318,7 +318,7 @@ describe("session.message-v2.fromError unwraps AI_RetryError", () => {
   // Regression: the AI SDK wraps the underlying failure in AI_RetryError once
   // its internal maxRetries is exhausted. fromError() previously only matched a
   // bare APICallError, so a wrapped 5xx fell through to the generic
-  // `e instanceof Error` branch and collapsed to an opaque UnknownError â€” which
+  // `e instanceof Error` branch and collapsed to an opaque UnknownError â€?which
   // SessionRetry.retryable() cannot classify, so the visible `type: "retry"`
   // banner never fired and the turn hung with a dead spinner.
   test("a wrapped 503 becomes a structured APIError, not UnknownError", () => {
@@ -392,7 +392,7 @@ describe("isRetryableTransientError", () => {
   })
 })
 
-describe("retryable() with raw Error (Spec â‘¢ P2 regression)", () => {
+describe("retryable() with raw Error (Spec â‘?P2 regression)", () => {
   test("SSE read timed out is retryable", () => {
     const rawErr = new Error("SSE read timed out")
     expect(retryable(rawErr as unknown as never)).toBeTruthy()

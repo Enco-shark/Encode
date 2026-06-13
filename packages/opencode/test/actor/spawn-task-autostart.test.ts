@@ -17,7 +17,7 @@ import { Question } from "../../src/question"
 import { Todo } from "../../src/session/todo"
 import { Session } from "../../src/session"
 import { LLM } from "../../src/session/llm"
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import { SessionPrune } from "../../src/session/prune"
 import { SessionSummary } from "../../src/session/summary"
 import { Instruction } from "../../src/session/instruction"
@@ -366,14 +366,14 @@ describe("Actor.spawn auto-starts bound task", () => {
         })
 
         // TaskRegistry.create + .start publish through their (encapsulated) Bus,
-        // which fans out to the module-level GlobalBus singleton â€” the same channel
+        // which fans out to the module-level GlobalBus singleton â€?the same channel
         // the server SSE stream / TUI live-update path consumes. The in-process Bus
         // PubSub (Bus.subscribe) is a *separate* instance from the registry's Bus in
         // this layer composition, so we observe via GlobalBus to catch the publish.
         //
         // create() emits task.created; auto-start emits task.updated with kind=started.
         // We can now distinguish them by event.type, so a single ordering flag is
-        // unnecessary â€” each Deferred awaits its own event. Publishes are
+        // unnecessary â€?each Deferred awaits its own event. Publishes are
         // fire-and-forget (Effect.runFork), so we complete the Deferreds from the
         // sync GlobalBus callback via Effect.runFork(Deferred.succeed(...)).
         const created = yield* Deferred.make<void>()
@@ -415,7 +415,7 @@ describe("Actor.spawn auto-starts bound task", () => {
             yield* Deferred.await(result.outcome)
 
             // Deterministic: resolves the instant auto-start's task.updated(started)
-            // reaches GlobalBus â€” the publish we're asserting fired, distinct from
+            // reaches GlobalBus â€?the publish we're asserting fired, distinct from
             // create's earlier task.created. Bounded by Effect.timeout so a *missing*
             // event fails fast with a TimeoutError instead of hanging until the
             // harness-level timeout.
@@ -496,7 +496,7 @@ describe("Actor.spawn completion gate (B)", () => {
           permission: [{ permission: "*", pattern: "*", action: "allow" }],
         })
 
-        // explore has a hardcoded prompt â†’ not gate-eligible. An open task it owns
+        // explore has a hardcoded prompt â†?not gate-eligible. An open task it owns
         // must be ignored by the gate.
         yield* tasks.create({
           session_id: parent.id,

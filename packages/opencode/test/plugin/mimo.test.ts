@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test"
 import crypto from "crypto"
-import { MimoAuthPlugin } from "../../src/plugin/mimo"
-import type { PluginInput } from "@mimo-ai/plugin"
+import { encodeAuthPlugin } from "../../src/plugin/Encode"
+import type { PluginInput } from "@encode-ai/plugin"
 
 function encrypt(recipientPkBase64: string, payload: string): string {
   const recipientPublicKey = crypto.createPublicKey({
@@ -39,53 +39,53 @@ const fakeInput = {
   $: undefined,
 } as unknown as PluginInput
 
-describe("MimoAuthPlugin", () => {
+describe("encodeAuthPlugin", () => {
   describe("config hook", () => {
-    test("registers mimo provider with correct name", async () => {
-      const hooks = await MimoAuthPlugin(fakeInput)
+    test("registers Encode provider with correct name", async () => {
+      const hooks = await encodeAuthPlugin(fakeInput)
       const cfg: any = {}
       await hooks.config!(cfg)
-      expect(cfg.provider.xiaomi.name).toBe("MiMo")
-      expect(cfg.provider.xiaomi.api).toBeTruthy()
+      expect(cfg.provider.Encode.name).toBe("Encode")
+      expect(cfg.provider.Encode.api).toBeTruthy()
     })
 
     test("registers all expected models", async () => {
-      const hooks = await MimoAuthPlugin(fakeInput)
+      const hooks = await encodeAuthPlugin(fakeInput)
       const cfg: any = {}
       await hooks.config!(cfg)
       // The plugin only sets name and api; models are not registered by the plugin
       // (they come from the provider registry). Verify the provider is created.
-      expect(cfg.provider.xiaomi).toBeDefined()
-      expect(cfg.provider.xiaomi.name).toBe("MiMo")
+      expect(cfg.provider.Encode).toBeDefined()
+      expect(cfg.provider.Encode.name).toBe("Encode")
     })
 
     test("does not overwrite existing config", async () => {
-      const hooks = await MimoAuthPlugin(fakeInput)
-      const cfg: any = { provider: { xiaomi: { name: "Custom", api: "https://custom.api" } } }
+      const hooks = await encodeAuthPlugin(fakeInput)
+      const cfg: any = { provider: { Encode: { name: "Custom", api: "https://custom.api" } } }
       await hooks.config!(cfg)
-      expect(cfg.provider.xiaomi.name).toBe("Custom")
-      expect(cfg.provider.xiaomi.api).toBe("https://custom.api")
+      expect(cfg.provider.Encode.name).toBe("Custom")
+      expect(cfg.provider.Encode.api).toBe("https://custom.api")
     })
   })
 
   describe("auth hook structure", () => {
-    test("registers auth for mimo provider", async () => {
-      const hooks = await MimoAuthPlugin(fakeInput)
+    test("registers auth for Encode provider", async () => {
+      const hooks = await encodeAuthPlugin(fakeInput)
       expect(hooks.auth).toBeDefined()
-      expect(hooks.auth!.provider).toBe("xiaomi")
+      expect(hooks.auth!.provider).toBe("Encode")
     })
 
     test("has one login method", async () => {
-      const hooks = await MimoAuthPlugin(fakeInput)
+      const hooks = await encodeAuthPlugin(fakeInput)
       expect(hooks.auth!.methods).toHaveLength(1)
-      expect(hooks.auth!.methods[0].label).toBe("浏览器登录")
+      expect(hooks.auth!.methods[0].label).toBe("浏览器登�?)
       expect(hooks.auth!.methods[0].type).toBe("oauth")
     })
   })
 
   describe("authorize", () => {
     test("returns url with pk, redirect_uri, kn, key_name params", async () => {
-      const hooks = await MimoAuthPlugin(fakeInput)
+      const hooks = await encodeAuthPlugin(fakeInput)
       const method = hooks.auth!.methods[0]
       const result = (await method.authorize!()) as any
 
@@ -93,14 +93,14 @@ describe("MimoAuthPlugin", () => {
       expect(url.pathname).toContain("/authorize")
       expect(url.searchParams.get("pk")).toBeTruthy()
       expect(url.searchParams.get("redirect_uri")).toBeTruthy()
-      expect(url.searchParams.get("kn")).toBe("mimocode")
-      expect(url.searchParams.get("key_name")).toMatch(/^mimo-code-cli-key-/)
+      expect(url.searchParams.get("kn")).toBe("encode")
+      expect(url.searchParams.get("key_name")).toMatch(/^Encode-cli-key-/)
 
       await result.callback("invalid").catch(() => {})
     })
 
     test("displayed url has platform redirect_uri for manual copy", async () => {
-      const hooks = await MimoAuthPlugin(fakeInput)
+      const hooks = await encodeAuthPlugin(fakeInput)
       const method = hooks.auth!.methods[0]
       const result = (await method.authorize!()) as any
 
@@ -112,7 +112,7 @@ describe("MimoAuthPlugin", () => {
     })
 
     test("returns method auto", async () => {
-      const hooks = await MimoAuthPlugin(fakeInput)
+      const hooks = await encodeAuthPlugin(fakeInput)
       const method = hooks.auth!.methods[0]
       const result = (await method.authorize!()) as any
       expect(result.method).toBe("auto")
@@ -120,7 +120,7 @@ describe("MimoAuthPlugin", () => {
     })
 
     test("pk is valid base64url-encoded SPKI DER (44 bytes)", async () => {
-      const hooks = await MimoAuthPlugin(fakeInput)
+      const hooks = await encodeAuthPlugin(fakeInput)
       const method = hooks.auth!.methods[0]
       const result = (await method.authorize!()) as any
 
@@ -133,7 +133,7 @@ describe("MimoAuthPlugin", () => {
     })
 
     test("each authorize generates different pk", async () => {
-      const hooks = await MimoAuthPlugin(fakeInput)
+      const hooks = await encodeAuthPlugin(fakeInput)
       const method = hooks.auth!.methods[0]
 
       const result1 = (await method.authorize!()) as any
@@ -150,7 +150,7 @@ describe("MimoAuthPlugin", () => {
 
   describe("callback with code (manual paste)", () => {
     test("decrypts valid code and returns sk, uid, base_url", async () => {
-      const hooks = await MimoAuthPlugin(fakeInput)
+      const hooks = await encodeAuthPlugin(fakeInput)
       const method = hooks.auth!.methods[0]
       const result = (await method.authorize!()) as any
 
@@ -166,7 +166,7 @@ describe("MimoAuthPlugin", () => {
     })
 
     test("trims whitespace from pasted code", async () => {
-      const hooks = await MimoAuthPlugin(fakeInput)
+      const hooks = await encodeAuthPlugin(fakeInput)
       const method = hooks.auth!.methods[0]
       const result = (await method.authorize!()) as any
 
@@ -180,7 +180,7 @@ describe("MimoAuthPlugin", () => {
     })
 
     test("returns failed for invalid data", async () => {
-      const hooks = await MimoAuthPlugin(fakeInput)
+      const hooks = await encodeAuthPlugin(fakeInput)
       const method = hooks.auth!.methods[0]
       const result = (await method.authorize!()) as any
 
@@ -189,7 +189,7 @@ describe("MimoAuthPlugin", () => {
     })
 
     test("returns empty key when sk not in payload", async () => {
-      const hooks = await MimoAuthPlugin(fakeInput)
+      const hooks = await encodeAuthPlugin(fakeInput)
       const method = hooks.auth!.methods[0]
       const result = (await method.authorize!()) as any
 
@@ -204,7 +204,7 @@ describe("MimoAuthPlugin", () => {
     })
 
     test("metadata omits base_url when url not in payload", async () => {
-      const hooks = await MimoAuthPlugin(fakeInput)
+      const hooks = await encodeAuthPlugin(fakeInput)
       const method = hooks.auth!.methods[0]
       const result = (await method.authorize!()) as any
 
@@ -219,27 +219,27 @@ describe("MimoAuthPlugin", () => {
   })
 
   describe("chat.headers hook", () => {
-    test("adds X-Mimo-Source header for mimo provider", async () => {
-      const hooks = await MimoAuthPlugin(fakeInput)
+    test("adds X-Encode-Source header for Encode provider", async () => {
+      const hooks = await encodeAuthPlugin(fakeInput)
       const output = { headers: {} as Record<string, string> }
-      await hooks["chat.headers"]!({ model: { providerID: "xiaomi" } } as any, output as any)
-      expect(output.headers["X-Mimo-Source"]).toBe("mimocode-cli")
+      await hooks["chat.headers"]!({ model: { providerID: "Encode" } } as any, output as any)
+      expect(output.headers["X-Encode-Source"]).toBe("encode-cli")
     })
 
     test("does not add header for other providers", async () => {
-      const hooks = await MimoAuthPlugin(fakeInput)
+      const hooks = await encodeAuthPlugin(fakeInput)
       const providers = ["anthropic", "openai", "google"]
       for (const providerID of providers) {
         const output = { headers: {} as Record<string, string> }
         await hooks["chat.headers"]!({ model: { providerID } } as any, output as any)
-        expect(output.headers["X-Mimo-Source"]).toBeUndefined()
+        expect(output.headers["X-Encode-Source"]).toBeUndefined()
       }
     })
   })
 
   describe("encryption", () => {
     test("decrypts correctly formatted payload", async () => {
-      const hooks = await MimoAuthPlugin(fakeInput)
+      const hooks = await encodeAuthPlugin(fakeInput)
       const method = hooks.auth!.methods[0]
       const result = (await method.authorize!()) as any
 

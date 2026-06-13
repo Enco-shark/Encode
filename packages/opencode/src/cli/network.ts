@@ -20,8 +20,8 @@ const options = {
   },
   "mdns-domain": {
     type: "string" as const,
-    describe: "custom domain name for mDNS service (default: mimocode.local)",
-    default: "mimocode.local",
+    describe: "custom domain name for mDNS service (default: encode.local)",
+    default: "encode.local",
   },
   cors: {
     type: "string" as const,

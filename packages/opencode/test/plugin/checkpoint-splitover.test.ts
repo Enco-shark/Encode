@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test"
 import * as fs from "fs/promises"
 import * as path from "path"
-import type { ActorMatcher, ActorPreStopInput, ActorStopOutput, PluginInput } from "@mimo-ai/plugin"
+import type { ActorMatcher, ActorPreStopInput, ActorStopOutput, PluginInput } from "@encode-ai/plugin"
 import { CheckpointSplitoverPlugin } from "../../src/plugin/checkpoint-splitover"
 import { matchesActor } from "../../src/plugin/matcher"
 import * as CheckpointContext from "../../src/session/checkpoint-context"
@@ -91,7 +91,7 @@ describe("CheckpointSplitoverPlugin", () => {
     expect(output.reason).toBeUndefined()
   })
 
-  test("extract-required â†’ buildExtractionReflection in reason", async () => {
+  test("extract-required â†?buildExtractionReflection in reason", async () => {
     const sessionID = tmpSessionID()
     const projectID = tmpProjectID()
     await setupSession(sessionID, projectID)
@@ -113,7 +113,7 @@ describe("CheckpointSplitoverPlugin", () => {
     expect(output.reason!).toContain("spillover")
   })
 
-  test("regular error â†’ buildReflectionMessage in reason", async () => {
+  test("regular error â†?buildReflectionMessage in reason", async () => {
     const sessionID = tmpSessionID()
     const projectID = tmpProjectID()
     await setupSession(sessionID, projectID)
@@ -160,8 +160,8 @@ describe("CheckpointSplitoverPlugin", () => {
   })
 
   test("hook never throws on pathological session IDs", async () => {
-    // Different inputs route through different paths (graceful empty â†’ error
-    // branch, or genuine throw â†’ catch). The universal invariant is: no
+    // Different inputs route through different paths (graceful empty â†?error
+    // branch, or genuine throw â†?catch). The universal invariant is: no
     // exception escapes the hook.
     const hooks = await CheckpointSplitoverPlugin(fakeInput(tmpProjectID()))
     const reg = hooks["actor.preStop"]
@@ -178,9 +178,9 @@ describe("CheckpointSplitoverPlugin", () => {
     }
   })
 
-  test("synchronous validator throw â†’ caught by plugin (output untouched, no exception)", async () => {
+  test("synchronous validator throw â†?caught by plugin (output untouched, no exception)", async () => {
     // NUL byte in session ID forces Bun.file() to throw synchronously inside
-    // runValidatorsForCkpt â€” escaping the validator's own .catch(() => "")
+    // runValidatorsForCkpt â€?escaping the validator's own .catch(() => "")
     // handler. The plugin's outer try/catch must catch it.
     //
     // Load-bearing assertions:
@@ -198,7 +198,7 @@ describe("CheckpointSplitoverPlugin", () => {
     expect(output.reason).toBeUndefined()
   })
 
-  test("warn-only â†’ no reentry", async () => {
+  test("warn-only â†?no reentry", async () => {
     const sessionID = tmpSessionID()
     const projectID = tmpProjectID()
     await setupSession(sessionID, projectID)
@@ -207,7 +207,7 @@ describe("CheckpointSplitoverPlugin", () => {
     // the clean v5 checkpoint skeleton but stretch the topic over 80 chars.
     // All required sub-sections are present in order with (none) placeholders,
     // so no error/extract-required violations fire. Result: 2 warn violations
-    // (one per validator) â†’ plugin must leave output untouched regardless.
+    // (one per validator) â†?plugin must leave output untouched regardless.
     const longTopic = "a".repeat(120) // > 80 char limit
     const warnOnlyCheckpoint =
       `Topic: ${longTopic}\n` +
@@ -241,7 +241,7 @@ describe("CheckpointSplitoverPlugin", () => {
 
     expect(matchesActor(matcher, { mode: "subagent", agentType: "checkpoint-writer" })).toBe(true)
 
-    // Any agentType not in the include list is rejected â€” independent of BUILT_IN_AGENTS membership.
+    // Any agentType not in the include list is rejected â€?independent of BUILT_IN_AGENTS membership.
     expect(matchesActor(matcher, { mode: "subagent", agentType: "general" })).toBe(false)
     expect(matchesActor(matcher, { mode: "subagent", agentType: "build" })).toBe(false)
     expect(matchesActor(matcher, { mode: "subagent", agentType: "summary" })).toBe(false)
@@ -250,7 +250,7 @@ describe("CheckpointSplitoverPlugin", () => {
     expect(matchesActor(matcher, { mode: "subagent", agentType: "custom" })).toBe(false)
   })
 
-  test("CheckpointContext entry with priorTitles â†’ validateLearning catches duplicate-title", async () => {
+  test("CheckpointContext entry with priorTitles â†?validateLearning catches duplicate-title", async () => {
     const sessionID = tmpSessionID()
     const projectID = tmpProjectID()
     const actorID = "act_dup"
@@ -262,11 +262,11 @@ describe("CheckpointSplitoverPlugin", () => {
       expectedRevisions: [],
     })
     // Writer's new checkpoint duplicates the prior title in Discovered section.
-    // Fixture matches validator's `valid` shape (Topic â†’ Discovered â†’ Dead ends)
+    // Fixture matches validator's `valid` shape (Topic â†?Discovered â†?Dead ends)
     // because extractDiscoveredEntries' regex anchors at start-of-body and
     // doesn't accept intervening snapshot sections. Missing snapshot sections
     // will also emit subsection-missing errors that ride alongside the
-    // duplicate-title error into the same `<system-reminder>` envelope â€” fine
+    // duplicate-title error into the same `<system-reminder>` envelope â€?fine
     // for what this test exercises (the priorTitles wire-through).
     const dupCheckpoint = `Topic: writer-output
 
@@ -299,11 +299,11 @@ describe("CheckpointSplitoverPlugin", () => {
     expect(output.reason).toContain("Reuse Bun.file() not fs.readFile")
   })
 
-  test("no CheckpointContext entry: fallback to empty (Dâ‚ behaviour)", async () => {
+  test("no CheckpointContext entry: fallback to empty (Dâ‚?behaviour)", async () => {
     const sessionID = tmpSessionID()
     const projectID = tmpProjectID()
     await setupSession(sessionID, projectID)
-    // No CheckpointContext.set call â€” entry is missing.
+    // No CheckpointContext.set call â€?entry is missing.
     // Write a clean checkpoint so without priorTitles, no validateLearning
     // violation can fire. Plugin should fall back to EMPTY_CTX and produce
     // no reentry signal.
@@ -327,21 +327,21 @@ describe("CheckpointSplitoverPlugin", () => {
   // Post-Axis-A, the writer runs under a fresh child session: input.sessionID
   // is the child's id, but the writer composes checkpoint.md / memory.md at
   // paths derived from the PARENT's session id. Without a parentSessionID
-  // fallback, the splitover plugin reads checkpointPath(child) â†’ file missing
-  // â†’ false `topic-missing` error â†’ wrong-path retry loop. Ditto for
+  // fallback, the splitover plugin reads checkpointPath(child) â†?file missing
+  // â†?false `topic-missing` error â†?wrong-path retry loop. Ditto for
   // CheckpointContext lookup (set by parent, looked up by child = miss).
   //
   // Fix: the plugin reads `(parentSessionID ?? sessionID)` so:
-  //   â€¢ checkpoint-writer (parent â‰  child) reads from parent's path.
-  //   â€¢ dream/distill (parent === child === sessionID) keep working via the
+  //   â€?checkpoint-writer (parent â‰?child) reads from parent's path.
+  //   â€?dream/distill (parent === child === sessionID) keep working via the
   //     fallback.
   describe("parentSessionID fallback (child-session writer)", () => {
-    test("clean parent's checkpoint + child's input.sessionID â†’ no violation", async () => {
+    test("clean parent's checkpoint + child's input.sessionID â†?no violation", async () => {
       const parentID = tmpSessionID()
       const childID = tmpSessionID()
       const projectID = tmpProjectID()
       // Provision PARENT's metaDir + write a clean checkpoint there.
-      // CHILD's metaDir is intentionally NOT created â€” proves the plugin
+      // CHILD's metaDir is intentionally NOT created â€?proves the plugin
       // does not consult the child's path.
       await setupSession(parentID, projectID)
       await fs.writeFile(checkpointPath(parentID), CLEAN_CHECKPOINT)
@@ -356,8 +356,8 @@ describe("CheckpointSplitoverPlugin", () => {
       const output: ActorStopOutput = {}
       await reg.run(input, output)
 
-      // No violation â†’ output untouched. Without the fallback the plugin would
-      // read checkpointPath(child) â†’ missing â†’ set continue=true with a
+      // No violation â†?output untouched. Without the fallback the plugin would
+      // read checkpointPath(child) â†?missing â†?set continue=true with a
       // topic-missing error, failing this assertion.
       expect(output.continue).toBeUndefined()
       expect(output.reason).toBeUndefined()
@@ -370,7 +370,7 @@ describe("CheckpointSplitoverPlugin", () => {
       const actorID = "act_dup_child"
       await setupSession(parentID, projectID)
       // Producer (tryStartCheckpointWriter) seeds CheckpointContext keyed on
-      // the PARENT session. The plugin must look up by parent too â€” otherwise
+      // the PARENT session. The plugin must look up by parent too â€?otherwise
       // priorTitles is always empty and validateLearning never catches dupes.
       CheckpointContext.set(parentID, actorID, {
         priorTitles: new Set(["Reuse Bun.file() not fs.readFile"]),
@@ -402,7 +402,7 @@ describe("CheckpointSplitoverPlugin", () => {
       const output: ActorStopOutput = {}
       await reg.run(input, output)
 
-      // Duplicate-title violation must fire â€” proves both file path AND
+      // Duplicate-title violation must fire â€?proves both file path AND
       // CheckpointContext use the parent's session.
       expect(output.continue).toBe(true)
       expect(output.reason).toContain("duplicates a prior checkpoint")
@@ -423,7 +423,7 @@ describe("CheckpointSplitoverPlugin", () => {
       const reg = hooks["actor.preStop"]
       if (!reg || typeof reg === "function") throw new Error("expected registration object")
 
-      // No parentSessionID set â€” same shape as today's dream/distill.
+      // No parentSessionID set â€?same shape as today's dream/distill.
       const output: ActorStopOutput = {}
       await reg.run(fakeStopInput(sessionID), output)
 

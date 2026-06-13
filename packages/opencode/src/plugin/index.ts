@@ -8,21 +8,21 @@ import type {
   ActorPostStopInput,
   ActorStopOutput,
   ActorMatcher,
-} from "@mimo-ai/plugin"
+} from "@encode-ai/plugin"
 import { z } from "zod"
 import { matchesActor } from "./matcher"
 import { Config } from "../config"
 import { Bus } from "../bus"
 import { BusEvent } from "../bus/bus-event"
 import { Log } from "../util"
-import { createOpencodeClient } from "@mimo-ai/sdk"
+import { createOpencodeClient } from "@encode-ai/sdk"
 import { Flag } from "../flag/flag"
 import { CodexAuthPlugin } from "./codex"
-import { MimoAuthPlugin, AnthropicProxyPlugin } from "./mimo"
-import { MimoFreeAuthPlugin } from "./mimo-free"
+import { encodeAuthPlugin, AnthropicProxyPlugin } from "./Encode"
+import { EncodeFreeAuthPlugin } from "./Encode-free"
 import { Session } from "../session"
 import type { SessionID } from "../session/schema"
-import { NamedError } from "@mimo-ai/shared/util/error"
+import { NamedError } from "@encode-ai/shared/util/error"
 import { CopilotAuthPlugin } from "./github-copilot/copilot"
 import { gitlabAuthPlugin as GitlabAuthPlugin } from "opencode-gitlab-auth"
 import { PoeAuthPlugin } from "opencode-poe-auth"
@@ -122,8 +122,8 @@ export class Service extends Context.Service<Service, Interface>()("@opencode/Pl
 
 // Built-in plugins that are directly imported (not installed from npm)
 const INTERNAL_PLUGINS: PluginInstance[] = [
-  MimoFreeAuthPlugin,
-  MimoAuthPlugin,
+  EncodeFreeAuthPlugin,
+  encodeAuthPlugin,
   AnthropicProxyPlugin,
   CodexAuthPlugin,
   CopilotAuthPlugin,
@@ -220,9 +220,9 @@ export const layer = Layer.effect(
         const client = createOpencodeClient({
           baseUrl: "http://localhost:4096",
           directory: ctx.directory,
-          headers: Flag.MIMOCODE_SERVER_PASSWORD
+          headers: Flag.ENCODE_SERVER_PASSWORD
             ? {
-                Authorization: `Basic ${Buffer.from(`${Flag.MIMOCODE_SERVER_USERNAME ?? "mimocode"}:${Flag.MIMOCODE_SERVER_PASSWORD}`).toString("base64")}`,
+                Authorization: `Basic ${Buffer.from(`${Flag.ENCODE_SERVER_USERNAME ?? "ENCODE"}:${Flag.ENCODE_SERVER_PASSWORD}`).toString("base64")}`,
               }
             : undefined,
           fetch: async (...args) => (await Server.Default()).app.fetch(...args),
@@ -263,8 +263,8 @@ export const layer = Layer.effect(
           }
         }
 
-        const plugins = Flag.MIMOCODE_PURE ? [] : (cfg.plugin_origins ?? [])
-        if (Flag.MIMOCODE_PURE && cfg.plugin_origins?.length) {
+        const plugins = Flag.ENCODE_PURE ? [] : (cfg.plugin_origins ?? [])
+        if (Flag.ENCODE_PURE && cfg.plugin_origins?.length) {
           log.info("skipping external plugins in pure mode", { count: cfg.plugin_origins.length })
         }
         if (plugins.length) yield* config.waitForDependencies()
@@ -400,10 +400,10 @@ export const layer = Layer.effect(
           let hookOutcome: "success" | "error" = "success"
           // TODO: pass an AbortSignal to fn so plugin authors can wire cooperative
           // cancellation into their fetch / DB calls. Effect interrupt only stops
-          // the awaiting fiber — the underlying Promise keeps running and may
+          // the awaiting fiber �?the underlying Promise keeps running and may
           // bus.publish events after the actor has been cleaned up. See spec
           // Future work for full discussion. Strict in-process cancellation
-          // (子进程隔离) is out of scope; AbortSignal is the in-process ceiling.
+          // (子进程隔�? is out of scope; AbortSignal is the in-process ceiling.
           yield* Effect.tryPromise({
             try: () => fn(input as never, o),
             catch: (err) => err,

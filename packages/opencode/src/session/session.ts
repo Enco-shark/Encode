@@ -1,4 +1,4 @@
-import { Slug } from "@mimo-ai/shared/util/slug"
+import { Slug } from "@encode-ai/shared/util/slug"
 import path from "path"
 import { BusEvent } from "@/bus/bus-event"
 import { Bus } from "@/bus"
@@ -255,7 +255,7 @@ export const Event = {
     "session.error",
     z.object({
       sessionID: SessionID.zod.optional(),
-      // z.lazy defers access to break circular dep: session â†’ message-v2 â†’ provider â†’ plugin â†’ session
+      // z.lazy defers access to break circular dep: session â†?message-v2 â†?provider â†?plugin â†?session
       error: z.lazy(() => MessageV2.Assistant.shape.error),
     }),
   ),
@@ -274,7 +274,7 @@ export const Event = {
 
 export function plan(input: { slug: string; time: { created: number } }) {
   const base = Instance.project.vcs
-    ? path.join(Instance.worktree, ".mimocode", "plans")
+    ? path.join(Instance.worktree, ".ENCODE", "plans")
     : path.join(Global.Path.data, "plans")
   return path.join(base, [input.time.created, input.slug].join("-") + ".md")
 }
@@ -381,7 +381,7 @@ export interface Interface {
      * `undefined` (default) returns the main-agent slice only.
      * `"main"` is equivalent to `undefined`.
      * `"*"` returns every message in the session, regardless of slice
-     * (export / stats / share / cross-slice diagnostic paths only â€”
+     * (export / stats / share / cross-slice diagnostic paths only â€?
      * almost no production caller wants this).
      * Any other string returns the slice owned by that subagent actor
      * (`agent_id = <id>`).
@@ -478,7 +478,7 @@ export const layer: Layer.Layer<Service, never, Bus.Service | Storage.Service | 
         tools: "INHERIT",
       }).pipe(Effect.ignore)
 
-      if (!Flag.MIMOCODE_EXPERIMENTAL_WORKSPACES) {
+      if (!Flag.ENCODE_EXPERIMENTAL_WORKSPACES) {
         // This only exist for backwards compatibility. We should not be
         // manually publishing this event; it is a sync event now
         yield* bus.publish(Event.Updated, {
@@ -807,7 +807,7 @@ export function* list(input?: {
   if (input?.workspaceID) {
     conditions.push(eq(SessionTable.workspace_id, input.workspaceID))
   }
-  if (!Flag.MIMOCODE_EXPERIMENTAL_WORKSPACES) {
+  if (!Flag.ENCODE_EXPERIMENTAL_WORKSPACES) {
     if (input?.directory) {
       conditions.push(eq(SessionTable.directory, input.directory))
     }

@@ -28,7 +28,7 @@ export interface ActorPromptOps {
 const id = "actor"
 
 const MODEL_PARAM_DESCRIPTION =
-  "(optional) Model for this subagent: a model group name (e.g. ultra/standard/lite) or a literal provider/model (e.g. mimo-v2.5-pro). Overrides the agent's configured model; defaults to the agent's model, else the parent's. If no model_groups are configured, the tier names resolve to the default model."
+  "(optional) Model for this subagent: a model group name (e.g. ultra/standard/lite) or a literal provider/model (e.g. encode-v2.5-pro). Overrides the agent's configured model; defaults to the agent's model, else the parent's. If no model_groups are configured, the tier names resolve to the default model."
 
 const KNOWN_ACTOR_VERBS = ["run", "spawn", "status", "wait", "cancel", "send"]
 
@@ -54,7 +54,7 @@ function suggestActorVerb(input: string): string | undefined {
   return candidates[0].v
 }
 
-// Static args type for shell parsing â€” mirrors the discriminated union shape but
+// Static args type for shell parsing â€?mirrors the discriminated union shape but
 // uses z.string() for subagent_type since the dynamic enum is only needed at
 // Zod validation time (inside execute), not at parse time.
 type ActorShellArgs =
@@ -248,9 +248,9 @@ export function recoverActorArgs(rawArgs: unknown): ActorShellArgs | undefined {
     // Carry only the optional fields a confused model plausibly puts at top level
     // alongside the bare Task-prior triple. This is a deliberate subset of the
     // run/spawn schema's optionals (model, actor_id, timeout_ms, command, context,
-    // task_id, output_schema) â€” the others (timeout_ms/command/context/output_schema)
+    // task_id, output_schema) â€?the others (timeout_ms/command/context/output_schema)
     // are dropped here, falling back to their schema defaults. Low risk in practice:
-    // the bare shape mimo emits is the 3 required fields, rarely with extras. When
+    // the bare shape Encode emits is the 3 required fields, rarely with extras. When
     // adding an actor schema field, decide whether bare-shape recover should carry
     // it here, or this whitelist silently drifts from the schema.
     if (typeof obj.model === "string") op.model = obj.model
@@ -275,7 +275,7 @@ export const ActorTool = Tool.define(
 
     // Resolve the Actor service through the late-bound spawnRef rather than as
     // a Layer dependency: pulling Actor.Service in here would create a layer
-    // cycle (Actor â†’ SessionPrompt â†’ ToolRegistry â†’ tool/actor â†’ Actor) that
+    // cycle (Actor â†?SessionPrompt â†?ToolRegistry â†?tool/actor â†?Actor) that
     // Effect cannot satisfy. The ref is populated by Actor.layer's initialiser
     // (see actor/spawn-ref.ts).
     const requireActor = () => {
@@ -283,7 +283,7 @@ export const ActorTool = Tool.define(
       if (!a) {
         return Effect.fail(
           new Error(
-            "Actor service unavailable â€” Actor.defaultLayer must be running for the actor tool to spawn or cancel actors",
+            "Actor service unavailable â€?Actor.defaultLayer must be running for the actor tool to spawn or cancel actors",
           ),
         )
       }
@@ -292,7 +292,7 @@ export const ActorTool = Tool.define(
 
     // Tool def is built lazily (function form of Init) because the dynamic
     // `subagent_type` enum below calls agent.list(), which queries
-    // InstanceState â€” Instance is only available at tool-init time
+    // InstanceState â€?Instance is only available at tool-init time
     // (per-invocation), not at service-resolution time when ActorTool is
     // wired into ToolRegistry's layer.
     return Effect.fn("ActorTool.init")(function* () {
@@ -301,7 +301,7 @@ export const ActorTool = Tool.define(
       // hidden internals (title, summary, checkpoint-writer per F24) and
       // includes both native registry agents (general/explore) and
       // user-config-defined subagents. This gives the LLM a discoverable,
-      // validated list of agent types â€” replaces the prior bare z.string()
+      // validated list of agent types â€?replaces the prior bare z.string()
       // that the model couldn't introspect (root cause of three harness runs
       // with zero subagent spawns).
       const allAgents = yield* agent.list()
@@ -356,7 +356,7 @@ export const ActorTool = Tool.define(
           .min(1)
           .optional()
           .describe(
-            "(optional) If this subagent is doing work for a specific task in the `task` tool, pass that task's ID (e.g. T4, T2.1) here â€” only an ID the `task` tool returned this session. After completion, the actor.postStop hook validates that tasks/<task_id>/progress.md exists with the required sections. If the ID is malformed or names no existing task, the binding is silently dropped and the subagent's findings are NOT captured to that task. Leave omitted only for work that isn't tied to a task.",
+            "(optional) If this subagent is doing work for a specific task in the `task` tool, pass that task's ID (e.g. T4, T2.1) here â€?only an ID the `task` tool returned this session. After completion, the actor.postStop hook validates that tasks/<task_id>/progress.md exists with the required sections. If the ID is malformed or names no existing task, the binding is silently dropped and the subagent's findings are NOT captured to that task. Leave omitted only for work that isn't tied to a task.",
           ),
         output_schema: z
           .record(z.string(), z.any())
@@ -393,7 +393,7 @@ export const ActorTool = Tool.define(
           .min(1)
           .optional()
           .describe(
-            "(optional) If this subagent is doing work for a specific task in the `task` tool, pass that task's ID (e.g. T4, T2.1) here â€” only an ID the `task` tool returned this session. After completion, the actor.postStop hook validates that tasks/<task_id>/progress.md exists with the required sections. If the ID is malformed or names no existing task, the binding is silently dropped and the subagent's findings are NOT captured to that task. Leave omitted only for work that isn't tied to a task.",
+            "(optional) If this subagent is doing work for a specific task in the `task` tool, pass that task's ID (e.g. T4, T2.1) here â€?only an ID the `task` tool returned this session. After completion, the actor.postStop hook validates that tasks/<task_id>/progress.md exists with the required sections. If the ID is malformed or names no existing task, the binding is silently dropped and the subagent's findings are NOT captured to that task. Leave omitted only for work that isn't tied to a task.",
           ),
         output_schema: z
           .record(z.string(), z.any())
@@ -426,7 +426,7 @@ export const ActorTool = Tool.define(
           .min(1)
           .optional()
           .describe(
-            "(optional) Target session ID. Defaults to the current session â€” useful for sending to subagents in this session.",
+            "(optional) Target session ID. Defaults to the current session â€?useful for sending to subagents in this session.",
           ),
         to_actor_id: z
           .string()
@@ -444,12 +444,12 @@ export const ActorTool = Tool.define(
       })
 
       const parameters = z.strictObject({
-        // .meta({ type: "object" }) is REQUIRED â€” without it the emitted JSON
+        // .meta({ type: "object" }) is REQUIRED â€?without it the emitted JSON
         // schema's `operation` node has only `anyOf`, no `type`, and some models
-        // (notably mimo-v2.5-pro) stringify the whole envelope
+        // (notably encode-v2.5-pro) stringify the whole envelope
         // ({"operation":"{\"action\":\"run\",...}"}) which fails zod validation.
         // The root strictObject also means flattenDiscriminatedUnion finds no
-        // root-level union and passes through unchanged â€” root keeps exactly one
+        // root-level union and passes through unchanged â€?root keeps exactly one
         // key (`operation`), so models can't drop the discriminator.
         operation: z
           .discriminatedUnion("action", [
@@ -468,7 +468,7 @@ export const ActorTool = Tool.define(
         const cfg = yield* config.get()
 
         // Helper: "actor belongs to another session OR doesn't exist" response.
-        // Same response for both cases â€” don't leak the difference (POSIX: you can
+        // Same response for both cases â€?don't leak the difference (POSIX: you can
         // only reap your own children).
         const unknownResponse = (label: string, actorID: string) => {
           const snapshot = { status: "unknown" as const, actor_id: actorID }
@@ -495,7 +495,7 @@ export const ActorTool = Tool.define(
           const inboxSvc = inboxServiceRef.current
           if (!inboxSvc) {
             return yield* Effect.fail(
-              new Error("Inbox service unavailable â€” Inbox.layer must be running for the actor tool to send messages"),
+              new Error("Inbox service unavailable â€?Inbox.layer must be running for the actor tool to send messages"),
             )
           }
           const targetSid = op.to_session_id !== undefined ? SessionID.make(op.to_session_id) : ctx.sessionID
@@ -581,7 +581,7 @@ export const ActorTool = Tool.define(
           if (!found) return unknownResponse("cancel", op.actor_id)
           const entry = found.entry
 
-          // Already terminal? No-op â€” return current status. Idempotent.
+          // Already terminal? No-op â€?return current status. Idempotent.
           if (entry.status === "idle") {
             const snapshot = {
               status: entry.status,
@@ -597,7 +597,7 @@ export const ActorTool = Tool.define(
             }
           }
 
-          // Signal the actor through Actor.cancel â€” marks status "cancelled" in the registry.
+          // Signal the actor through Actor.cancel â€?marks status "cancelled" in the registry.
           const actorForCancel = yield* requireActor()
           yield* actorForCancel.cancel(found.sessionID, entry.actorID, "graceful")
 
@@ -615,7 +615,7 @@ export const ActorTool = Tool.define(
           }
         }
 
-        // op.action ==="run" or "spawn" â€” schema guarantees
+        // op.action ==="run" or "spawn" â€?schema guarantees
         // description / prompt / subagent_type are present and non-empty.
         if (!ctx.extra?.bypassAgentCheck) {
           yield* ctx.ask({
@@ -653,7 +653,7 @@ export const ActorTool = Tool.define(
                 "",
               ].join("\n") + prompt
           }
-          // If no checkpoint, fall through â€” child gets just the prompt (same as "none")
+          // If no checkpoint, fall through â€?child gets just the prompt (same as "none")
         }
 
         const msg = yield* Effect.sync(() => MessageV2.get({ sessionID: ctx.sessionID, messageID: ctx.messageID }))
@@ -671,7 +671,7 @@ export const ActorTool = Tool.define(
 
         // Validate task_id by reference at execute time (NOT in the schema, so a
         // bad value degrades instead of hard-failing the call). A malformed shape
-        // or an ID that names no task in this session â‡’ run ad-hoc (task_id
+        // or an ID that names no task in this session â‡?run ad-hoc (task_id
         // dropped) and tell the model why, so a fabricated ID becomes harmless
         // instead of triggering phantom postStop progress nagging.
         let effectiveTaskId = op.task_id
@@ -691,7 +691,7 @@ export const ActorTool = Tool.define(
 
         // v6: subagents share the parent's sessionID and run as registered actors
         // under the parent. Actor.spawn handles registry registration, forking
-        // the agent loop, and sending inbox notifications on terminal â€” replacing
+        // the agent loop, and sending inbox notifications on terminal â€?replacing
         // the legacy session.create + manual fork path that lived here pre-Task-29.
         const actor = yield* requireActor()
         const spawnResult = yield* actor.spawn({
@@ -729,10 +729,10 @@ export const ActorTool = Tool.define(
           }
         }
 
-        // op.action ==="run": blocking path â€” await the authoritative
+        // op.action ==="run": blocking path â€?await the authoritative
         // `outcome` Deferred. It is resolved in spawn's onSuccess AFTER the
         // preStop loop AND the completion gate (but before the fire-and-forget
-        // postStop loop), so the parent sees the reconciled status/summary â€”
+        // postStop loop), so the parent sees the reconciled status/summary â€?
         // unlike ActorWaiter, which resolves on the row's first `idle` and would
         // miss the gate's downgrade.
         function cancelHandler() {
@@ -756,7 +756,7 @@ export const ActorTool = Tool.define(
         // Blocking run preserves the pre-unification contract: tool call fails
         // when the child fails. The LLM sees a tool error, not a "success with
         // error in output." (The explicit action="wait" returns the structured
-        // snapshot as a regular tool result â€” that's a different contract.)
+        // snapshot as a regular tool result â€?that's a different contract.)
         if (outcome.status === "failure") {
           return yield* Effect.fail(new Error(`Tool execution failed: ${outcome.error ?? "unknown"}`))
         }

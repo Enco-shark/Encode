@@ -7,7 +7,7 @@ import { Flag } from "../../flag/flag"
 import { bootstrap } from "../bootstrap"
 import { EOL } from "os"
 import { Filesystem, Log } from "../../util"
-import { createOpencodeClient, type OpencodeClient, type ToolPart } from "@mimo-ai/sdk/v2"
+import { createOpencodeClient, type OpencodeClient, type ToolPart } from "@encode-ai/sdk/v2"
 import { Server } from "../../server/server"
 import { Provider } from "../../provider"
 import { Agent } from "../../agent/agent"
@@ -69,7 +69,7 @@ function fallback(part: ToolPart) {
     ("title" in state && state.title ? state.title : undefined) ||
     (input && typeof input === "object" && Object.keys(input).length > 0 ? JSON.stringify(input) : "Unknown")
   inline({
-    icon: "‚öô",
+    icon: "‚ö?,
     title: `${part.tool} ${title}`,
   })
 }
@@ -82,7 +82,7 @@ function glob(info: ToolProps<typeof GlobTool>) {
   const description =
     num === undefined ? suffix : `${suffix}${suffix ? " ¬∑ " : ""}${num} ${num === 1 ? "match" : "matches"}`
   inline({
-    icon: "‚ú±",
+    icon: "‚ú?,
     title,
     ...(description && { description }),
   })
@@ -96,7 +96,7 @@ function grep(info: ToolProps<typeof GrepTool>) {
   const description =
     num === undefined ? suffix : `${suffix}${suffix ? " ¬∑ " : ""}${num} ${num === 1 ? "match" : "matches"}`
   inline({
-    icon: "‚ú±",
+    icon: "‚ú?,
     title,
     ...(description && { description }),
   })
@@ -110,7 +110,7 @@ function read(info: ToolProps<typeof ReadTool>) {
   })
   const description = pairs.length ? `[${pairs.map(([key, value]) => `${key}=${value}`).join(", ")}]` : undefined
   inline({
-    icon: "‚Üí",
+    icon: "‚Ü?,
     title: `Read ${file}`,
     ...(description && { description }),
   })
@@ -119,7 +119,7 @@ function read(info: ToolProps<typeof ReadTool>) {
 function write(info: ToolProps<typeof WriteTool>) {
   block(
     {
-      icon: "‚Üê",
+      icon: "‚Ü?,
       title: `Write ${normalizePath(info.input.filePath)}`,
     },
     info.part.state.status === "completed" ? info.part.state.output : undefined,
@@ -138,7 +138,7 @@ function edit(info: ToolProps<typeof EditTool>) {
   const diff = info.metadata.diff
   block(
     {
-      icon: "‚Üê",
+      icon: "‚Ü?,
       title: `Edit ${title}`,
     },
     diff,
@@ -147,14 +147,14 @@ function edit(info: ToolProps<typeof EditTool>) {
 
 function codesearch(info: ToolProps<typeof CodeSearchTool>) {
   inline({
-    icon: "‚óá",
+    icon: "‚ó?,
     title: `Exa Code Search "${info.input.query}"`,
   })
 }
 
 function websearch(info: ToolProps<typeof WebSearchTool>) {
   inline({
-    icon: "‚óà",
+    icon: "‚ó?,
     title: `Web Search "${info.input.query}"`,
   })
 }
@@ -166,7 +166,7 @@ function task(info: ToolProps<typeof ActorTool>) {
     typeof op?.subagent_type === "string" && op.subagent_type.trim().length > 0 ? op.subagent_type : "unknown"
   const agent = Locale.titlecase(subagent)
   const desc = typeof op?.description === "string" && op.description.trim().length > 0 ? op.description : undefined
-  const icon = status === "error" ? "‚úó" : status === "running" ? "‚Ä¢" : "‚úì"
+  const icon = status === "error" ? "‚ú? : status === "running" ? "‚Ä? : "‚ú?
   const name = desc ?? `${agent} Task`
   inline({
     icon,
@@ -177,7 +177,7 @@ function task(info: ToolProps<typeof ActorTool>) {
 
 function skill(info: ToolProps<typeof SkillTool>) {
   inline({
-    icon: "‚Üí",
+    icon: "‚Ü?,
     title: `Skill "${info.input.name}"`,
   })
 }
@@ -201,7 +201,7 @@ function normalizePath(input?: string) {
 
 export const RunCommand = cmd({
   command: "run [message..]",
-  describe: "run mimocode with a message",
+  describe: "run ENCODE with a message",
   builder: (yargs: Argv) => {
     return yargs
       .positional("message", {
@@ -259,12 +259,12 @@ export const RunCommand = cmd({
       })
       .option("attach", {
         type: "string",
-        describe: "attach to a running mimocode server (e.g., http://localhost:4096)",
+        describe: "attach to a running ENCODE server (e.g., http://localhost:4096)",
       })
       .option("password", {
         alias: ["p"],
         type: "string",
-        describe: "basic auth password (defaults to MIMOCODE_SERVER_PASSWORD)",
+        describe: "basic auth password (defaults to ENCODE_SERVER_PASSWORD)",
       })
       .option("dir", {
         type: "string",
@@ -382,7 +382,7 @@ export const RunCommand = cmd({
     async function share(sdk: OpencodeClient, sessionID: string) {
       const cfg = await sdk.config.get()
       if (!cfg.data) return
-      if (cfg.data.share !== "auto" && !Flag.MIMOCODE_AUTO_SHARE && !args.share) return
+      if (cfg.data.share !== "auto" && !Flag.ENCODE_AUTO_SHARE && !args.share) return
       const res = await sdk.session.share({ sessionID }).catch((error) => {
         if (error instanceof Error && error.message.includes("disabled")) {
           UI.println(UI.Style.TEXT_DANGER_BOLD + "!  " + error.message)
@@ -466,7 +466,7 @@ export const RunCommand = cmd({
                   continue
                 }
                 inline({
-                  icon: "‚úó",
+                  icon: "‚ú?,
                   title: `${part.tool} failed`,
                 })
                 UI.error(part.state.error)
@@ -672,9 +672,9 @@ export const RunCommand = cmd({
 
     if (args.attach) {
       const headers = (() => {
-        const password = args.password ?? process.env.MIMOCODE_SERVER_PASSWORD
+        const password = args.password ?? process.env.ENCODE_SERVER_PASSWORD
         if (!password) return undefined
-        const username = process.env.MIMOCODE_SERVER_USERNAME ?? "mimocode"
+        const username = process.env.ENCODE_SERVER_USERNAME ?? "ENCODE"
         const auth = `Basic ${Buffer.from(`${username}:${password}`).toString("base64")}`
         return { Authorization: auth }
       })()

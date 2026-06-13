@@ -5,7 +5,7 @@ import { Effect, ManagedRuntime, Layer } from "effect"
 import { ApplyPatchTool } from "../../src/tool/apply_patch"
 import { Instance } from "../../src/project/instance"
 import { LSP } from "../../src/lsp"
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import { Format } from "../../src/format"
 import { Agent } from "../../src/agent/agent"
 import { Bus } from "../../src/bus"
@@ -586,7 +586,7 @@ EOF`
 })
 
 describe("tool.apply_patch memory-path-guard", () => {
-  test("rejects writing another task's memory (taskId=T3 â†’ tasks/T5)", async () => {
+  test("rejects writing another task's memory (taskId=T3 â†?tasks/T5)", async () => {
     await using fixture = await tmpdir({ git: true })
     const { ctx: base } = makeCtx()
     const ctx = { ...base, taskId: "T3" }
@@ -604,7 +604,7 @@ describe("tool.apply_patch memory-path-guard", () => {
     })
   })
 
-  test("allows writing its OWN task's memory (taskId=T3 â†’ tasks/T3)", async () => {
+  test("allows writing its OWN task's memory (taskId=T3 â†?tasks/T3)", async () => {
     await using fixture = await tmpdir({ git: true })
     const { ctx: base, calls } = makeCtx()
     const ctx = { ...base, taskId: "T3" }

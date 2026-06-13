@@ -23,7 +23,7 @@ afterEach(async () => {
 })
 
 describe("CheckpointSplitoverPlugin (integration)", () => {
-  test("triggerActorPreStop(checkpoint-writer) on over-budget file â†’ continue=true with EXTRACTION reason", async () => {
+  test("triggerActorPreStop(checkpoint-writer) on over-budget file â†?continue=true with EXTRACTION reason", async () => {
     await using tmp = await tmpdir({})
 
     const sessionID = ("s_" + Math.random().toString(36).slice(2, 10)) as SessionID
@@ -58,7 +58,7 @@ describe("CheckpointSplitoverPlugin (integration)", () => {
     expect(result.continue).toBe(true)
     expect(result.reason).toBeDefined()
     expect(result.reason!).toContain("EXTRACTION REQUIRED")
-    // "CheckpointSplitoverPlugin" tracks the function's .name â€” applyPlugin
+    // "CheckpointSplitoverPlugin" tracks the function's .name â€?applyPlugin
     // records pluginName via plugin.name (src/plugin/index.ts). Rewriting the
     // export as a const arrow would change .name and break this assertion.
     expect(result.contributingPluginNames).toContain("CheckpointSplitoverPlugin")
@@ -67,24 +67,24 @@ describe("CheckpointSplitoverPlugin (integration)", () => {
 })
 
 describe("CheckpointSplitoverPlugin spawn-loop integration", () => {
-  test("over-budget file â†’ splitover hook drives writer through one ReAct repair turn â†’ success", async () => {
+  test("over-budget file â†?splitover hook drives writer through one ReAct repair turn â†?success", async () => {
     // End-to-end test of the spawn.ts ReAct loop wiring for the splitover
     // plugin. Asserts that the hook's {continue: true, reason} actually drives
-    // the checkpoint-writer through iteration 0 â†’ iteration 1 via MAX_PRE_REACT,
+    // the checkpoint-writer through iteration 0 â†?iteration 1 via MAX_PRE_REACT,
     // not just that triggerActorPreStop returns the right shape (covered above).
     //
     // Flow:
     //   1. Create session inside Instance.provide, pre-write over-budget
     //      checkpoint.md at the session's path (extract-required violation).
     //   2. Spawn checkpoint-writer actor with scripted LLM (two text turns).
-    //   3. Turn 0 runs; preStop hook reads over-budget file â†’ continue=true.
-    //   4. Bus subscriber catches ReActReentered â†’ overwrites file with clean
+    //   3. Turn 0 runs; preStop hook reads over-budget file â†?continue=true.
+    //   4. Bus subscriber catches ReActReentered â†?overwrites file with clean
     //      v5 skeleton. (This stands in for what a real writer turn would do
-    //      via tool calls â€” the scripted LLM can't drive write tool calls
+    //      via tool calls â€?the scripted LLM can't drive write tool calls
     //      without far more complexity, and this design still proves the
-    //      contract: hook fires â†’ reentry happens â†’ next iteration sees
-    //      corrected state â†’ hook returns continue=false â†’ delivery.)
-    //   5. Turn 1 runs; preStop hook reads clean file â†’ continue=false.
+    //      contract: hook fires â†?reentry happens â†?next iteration sees
+    //      corrected state â†?hook returns continue=false â†?delivery.)
+    //   5. Turn 1 runs; preStop hook reads clean file â†?continue=false.
     //   6. Outcome: success, two captures, exactly one ReActReentered.
     const server = startScriptedLLMServer([
       { lines: textStopResponse("first writer turn (over-budget)") },
@@ -115,7 +115,7 @@ describe("CheckpointSplitoverPlugin spawn-loop integration", () => {
       await using tmp = await tmpdir({
         init: async (dir) => {
           await Bun.write(
-            `${dir}/mimocode.json`,
+            `${dir}/encode.json`,
             JSON.stringify({
               $schema: "https://opencode.ai/config.json",
               enabled_providers: ["alibaba"],
@@ -154,7 +154,7 @@ describe("CheckpointSplitoverPlugin spawn-loop integration", () => {
               sessionIDForCleanup = sess.id
 
               // Pre-write the over-budget checkpoint at this session's path.
-              // The hook reads from metaDir(sessionID)/checkpoint.md â€” the
+              // The hook reads from metaDir(sessionID)/checkpoint.md â€?the
               // same path that runValidatorsForCkpt resolves inside the
               // splitover plugin.
               yield* Effect.promise(async () => {
@@ -175,7 +175,7 @@ describe("CheckpointSplitoverPlugin spawn-loop integration", () => {
                     })
                     // Overwrite with clean content. The next preStop tick
                     // reads from disk, finds no violations, returns
-                    // continue=false â†’ break out of the loop.
+                    // continue=false â†?break out of the loop.
                     yield* Effect.promise(() => fs.writeFile(checkpointPath(sess.id), CLEAN))
                   }),
                 ),
@@ -203,13 +203,13 @@ describe("CheckpointSplitoverPlugin spawn-loop integration", () => {
       if (outcome.status === "failure") throw new Error(`Actor failed: ${outcome.error}`)
       if (outcome.status === "cancelled") throw new Error("Actor was cancelled")
 
-      // Exactly two LLM calls â€” proves the ReAct loop ran one repair turn,
+      // Exactly two LLM calls â€?proves the ReAct loop ran one repair turn,
       // not zero (no reentry) and not three (cap).
       expect(server.captures.length).toBe(2)
 
       // At least one ReActReentered fired in the pre phase, attributed to
       // CheckpointSplitoverPlugin. The subscriber's callback overwrote the
-      // file â†’ second preStop saw clean content â†’ no further re-entries.
+      // file â†?second preStop saw clean content â†?no further re-entries.
       const preEvents = reenteredEvents.filter((e) => e.phase === "pre")
       expect(preEvents.length).toBe(1)
       expect(preEvents[0].triggeredByPlugins).toContain("CheckpointSplitoverPlugin")
@@ -236,7 +236,7 @@ describe("CheckpointContext producer (tryStartCheckpointWriter)", () => {
       await using tmp = await tmpdir({
         init: async (dir) => {
           await Bun.write(
-            `${dir}/mimocode.json`,
+            `${dir}/encode.json`,
             JSON.stringify({
               $schema: "https://opencode.ai/config.json",
               enabled_providers: ["alibaba"],
@@ -330,7 +330,7 @@ describe("CheckpointContext producer (tryStartCheckpointWriter)", () => {
               // waitForWriter and the forked settle watcher (which owns the
               // Effect.ensuring cleanup) both race on the same outcome
               // Deferred. The watcher's `ensuring` may not have fired by the
-              // time waitForWriter returns â€” poll briefly until _size drops
+              // time waitForWriter returns â€?poll briefly until _size drops
               // to 0, capped so a real leak still fails the test.
               const afterSize = yield* Effect.gen(function* () {
                 for (let i = 0; i < 50; i++) {
@@ -348,7 +348,7 @@ describe("CheckpointContext producer (tryStartCheckpointWriter)", () => {
       expect(result.status).toBe("started")
       // During the writer's lifetime, the context entry exists.
       expect(result.midSize).toBeGreaterThanOrEqual(1)
-      // After settle, ensuring ran â†’ no leak.
+      // After settle, ensuring ran â†?no leak.
       expect(result.afterSize).toBe(0)
     } finally {
       await server.stop()
@@ -360,20 +360,20 @@ describe("CheckpointContext producer (tryStartCheckpointWriter)", () => {
 })
 
 describe("parentSessionID end-to-end (Axis A wiring)", () => {
-  test("clean parent checkpoint â†’ splitover plugin reads parent's path â†’ no ReAct reentry fired", async () => {
+  test("clean parent checkpoint â†?splitover plugin reads parent's path â†?no ReAct reentry fired", async () => {
     // Regression for MR !162 review M1: when tryStartCheckpointWriter spawns
     // a child session, the splitover plugin's actor.preStop hook needs to
     // re-derive paths against the PARENT's sessionID (where the writer wrote
     // its checkpoint.md), not the child's. Without parentSessionID plumbed
-    // through SpawnInput â†’ forkWork â†’ triggerActorPreStop, the plugin sees
-    // checkpointPath(child) â†’ empty file â†’ false topic-missing â†’ forces a
+    // through SpawnInput â†?forkWork â†?triggerActorPreStop, the plugin sees
+    // checkpointPath(child) â†?empty file â†?false topic-missing â†?forces a
     // ReActReentered loop up to MAX_PRE_REACT, costing 2-3Ã— LLM calls per
     // checkpoint.
     //
     // This test drives the real Actor.spawn path with a scripted LLM,
     // pre-writes a CLEAN checkpoint at the PARENT's path, and asserts that
     // the writer settles cleanly with ZERO ReActReentered events. Pre-fix
-    // (before MR review M1) would surface â‰¥1 reentry event with a
+    // (before MR review M1) would surface â‰? reentry event with a
     // "checkpoint file did not exist" reason because the plugin read from
     // the child's path.
     const server = startScriptedLLMServer([
@@ -405,7 +405,7 @@ describe("parentSessionID end-to-end (Axis A wiring)", () => {
       await using tmp = await tmpdir({
         init: async (dir) => {
           await Bun.write(
-            `${dir}/mimocode.json`,
+            `${dir}/encode.json`,
             JSON.stringify({
               $schema: "https://opencode.ai/config.json",
               enabled_providers: ["alibaba"],
@@ -482,7 +482,7 @@ describe("parentSessionID end-to-end (Axis A wiring)", () => {
                 Effect.forkScoped,
               )
 
-              // Trigger checkpoint writer the production way â€” this creates
+              // Trigger checkpoint writer the production way â€?this creates
               // a child session and spawns the writer in it. The wiring under
               // test: actor.spawn must receive parentSessionID = parent.id,
               // forkWork must propagate it, plugin must see it.
@@ -514,7 +514,7 @@ describe("parentSessionID end-to-end (Axis A wiring)", () => {
       // Sanity: parent and child differ (proves Axis A active).
       expect(childID).not.toBe(parentID)
 
-      // The contract under test: clean parent file â†’ no preStop reentry.
+      // The contract under test: clean parent file â†?no preStop reentry.
       // Pre-fix: at least one reentry event from CheckpointSplitoverPlugin
       // with reason mentioning "checkpoint file did not exist".
       const splitoverReentries = reenteredEvents.filter((e) =>

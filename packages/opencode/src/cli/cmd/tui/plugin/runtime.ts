@@ -9,7 +9,7 @@ import {
   type TuiPluginStatus,
   type TuiSlotPlugin,
   type TuiTheme,
-} from "@mimo-ai/plugin/tui"
+} from "@encode-ai/plugin/tui"
 import path from "path"
 import { fileURLToPath } from "url"
 import { TuiConfig } from "@/cli/cmd/tui/config/tui"
@@ -32,7 +32,7 @@ import { hasTheme, upsertTheme } from "../context/theme"
 import { Global } from "@/global"
 import { Filesystem } from "@/util"
 import { Process } from "@/util"
-import { Flock } from "@mimo-ai/shared/util/flock"
+import { Flock } from "@encode-ai/shared/util/flock"
 import { Flag } from "@/flag/flag"
 import { INTERNAL_TUI_PLUGINS, type InternalTuiPlugin } from "./internal"
 import { setupSlots, Slot as View } from "./slots"
@@ -157,9 +157,9 @@ function createThemeInstaller(
     const name = path.basename(src, path.extname(src))
     const source_dir = path.dirname(meta.source)
     const local_dir =
-      path.basename(source_dir) === ".mimocode"
+      path.basename(source_dir) === ".ENCODE"
         ? path.join(source_dir, "themes")
-        : path.join(source_dir, ".mimocode", "themes")
+        : path.join(source_dir, ".ENCODE", "themes")
     const dest_dir = meta.scope === "local" ? local_dir : path.join(Global.Path.config, "themes")
     const dest = path.join(dest_dir, `${name}.json`)
     const stat = await Filesystem.statAsync(src)
@@ -748,7 +748,7 @@ function defaultPluginOrigin(state: RuntimeState, spec: string): ConfigPlugin.Or
   return {
     spec,
     scope: "local",
-    source: state.api.state.path.config || path.join(state.directory, ".mimocode", "tui.json"),
+    source: state.api.state.path.config || path.join(state.directory, ".ENCODE", "tui.json"),
   }
 }
 
@@ -989,8 +989,8 @@ async function load(input: { api: Api; config: TuiConfig.Info }) {
     await Instance.provide({
       directory: cwd,
       fn: async () => {
-        const records = Flag.MIMOCODE_PURE ? [] : (config.plugin_origins ?? [])
-        if (Flag.MIMOCODE_PURE && config.plugin_origins?.length) {
+        const records = Flag.ENCODE_PURE ? [] : (config.plugin_origins ?? [])
+        if (Flag.ENCODE_PURE && config.plugin_origins?.length) {
           log.info("skipping external tui plugins in pure mode", { count: config.plugin_origins.length })
         }
 

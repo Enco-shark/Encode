@@ -572,7 +572,7 @@ export const GithubRunCommand = cmd({
           await AppRuntime.runPromise(SessionShare.Service.use((svc) => svc.share(session.id)))
           return session.id.slice(-8)
         })()
-        console.log("mimocode session", session.id)
+        console.log("encode session", session.id)
 
         // Handle event types:
         // REPO_EVENTS (schedule, workflow_dispatch): no issue/PR context, output to logs/PR only
@@ -663,7 +663,7 @@ export const GithubRunCommand = cmd({
           const { dirty, uncommittedChanges, switched } = await branchIsDirty(head, branch)
           if (switched) {
             // Agent switched branches (likely created its own branch/PR).
-            // Don't push the stale infrastructure branch â€” just comment.
+            // Don't push the stale infrastructure branch â€?just comment.
             await createComment(`${response}${footer({ image: true })}`)
             await removeReaction(commentType)
           } else if (dirty) {
@@ -940,7 +940,7 @@ export const GithubRunCommand = cmd({
       }
 
       async function chat(message: string, files: PromptFiles = []) {
-        console.log("Sending message to mimocode...")
+        console.log("Sending message to encode...")
 
         return AppRuntime.runPromise(
           Effect.gen(function* () {

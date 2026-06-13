@@ -2,7 +2,7 @@ import { NodePath } from "@effect/platform-node"
 import { Cause, Duration, Effect, Layer, Schedule, Context } from "effect"
 import path from "path"
 import type { Agent } from "../agent/agent"
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import { evaluate } from "@/permission/evaluate"
 import { Identifier } from "../id/id"
 import { Log } from "../util"
@@ -130,7 +130,7 @@ export const layer = Layer.effect(
             : `The tool call succeeded but the output was truncated. Full output saved to: ${file}\nUse Grep to search the full content or Read with offset/limit to view specific sections.`
 
           return {
-            content: `${headOut.join("\n")}\n\n... ${omitted} lines omitted â€” showing head and tail ...\n\n${tailOut.join("\n")}\n\n${hintText}`,
+            content: `${headOut.join("\n")}\n\n... ${omitted} lines omitted â€?showing head and tail ...\n\n${tailOut.join("\n")}\n\n${hintText}`,
             truncated: true,
             outputPath: file,
           } as const

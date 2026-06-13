@@ -4,7 +4,7 @@ import { OtlpLogger, OtlpSerialization } from "effect/unstable/observability"
 import * as EffectLogger from "./logger"
 import { Flag } from "@/flag/flag"
 import { InstallationChannel, InstallationVersion } from "@/installation/version"
-import { ensureProcessMetadata } from "@/util/mimo-process"
+import { ensureProcessMetadata } from "@/util/Encode-process"
 
 const base = Flag.OTEL_EXPORTER_OTLP_ENDPOINT
 export const enabled = !!base
@@ -45,7 +45,7 @@ export function resource(): { serviceName: string; serviceVersion: string; attri
     attributes: {
       ...attributes,
       "deployment.environment.name": InstallationChannel,
-      "opencode.client": Flag.MIMOCODE_CLIENT,
+      "opencode.client": Flag.ENCODE_CLIENT,
       "opencode.process_role": processMetadata.processRole,
       "opencode.run_id": processMetadata.runID,
       "service.instance.id": processID,
@@ -76,7 +76,7 @@ const traces = async () => {
   // register(), so the global @opentelemetry/api context manager stays
   // as the no-op default. Non-Effect code (like the AI SDK) that calls
   // tracer.startActiveSpan() relies on context.active() to find the
-  // parent span â€” without a real context manager every span starts a
+  // parent span â€?without a real context manager every span starts a
   // new trace. Registering AsyncLocalStorageContextManager fixes this.
   const { AsyncLocalStorageContextManager } = await import("@opentelemetry/context-async-hooks")
   const { context } = await import("@opentelemetry/api")

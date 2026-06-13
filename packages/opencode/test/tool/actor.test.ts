@@ -259,7 +259,7 @@ describe("tool.actor", () => {
               description: "inspect bug",
               prompt: "look into the cache key path",
               subagent_type: "general",
-              actor_id: "ses_missing", // v9: actor_id in run action is ignored â€” always creates new
+              actor_id: "ses_missing", // v9: actor_id in run action is ignored â€?always creates new
             },
           },
           {
@@ -432,7 +432,7 @@ describe("Actor tool subagent_type enum (F36)", () => {
   // agents (general, explore, user-config-defined) appear in the enum;
   // hidden internals (title, summary, checkpoint-writer per F24) do not.
   // We probe via the resolved tool's parameters schema since that's the
-  // contract surface the LLM hits â€” Actor.Service.spawn bypasses zod.
+  // contract surface the LLM hits â€?Actor.Service.spawn bypasses zod.
   it.live("subagent_type enum includes spawnable agents and rejects hidden ones", () =>
     provideTmpdirInstance(() =>
       Effect.gen(function* () {
@@ -451,16 +451,16 @@ describe("Actor tool subagent_type enum (F36)", () => {
             },
           })
 
-        // general and explore are mode="subagent" + !hidden â†’ in the enum.
+        // general and explore are mode="subagent" + !hidden â†?in the enum.
         expect(accept("general").success).toBe(true)
         expect(accept("explore").success).toBe(true)
 
-        // title, summary, checkpoint-writer are hidden=true â†’ not in the enum.
+        // title, summary, checkpoint-writer are hidden=true â†?not in the enum.
         expect(accept("title").success).toBe(false)
         expect(accept("summary").success).toBe(false)
         expect(accept("checkpoint-writer").success).toBe(false)
 
-        // Made-up name â†’ not in the enum.
+        // Made-up name â†?not in the enum.
         expect(accept("does-not-exist").success).toBe(false)
       }),
     ),
@@ -483,7 +483,7 @@ describe("Actor tool subagent_type enum (F36)", () => {
               },
             })
 
-          // User-config-defined "alpha" is mode="subagent" â†’ in the enum.
+          // User-config-defined "alpha" is mode="subagent" â†?in the enum.
           expect(accept("alpha").success).toBe(true)
         }),
       {
@@ -501,7 +501,7 @@ describe("Actor tool subagent_type enum (F36)", () => {
 
   // Mirror of the task tool's schema regression test (commit 334cf6708).
   // The pre-discriminated-union schema let the model fill every "optional" string
-  // with "" â€” including actor_id â€” which slipped past the runtime guards in some
+  // with "" â€?including actor_id â€?which slipped past the runtime guards in some
   // paths and produced confusing tool errors elsewhere.
   it.live("schema rejects empty strings, unknown fields, and per-action missing required fields", () =>
     provideTmpdirInstance(() =>
@@ -532,7 +532,7 @@ describe("Actor tool subagent_type enum (F36)", () => {
         // kill is no longer a valid action
         expect(wrap({ operation: { action: "kill", actor_id: "abc" } }).success).toBe(false)
 
-        // Flat shape (old format) is rejected â€” the discriminator must live inside the envelope.
+        // Flat shape (old format) is rejected â€?the discriminator must live inside the envelope.
         expect(
           params.safeParse({ operation: "run", description: "x", prompt: "y", subagent_type: "general" }).success,
         ).toBe(false)
@@ -540,19 +540,19 @@ describe("Actor tool subagent_type enum (F36)", () => {
     ),
   )
 
-  it.live("flattened schema keeps operation as the sole root key (mimo can't drop the discriminator)", () =>
+  it.live("flattened schema keeps operation as the sole root key (Encode can't drop the discriminator)", () =>
     provideTmpdirInstance(() =>
       Effect.gen(function* () {
         const tool = yield* ActorTool
         const def = yield* tool.init()
         const fakeModel = {
-          providerID: "mimo",
-          api: { id: "mimo-v2.5-pro", npm: "@ai-sdk/openai-compatible" },
-          id: "mimo-v2.5-pro",
+          providerID: "Encode",
+          api: { id: "encode-v2.5-pro", npm: "@ai-sdk/openai-compatible" },
+          id: "encode-v2.5-pro",
           capabilities: { input: {} },
         } as any
         const flat = transformSchema(fakeModel, z.toJSONSchema(def.parameters)) as any
-        // Root must expose ONLY `operation`. A flat bag (the bug) lets mimo omit
+        // Root must expose ONLY `operation`. A flat bag (the bug) lets Encode omit
         // the discriminator entirely; a nested envelope makes it unmissable.
         expect(Object.keys(flat.properties)).toEqual(["operation"])
         expect(flat.required).toEqual(["operation"])

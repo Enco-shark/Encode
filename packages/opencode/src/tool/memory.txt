@@ -12,19 +12,19 @@ QUERY GUIDELINES:
   ANY query word, ordered by relevance (how many / how rare the matched
   words are). Low-relevance common-word-only matches are dropped by a
   score floor.
-- Prefer 1â€“3 distinctive terms (function name, task ID, exact phrase
+- Prefer 1â€? distinctive terms (function name, task ID, exact phrase
   from a directive, a rare word from the snippet you want). Long lists
   of generic words ("config params database connection") just add noise
-  and bury the real hit â€” pick the rarest, most specific word.
+  and bury the real hit â€?pick the rarest, most specific word.
 - "T5.3 closure" works. So does "permission deadlock". Avoid padding
   with generic descriptors.
 - Punctuation (`.`, `-`, `/`, `:`) is stripped during tokenization.
   Both query and indexed body see only alphanumeric runs, so `T5.3`
   matches `T5.3`, `T5_3`, or `T5 3`. A literal like `postgres://host:5433`
-  is indexed as tokens `postgres`, `host`, `5433` â€” search one of those,
+  is indexed as tokens `postgres`, `host`, `5433` â€?search one of those,
   not the full URL.
 
-A HIT IS AUTHORITATIVE. If search returns a result, trust it â€” even
+A HIT IS AUTHORITATIVE. If search returns a result, trust it â€?even
 when a different/sibling query you ran returned nothing. Do not conclude
 "I never recorded this" because one phrasing missed.
 
@@ -32,16 +32,16 @@ PARTIAL HIT, EXACT LITERAL NEEDED. A hit may give the gist but have
 dropped the precise form of a connection string, port, token, full
 command line, or path (curation paraphrases). If you need the literal
 byte-for-byte and the result only approximates it, query the history
-tool â€” the original message holds it verbatim. Don't reconstruct or
+tool â€?the original message holds it verbatim. Don't reconstruct or
 guess the exact value from a paraphrase.
 
 WHEN SEARCH RETURNS 0 (escalate, do not give up):
 1. Retry with fewer / rarer terms (see guidelines above).
-2. For a literal string the tokenizer splits (URL, port, path) â€” Grep
+2. For a literal string the tokenizer splits (URL, port, path) â€?Grep
    the memory dir directly; FTS can't match the punctuation form.
-3. For verbatim recall a summary may have glossed over â€” use the
+3. For verbatim recall a summary may have glossed over â€?use the
    history tool (raw conversation messages).
-Widen scope progressively: session â†’ project â†’ global â†’ history.
+Widen scope progressively: session â†?project â†?global â†?history.
 
 Actions:
 - search: OR-joined BM25 query, optional scope/scope_id/type filters
@@ -63,7 +63,7 @@ read-only from this tool.
 Privacy note: CC's `type: user` and `type: feedback` categories may
 hold personal context (the user's role, preferences, prior guidance)
 that CC originally wrote for its own future sessions. With cc_index on,
-they become recallable from any mimocode agent â€” including subagents
+they become recallable from any Encode agent â€?including subagents
 that may be exposed to prompt-injected content. If that's not desired,
 keep cc_index disabled or filter `type` at search time to exclude
 the more sensitive categories.

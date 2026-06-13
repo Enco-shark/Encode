@@ -5,21 +5,21 @@ type Keys = keyof typeof en
 export const dict = {
   // Language names
   "language.en": "English",
-  "language.zh": "简体中文",
+  "language.zh": "简体中�?,
   "language.zht": "繁體中文",
-  "language.ko": "한국어",
+  "language.ko": "한국�?,
   "language.de": "Deutsch",
   "language.es": "Español",
   "language.fr": "Français",
   "language.da": "Dansk",
-  "language.ja": "日本語",
+  "language.ja": "日本�?,
   "language.pl": "Polski",
   "language.ru": "Русский",
   "language.ar": "العربية",
   "language.no": "Norsk",
   "language.br": "Português (Brasil)",
   "language.bs": "Bosanski",
-  "language.th": "ไทย",
+  "language.th": "ไท�?,
   "language.tr": "Türkçe",
 
   // Prompt placeholders
@@ -49,7 +49,7 @@ export const dict = {
   "tui.tips.theme_mode":
     "Exécutez {highlight}/dark{/highlight} pour le mode sombre ou {highlight}/light{/highlight} pour le mode clair",
   "tui.tips.doc": "Exécutez {highlight}/doc{/highlight} pour ouvrir la documentation utilisateur",
-  "tui.tips.free_models": "Modèles gratuits disponibles pour une durée limitée — essayez-les !",
+  "tui.tips.free_models": "Modèles gratuits disponibles pour une durée limitée �?essayez-les !",
   "tui.tips.background":
     "Exécutez {highlight}/background{/highlight} pour définir une image personnalisée comme fond d'écran d'accueil",
   "tui.tips.undo": "Utilisez {highlight}/undo{/highlight} pour annuler le dernier message et ses modifications",
@@ -104,9 +104,9 @@ export const dict = {
   "tui.tips.cycle_sessions":
     "Appuyez sur {highlight}Ctrl+X Right/Left{/highlight} pour parcourir les sessions parent et enfant",
   "tui.tips.config_files":
-    "Créez {highlight}mimocode.json{/highlight} pour la configuration serveur et {highlight}tui.json{/highlight} pour le TUI",
+    "Créez {highlight}encode.json{/highlight} pour la configuration serveur et {highlight}tui.json{/highlight} pour le TUI",
   "tui.tips.global_config":
-    "Placez les paramètres TUI dans {highlight}~/.config/mimocode/tui.json{/highlight} comme configuration globale",
+    "Placez les paramètres TUI dans {highlight}~/.config/encode/tui.json{/highlight} comme configuration globale",
   "tui.tips.schema": "Ajoutez {highlight}$schema{/highlight} à votre config pour l'auto-complétion dans l'éditeur",
   "tui.tips.default_model": "Configurez {highlight}model{/highlight} dans la config pour définir le modèle par défaut",
   "tui.tips.keybinds":
@@ -116,15 +116,15 @@ export const dict = {
   "tui.tips.mcp_config":
     "Configurez les serveurs MCP locaux ou distants dans la section {highlight}mcp{/highlight}",
   "tui.tips.mcp_oauth":
-    "MiMoCode gère automatiquement OAuth pour les serveurs MCP distants nécessitant une authentification",
+    "encode gère automatiquement OAuth pour les serveurs MCP distants nécessitant une authentification",
   "tui.tips.custom_command":
-    "Ajoutez des fichiers {highlight}.md{/highlight} dans {highlight}.mimocode/command/{/highlight} pour définir des invites personnalisées réutilisables",
+    "Ajoutez des fichiers {highlight}.md{/highlight} dans {highlight}.encode/command/{/highlight} pour définir des invites personnalisées réutilisables",
   "tui.tips.command_args":
     "Utilisez {highlight}$ARGUMENTS{/highlight}, {highlight}$1{/highlight}, {highlight}$2{/highlight} dans les commandes pour des entrées dynamiques",
   "tui.tips.command_backticks":
     "Utilisez des backticks dans les commandes pour injecter la sortie shell (ex. {highlight}`git status`{/highlight})",
   "tui.tips.custom_agent":
-    "Ajoutez des fichiers {highlight}.md{/highlight} dans {highlight}.mimocode/agent/{/highlight} pour des personas IA spécialisés",
+    "Ajoutez des fichiers {highlight}.md{/highlight} dans {highlight}.encode/agent/{/highlight} pour des personas IA spécialisés",
   "tui.tips.agent_perms":
     "Configurez par agent les permissions des outils {highlight}edit{/highlight}, {highlight}bash{/highlight} et {highlight}webfetch{/highlight}",
   "tui.tips.bash_allow":
@@ -133,45 +133,45 @@ export const dict = {
     'Définissez {highlight}"rm -rf *": "deny"{/highlight} pour bloquer les commandes destructrices',
   "tui.tips.bash_ask":
     'Configurez {highlight}"git push": "ask"{/highlight} pour exiger une confirmation avant le push',
-  "tui.tips.formatter": "MiMoCode formate automatiquement les fichiers avec prettier, gofmt, ruff, etc.",
+  "tui.tips.formatter": "encode formate automatiquement les fichiers avec prettier, gofmt, ruff, etc.",
   "tui.tips.disable_formatter":
     'Définissez {highlight}"formatter": false{/highlight} dans la config pour désactiver le formatage automatique',
   "tui.tips.custom_formatter":
     "Définissez des commandes de formatage personnalisées par extension de fichier dans la config",
-  "tui.tips.lsp": "MiMoCode utilise des serveurs LSP pour une analyse de code intelligente",
+  "tui.tips.lsp": "encode utilise des serveurs LSP pour une analyse de code intelligente",
   "tui.tips.custom_tool":
-    "Créez des fichiers {highlight}.ts{/highlight} dans {highlight}.mimocode/tools/{/highlight} pour définir de nouveaux outils LLM",
+    "Créez des fichiers {highlight}.ts{/highlight} dans {highlight}.encode/tools/{/highlight} pour définir de nouveaux outils LLM",
   "tui.tips.tool_scripts": "Les définitions d'outils peuvent invoquer des scripts en Python, Go, etc.",
   "tui.tips.plugins":
-    "Ajoutez des fichiers {highlight}.ts{/highlight} dans {highlight}.mimocode/plugin/{/highlight} pour des hooks d'événements",
+    "Ajoutez des fichiers {highlight}.ts{/highlight} dans {highlight}.encode/plugin/{/highlight} pour des hooks d'événements",
   "tui.tips.plugin_notify":
     "Utilisez des plugins pour envoyer des notifications système à la fin des sessions",
   "tui.tips.plugin_protect":
-    "Créez un plugin pour empêcher MiMoCode de lire des fichiers sensibles",
-  "tui.tips.run": "Utilisez {highlight}mimo run{/highlight} pour des scripts non interactifs",
-  "tui.tips.continue": "Utilisez {highlight}mimo --continue{/highlight} pour reprendre la dernière session",
+    "Créez un plugin pour empêcher encode de lire des fichiers sensibles",
+  "tui.tips.run": "Utilisez {highlight}Encode run{/highlight} pour des scripts non interactifs",
+  "tui.tips.continue": "Utilisez {highlight}Encode --continue{/highlight} pour reprendre la dernière session",
   "tui.tips.attach_cli":
-    "Utilisez {highlight}mimo run -f file.ts{/highlight} pour joindre des fichiers via la CLI",
+    "Utilisez {highlight}Encode run -f file.ts{/highlight} pour joindre des fichiers via la CLI",
   "tui.tips.format_json":
     "Utilisez {highlight}--format json{/highlight} pour une sortie lisible par machine dans les scripts",
-  "tui.tips.serve": "Exécutez {highlight}mimo serve{/highlight} pour exposer l'API MiMoCode en mode headless",
+  "tui.tips.serve": "Exécutez {highlight}Encode serve{/highlight} pour exposer l'API encode en mode headless",
   "tui.tips.attach_server":
-    "Utilisez {highlight}mimo run --attach{/highlight} pour vous connecter à un serveur en cours",
-  "tui.tips.upgrade": "Exécutez {highlight}mimo upgrade{/highlight} pour passer à la dernière version",
+    "Utilisez {highlight}Encode run --attach{/highlight} pour vous connecter à un serveur en cours",
+  "tui.tips.upgrade": "Exécutez {highlight}Encode upgrade{/highlight} pour passer à la dernière version",
   "tui.tips.auth_list":
-    "Exécutez {highlight}mimo auth list{/highlight} pour voir tous les fournisseurs configurés",
+    "Exécutez {highlight}Encode auth list{/highlight} pour voir tous les fournisseurs configurés",
   "tui.tips.agent_create":
-    "Exécutez {highlight}mimo agent create{/highlight} pour créer un agent en mode guidé",
+    "Exécutez {highlight}Encode agent create{/highlight} pour créer un agent en mode guidé",
   "tui.tips.github_trigger":
     "Utilisez {highlight}/opencode{/highlight} dans les issues/PR GitHub pour déclencher des actions IA",
   "tui.tips.github_install":
-    "Exécutez {highlight}mimo github install{/highlight} pour configurer le workflow GitHub",
+    "Exécutez {highlight}Encode github install{/highlight} pour configurer le workflow GitHub",
   "tui.tips.github_oc":
     "Commentez {highlight}/oc{/highlight} sur une ligne de PR pour une revue ciblée",
   "tui.tips.theme_system":
     'Utilisez {highlight}"theme": "system"{/highlight} pour suivre les couleurs du terminal',
   "tui.tips.theme_files":
-    "Créez des fichiers de thème JSON dans le dossier {highlight}.mimocode/themes/{/highlight}",
+    "Créez des fichiers de thème JSON dans le dossier {highlight}.encode/themes/{/highlight}",
   "tui.tips.theme_variants": "Les thèmes prennent en charge des variantes claires/sombres pour les deux modes",
   "tui.tips.theme_ansi": "Référencez les couleurs ANSI 0-255 dans des thèmes personnalisés",
   "tui.tips.env_var":
@@ -201,7 +201,7 @@ export const dict = {
   "tui.tips.external_dir":
     "La permission {highlight}external_directory{/highlight} protège les fichiers en dehors du projet",
   "tui.tips.debug_config":
-    "Exécutez {highlight}mimo debug config{/highlight} pour diagnostiquer la configuration",
+    "Exécutez {highlight}Encode debug config{/highlight} pour diagnostiquer la configuration",
   "tui.tips.print_logs":
     "Utilisez l'option {highlight}--print-logs{/highlight} pour afficher des journaux détaillés sur stderr",
   "tui.tips.timeline":
@@ -217,7 +217,7 @@ export const dict = {
   "tui.tips.docker":
     "Exécutez {highlight}docker run -it --rm ghcr.io/anomalyco/opencode{/highlight} pour une utilisation conteneurisée",
   "tui.tips.zen":
-    "Utilisez {highlight}/connect{/highlight} avec MiMo Code pour des modèles testés et sélectionnés",
+    "Utilisez {highlight}/connect{/highlight} avec Encode pour des modèles testés et sélectionnés",
   "tui.tips.agents_md":
     "Versionnez le fichier {highlight}AGENTS.md{/highlight} de votre projet sur Git pour le partager avec l'équipe",
   "tui.tips.review":
@@ -260,11 +260,11 @@ export const dict = {
   "tui.command.model.cycle_favorite_reverse.title": "Favoris (inverse)",
   "tui.command.agent.list.title": "Changer d'agent",
   "tui.command.mcp.list.title": "Activer/désactiver MCP",
-  "tui.command.never_ask.title_on": "Sans questions : ACTIVÉ — désactiver (me redemander)",
-  "tui.command.never_ask.title_off": "Sans questions : DÉSACTIVÉ — activer (décider sans demander)",
+  "tui.command.never_ask.title_on": "Sans questions : ACTIVÉ �?désactiver (me redemander)",
+  "tui.command.never_ask.title_off": "Sans questions : DÉSACTIVÉ �?activer (décider sans demander)",
   "tui.command.never_ask.toast_on":
-    "Sans questions ACTIVÉ — je ne te demanderai rien ; je choisirai moi-même la meilleure option jusqu'à ce que tu le désactives (/never-ask-questions). Les demandes d'autorisation nécessitent toujours ton approbation.",
-  "tui.command.never_ask.toast_off": "Sans questions DÉSACTIVÉ — je te redemanderai aux points de décision.",
+    "Sans questions ACTIVÉ �?je ne te demanderai rien ; je choisirai moi-même la meilleure option jusqu'à ce que tu le désactives (/never-ask-questions). Les demandes d'autorisation nécessitent toujours ton approbation.",
+  "tui.command.never_ask.toast_off": "Sans questions DÉSACTIVÉ �?je te redemanderai aux points de décision.",
   "tui.command.agent.cycle.title": "Cycle d'agents",
   "tui.command.variant.cycle.title": "Cycle de variantes",
   "tui.command.variant.list.title": "Changer de variante de modèle",
@@ -379,21 +379,21 @@ export const dict = {
   "tui.command.prompt.editor.title": "Ouvrir l'éditeur",
   "tui.command.prompt.skills.title": "Compétences",
   "tui.command.voice.toggle.title": "Activer/désactiver la saisie vocale",
-  "tui.command.voice.toggle.title_on": "Saisie vocale : activée — cliquer pour désactiver",
-  "tui.command.voice.toggle.title_off": "Saisie vocale : désactivée — cliquer pour activer",
-  "tui.voice.enabled": "Saisie vocale activée (chinois/anglais) — cliquez sur [Voice] pour enregistrer",
+  "tui.command.voice.toggle.title_on": "Saisie vocale : activée �?cliquer pour désactiver",
+  "tui.command.voice.toggle.title_off": "Saisie vocale : désactivée �?cliquer pour activer",
+  "tui.voice.enabled": "Saisie vocale activée (chinois/anglais) �?cliquez sur [Voice] pour enregistrer",
   "tui.voice.disabled": "Saisie vocale désactivée",
-  "tui.voice.send.enabled": "Envoi vocal activé — dites「发送」ou \"send it\" pour envoyer",
+  "tui.voice.send.enabled": "Envoi vocal activé �?dites「发送」ou \"send it\" pour envoyer",
   "tui.voice.send.disabled": "Envoi vocal désactivé",
   "tui.command.voice.send.title": "Basculer l'envoi vocal",
-  "tui.command.voice.send.title_on": "Envoi vocal : activé — cliquer pour désactiver",
-  "tui.command.voice.send.title_off": "Envoi vocal : désactivé — cliquer pour activer",
-  "tui.voice.control.enabled": "Contrôle vocal activé — utilise le modèle multimodal pour l'édition intelligente (plus lent)",
-  "tui.voice.control.disabled": "Contrôle vocal désactivé — utilise la transcription ASR rapide",
+  "tui.command.voice.send.title_on": "Envoi vocal : activé �?cliquer pour désactiver",
+  "tui.command.voice.send.title_off": "Envoi vocal : désactivé �?cliquer pour activer",
+  "tui.voice.control.enabled": "Contrôle vocal activé �?utilise le modèle multimodal pour l'édition intelligente (plus lent)",
+  "tui.voice.control.disabled": "Contrôle vocal désactivé �?utilise la transcription ASR rapide",
   "tui.command.voice.control.title": "Basculer le contrôle vocal (multimodal)",
-  "tui.command.voice.control.title_on": "Contrôle vocal : activé (multimodal) — cliquer pour désactiver",
-  "tui.command.voice.control.title_off": "Contrôle vocal : désactivé (ASR rapide) — cliquer pour activer",
-  "tui.voice.error.no_auth": "Veuillez d'abord vous connecter à MiMo",
+  "tui.command.voice.control.title_on": "Contrôle vocal : activé (multimodal) �?cliquer pour désactiver",
+  "tui.command.voice.control.title_off": "Contrôle vocal : désactivé (ASR rapide) �?cliquer pour activer",
+  "tui.voice.error.no_auth": "Veuillez d'abord vous connecter à Encode",
   "tui.voice.error.no_recorder": "Aucun outil d'enregistrement trouvé, installez sox",
   "tui.voice.error.too_short": "Enregistrement trop court",
   "tui.voice.error.network": "La transcription a échoué, vérifiez votre réseau",
@@ -407,27 +407,27 @@ export const dict = {
   "tui.command.plugins.list.title": "Plugins",
   "tui.command.plugins.install.title": "Installer un plugin",
 
-  // MiMo Auto (free) — TUI login dialog
-  "tui.dialog.login.mimo_free": "MiMo Auto (free)",
-  "tui.dialog.login.mimo_free.desc": "Canal anonyme gratuit — aucune connexion requise",
-  "tui.dialog.login.mimo_free.success": "MiMo Auto (free) est prêt — modèle par défaut défini sur mimo/mimo-auto",
-  "tui.dialog.login.mimo_free.unavailable": "Fournisseur MiMo Auto (free) non chargé",
+  // Encode Auto (free) �?TUI login dialog
+  "tui.dialog.login.Encode_free": "Encode Auto (free)",
+  "tui.dialog.login.Encode_free.desc": "Canal anonyme gratuit �?aucune connexion requise",
+  "tui.dialog.login.Encode_free.success": "Encode Auto (free) est prêt �?modèle par défaut défini sur Encode/Encode-auto",
+  "tui.dialog.login.Encode_free.unavailable": "Fournisseur Encode Auto (free) non chargé",
 
   // CLI: providers command (auth login)
   "cli.providers.select": "Sélectionner un fournisseur",
   "cli.providers.other": "Autre fournisseur",
-  "cli.providers.mimo.recommended_hint": "recommandé",
-  "cli.providers.mimo_free.hint": "Canal anonyme gratuit / mimo-auto",
-  "cli.providers.mimo_free.verifying": "Vérification du canal MiMo Auto (free)...",
-  "cli.providers.mimo_free.ready": "Canal MiMo Auto (free) prêt",
-  "cli.providers.mimo_free.failed": "Échec de la vérification de MiMo Auto (free)",
-  "cli.providers.mimo_free.default_set": "Modèle par défaut défini sur mimo/mimo-auto (contexte 1M, gratuit)",
-  "cli.providers.mimo_free.usage_hint":
-    "Aucune connexion requise — exécutez simplement mimo. Pour les modèles payants/premium, choisissez plutôt la connexion navigateur MiMo.",
-  "cli.providers.mimo_login.decrypt_retry": "Échec du déchiffrement, veuillez réessayer ({remaining} tentatives restantes)",
-  "cli.providers.mimo_login.decrypt_exhausted": "Échec du déchiffrement, nombre maximal de tentatives atteint",
+  "cli.providers.Encode.recommended_hint": "recommandé",
+  "cli.providers.Encode_free.hint": "Canal anonyme gratuit / Encode-auto",
+  "cli.providers.Encode_free.verifying": "Vérification du canal Encode Auto (free)...",
+  "cli.providers.Encode_free.ready": "Canal Encode Auto (free) prêt",
+  "cli.providers.Encode_free.failed": "Échec de la vérification de Encode Auto (free)",
+  "cli.providers.Encode_free.default_set": "Modèle par défaut défini sur Encode/Encode-auto (contexte 1M, gratuit)",
+  "cli.providers.Encode_free.usage_hint":
+    "Aucune connexion requise �?exécutez simplement Encode. Pour les modèles payants/premium, choisissez plutôt la connexion navigateur Encode.",
+  "cli.providers.Encode_login.decrypt_retry": "Échec du déchiffrement, veuillez réessayer ({remaining} tentatives restantes)",
+  "cli.providers.Encode_login.decrypt_exhausted": "Échec du déchiffrement, nombre maximal de tentatives atteint",
 
-  // Question i18n — plan_exit
+  // Question i18n �?plan_exit
   "tui.question.plan_exit.question": "Le plan {{plan}} est terminé. Voulez-vous basculer vers l'agent build pour commencer l'implémentation ?",
   "tui.question.plan_exit.header": "Quitter le plan",
   "tui.question.plan_exit.option.0.label": "Oui",

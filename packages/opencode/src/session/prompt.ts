@@ -42,7 +42,7 @@ import { Command } from "../command"
 import { pathToFileURL, fileURLToPath } from "url"
 import { ConfigMarkdown } from "../config"
 import { SessionSummary } from "./summary"
-import { NamedError } from "@mimo-ai/shared/util/error"
+import { NamedError } from "@encode-ai/shared/util/error"
 import { SessionProcessor } from "./processor"
 import { buildLLMRequestPrefix } from "./llm-request-prefix"
 import { prefixCaptureRef } from "./prefix-capture-ref"
@@ -55,7 +55,7 @@ import { SessionStatus } from "./status"
 import { LLM } from "./llm"
 import { MaxMode } from "./max-mode"
 import { Shell } from "@/shell/shell"
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import { Truncate } from "@/tool"
 import { decodeDataUrl } from "@/util/data-url"
 import { Process } from "@/util"
@@ -89,15 +89,15 @@ export function recallHintLines(toolCfg: ToolStyleConfig | undefined): string[] 
     resolveInvocationStyle(toolCfg, "actor") === "shell"
       ? "- actor status <actor_id>"
       : `- actor({ operation: "status", actor_id: "<id>" })`
-  // memory has no shell form (no shell.parse) → always JSON.
+  // memory has no shell form (no shell.parse) �?always JSON.
   return [`- memory({ operation: "search", query: "<keyword>" })`, taskHint, actorHint]
 }
 
 /**
- * Cap on goal-driven main-loop re-entries per turn — the safety valve against
+ * Cap on goal-driven main-loop re-entries per turn �?the safety valve against
  * a never-satisfiable condition burning tokens forever. Higher than spawned
  * actors' MAX_PRE_REACT (=3) because main-session goals are usually larger.
- * TODO: lift to mimocode.json config (e.g. session.maxGoalReact).
+ * TODO: lift to ENCODE.json config (e.g. session.maxGoalReact).
  */
 const MAX_GOAL_REACT = 12
 
@@ -113,7 +113,7 @@ const REPEATED_STEP_THRESHOLD = 3
  * semantically-identical tool inputs produce the same string regardless of the
  * order the model happened to emit the keys in. `JSON.stringify` preserves
  * insertion order, and models routinely re-emit the same arguments with keys in
- * a different order (e.g. {url,format} vs {format,url}) — without this the
+ * a different order (e.g. {url,format} vs {format,url}) �?without this the
  * signatures would differ and the repeated-step check would miss real loops.
  */
 function stableStringify(value: unknown): string {
@@ -128,11 +128,11 @@ function stableStringify(value: unknown): string {
 }
 
 /**
- * Stable signature for an assistant step's *action* — the tool calls it made
+ * Stable signature for an assistant step's *action* �?the tool calls it made
  * (name + key-order-independent input). Text and reasoning are excluded on
  * purpose: in a ReAct loop the model narrates each step in slightly different
  * words while taking the exact same action, and some models emit their
- * reasoning as plain text parts — counting either would mask the repeated
+ * reasoning as plain text parts �?counting either would mask the repeated
  * action we want to catch. Returns undefined when a step makes no tool calls
  * (e.g. a pure-text turn), since there is no repeated *action* to compare.
  */
@@ -161,8 +161,8 @@ const PREDICT_SYSTEM = `You predict the single most likely next message a user w
 
 const PREDICT_NUDGE = `Based on the conversation above, write the user's most likely next message:`
 
-const OUTPUT_LENGTH_CONTINUATION_LIMIT = Flag.MIMOCODE_OUTPUT_LENGTH_CONTINUATION_LIMIT
-const INVALID_OUTPUT_CONTINUATION_LIMIT = Flag.MIMOCODE_INVALID_OUTPUT_CONTINUATION_LIMIT
+const OUTPUT_LENGTH_CONTINUATION_LIMIT = Flag.ENCODE_OUTPUT_LENGTH_CONTINUATION_LIMIT
+const INVALID_OUTPUT_CONTINUATION_LIMIT = Flag.ENCODE_INVALID_OUTPUT_CONTINUATION_LIMIT
 
 const log = Log.create({ service: "session.prompt" })
 const elog = EffectLogger.create({ service: "session.prompt" })
@@ -221,7 +221,7 @@ export const layer = Layer.effect(
 
     // Late-bind prefix-capture helper so SessionCheckpoint.tryStartCheckpointWriter
     // can call buildLLMRequestPrefix without forming a layer cycle
-    // (ToolRegistry → SessionCheckpoint → ToolRegistry). See prefix-capture-ref.ts.
+    // (ToolRegistry �?SessionCheckpoint �?ToolRegistry). See prefix-capture-ref.ts.
     // The closure resolves Agent.Info and Provider.Model internally so checkpoint.ts
     // only needs to pass string IDs.
     const capture: typeof prefixCaptureRef.current = (input) =>
@@ -401,7 +401,7 @@ export const layer = Layer.effect(
       const base = yield* agents.get("title")
       if (!base) return ""
       // Reuse the lightweight title agent's settings but swap its prompt for the
-      // prediction prompt — its default ("output ONLY a thread title") would
+      // prediction prompt �?its default ("output ONLY a thread title") would
       // otherwise be prepended ahead of PREDICT_SYSTEM and win.
       const ag = { ...base, prompt: PREDICT_SYSTEM }
       const mdl = ag.modelRef
@@ -633,7 +633,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
                 tool: { messageID: input.processor.message.id, callID: options.toolCallId },
                 ruleset: Permission.merge(input.agent.permission, input.session.permission ?? []),
                 // System-spawned background agents (checkpoint-writer, dream, distill)
-                // have no human to answer a permission prompt — fail clean, don't hang.
+                // have no human to answer a permission prompt �?fail clean, don't hang.
                 interactive: !SYSTEM_SPAWNED_AGENT_TYPES.has(input.agent.name),
               },
               options.abortSignal,
@@ -1619,7 +1619,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
     const sweepOrphanAssistants = Effect.fn("SessionPrompt.sweepOrphanAssistants")(function* (sessionID: SessionID) {
       const msgs = yield* sessions.messages({ sessionID, agentID: "*" })
       const now = Date.now()
-      // 1 hour — must exceed Task 1's chunkMs (300s) plus Task 2's
+      // 1 hour �?must exceed Task 1's chunkMs (300s) plus Task 2's
       // PERSISTENT_RETRY worst-case backoff (10 attempts × 5 min cap =
       // 50 min) so a still-active in-flight request is never falsely
       // swept while its retry chain is making progress.
@@ -1678,7 +1678,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
     const lastAssistant = Effect.fnUntraced(function* (sessionID: SessionID, agentID?: string) {
       if (agentID !== undefined) {
         // Agent-scoped: return THIS agent's newest message (assistant preferred).
-        // Critical for concurrent same-session subagents — a session-wide lookup
+        // Critical for concurrent same-session subagents �?a session-wide lookup
         // collapses concurrent actors' return values onto whichever finished last.
         // messages() yields oldest-first/newest-last, so findLast picks the newest
         // assistant and the last element is the newest message overall.
@@ -1709,12 +1709,12 @@ NOTE: At any point in time through this workflow you should feel free to ask the
         let outputLengthContinuations = 0
         // Shared local counter for "model finished but produced nothing usable"
         // (think-only / empty). T04's generic-invalid retries reuse this same
-        // counter — do not add a second one. Local to runLoop so a fresh user
+        // counter �?do not add a second one. Local to runLoop so a fresh user
         // turn resets it (no cross-message pollution), same as outputLengthContinuations.
         let invalidContinuations = 0
-        // structured-output 专用 retry：上限来自 lastUser.format.retryCount（默认 2），
-        // 与 invalidContinuations（generic invalid）分离，互不污染。局部于 runLoop，
-        // 新一轮用户 turn 自动归零。
+        // structured-output 专用 retry：上限来�?lastUser.format.retryCount（默�?2），
+        // �?invalidContinuations（generic invalid）分离，互不污染。局部于 runLoop�?
+        // 新一轮用�?turn 自动归零�?
         let structuredRetries = 0
         const agentMetrics = { tokens_in: 0, tokens_out: 0, files_changed: 0 }
         const publishAgentRequest = (phase: string, taskType: string) =>
@@ -1723,7 +1723,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
               sessionID,
               phase,
               task_type: taskType,
-              surface: Flag.MIMOCODE_CLIENT,
+              surface: Flag.ENCODE_CLIENT,
               total_tokens_in: agentMetrics.tokens_in,
               total_tokens_out: agentMetrics.tokens_out,
               files_changed: agentMetrics.files_changed,
@@ -1738,7 +1738,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
         // Contract (T05): on finish="length", inject a continuation nudge ONLY for
         // plain text. If any non-providerExecuted client tool part exists we bail
         // (return false) and let classify route the normal tool-observation re-loop.
-        // This guarantees "no output-length continuation when a tool is involved" —
+        // This guarantees "no output-length continuation when a tool is involved" �?
         // it does NOT guarantee a stream-time-truncated tool never executed, since
         // the AI SDK runs tools mid-stream before the finish reason is known.
         const autoContinueOutputLength = Effect.fn("SessionPrompt.autoContinueOutputLength")(function* (input: {
@@ -1865,7 +1865,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
 
         // Goal stop-condition gate (main agent only). Before honoring a stop,
         // an independent judge model reads the transcript and decides whether
-        // the active goal is satisfied. Not satisfied → inject the judge's
+        // the active goal is satisfied. Not satisfied �?inject the judge's
         // reason as a synthetic user turn and signal the caller to keep working
         // (return true). This is the main-loop analogue of actor.preStop ReAct
         // re-entry, which only fires for spawned actors. fail-open on any judge
@@ -1906,7 +1906,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
               impossible: verdict.impossible === true,
             })
             // Publish the final verdict (goal cleared) so the TUI can render the
-            // ✓/⊘ result line before the indicator disappears. goal.clear also
+            // �?�?result line before the indicator disappears. goal.clear also
             // publishes goal:undefined, but the TUI keeps lastVerdict sticky.
             yield* bus.publish(Goal.Event.Updated, {
               sessionID,
@@ -2127,7 +2127,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
 
           // F37: filter by agentID so subagent slices stay isolated from the
           // main agent's slice within the same session. Without this, an actor
-          // (explore/general/etc) spawned via mimocode's shared-sessionID
+          // (explore/general/etc) spawned via ENCODE's shared-sessionID
           // design would see the parent's full conversation here and drift
           // off-task. agentID === "main" => main agent slice (agent_id = 'main'
           // in DB), agentID === "explore-1" => only explore-1's slice.
@@ -2194,7 +2194,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
           )
           // Some providers return "stop" even when the assistant message contains tool calls.
           // Keep the loop running so tool results can be sent back to the model.
-          // Skip provider-executed tool parts — those were fully handled within the
+          // Skip provider-executed tool parts �?those were fully handled within the
           // provider's stream (e.g. DWS Agent Platform) and don't need a re-loop.
           const hasToolCalls =
             lastAssistantMsg?.parts.some((part) => part.type === "tool" && !part.metadata?.providerExecuted) ?? false
@@ -2257,7 +2257,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
             const mdl = { providerID: lastUser.model.providerID, modelID: lastUser.model.modelID }
             // AppRuntime is imported dynamically (not at module top level) to keep
             // the session layer out of the app-runtime module-init cycle
-            // (prompt → app-runtime → AppLayer → SessionPrompt). Only loaded when a
+            // (prompt �?app-runtime �?AppLayer �?SessionPrompt). Only loaded when a
             // trigger actually fires. Detached fire-and-forget on the full runtime.
             if (dreamTrigger || distillTrigger) {
               const { AppRuntime } = yield* Effect.promise(() => import("@/effect/app-runtime"))
@@ -2378,7 +2378,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
                   synthetic: true,
                   text: [
                     "<system-reminder>",
-                    `Your last ${REPEATED_STEP_THRESHOLD} steps have been identical — you appear to be`,
+                    `Your last ${REPEATED_STEP_THRESHOLD} steps have been identical �?you appear to be`,
                     "repeating the same action without making progress. Stop and reconsider:",
                     "the current approach is not working. Try a different strategy, use a",
                     "different tool, or if you are blocked, explain the blocker to the user",
@@ -2393,7 +2393,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
           // Resolve the agent for this iteration once. Both the management
           // hooks below (fireCheckpoints, overflow handler) and the existing
           // agent-not-found check later in the iteration reuse this binding.
-          // Bounded computation agents (native + hidden — currently title,
+          // Bounded computation agents (native + hidden �?currently title,
           // summary, checkpoint-writer) are exempt from context management;
           // see docs/superpowers/specs/2026-04-28-bounded-computation-agents-design.md
           const agent = yield* agents.get(lastUser.agent)
@@ -2425,10 +2425,10 @@ NOTE: At any point in time through this workflow you should feel free to ask the
             (overflowCheck({ cfg: yield* config.get(), tokens: lastFinished.tokens, model }) ||
               (yield* prune.maxThresholdCrossed(sessionID)))
           ) {
-            // Subagent overflow → per-actor compaction (lossy LLM summarization
+            // Subagent overflow �?per-actor compaction (lossy LLM summarization
             // scoped to the actor's (sessionID, agent_id) slice). Subagents
             // don't have checkpoints, so checkpoint+discard does not apply.
-            // Gate must exclude agentID="main" — F49+F50 made main carry
+            // Gate must exclude agentID="main" �?F49+F50 made main carry
             // agentID="main", so a bare `if (lastUser.agentID)` would route
             // main to this subagent path and skip the checkpoint rebuild
             // below. See checkpoint.ts:715 for the matching gate.
@@ -2443,7 +2443,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
                 })
                 .pipe(Effect.ignore)
               // After inserting the boundary, the actor's filterCompactedEffect
-              // slice begins at the boundary marker — context is freed for the
+              // slice begins at the boundary marker �?context is freed for the
               // next iteration's stream. Skip the next overflow check so the
               // model can respond on the trimmed context.
               skipOverflowCheck = true
@@ -2484,7 +2484,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
               }
             }
 
-            // F39: no checkpoint — fall back to compaction (LLM-driven lossy summary).
+            // F39: no checkpoint �?fall back to compaction (LLM-driven lossy summary).
             // Better than mechanical trim: preserves semantic content via summary.
             yield* compaction
               .create({
@@ -2590,7 +2590,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
             // Determine if this iteration is for a fork agent (contextMode === "full").
             // Fork agents use the frozen ForkContext snapshot captured at spawn time
             // (system + inheritedMessages) rather than recomputing from their own
-            // agent identity — which would diverge from the parent and break the
+            // agent identity �?which would diverge from the parent and break the
             // prefix cache.
             const actorRecord = lastUser.agentID
               ? yield* actorRegistry.get(sessionID, lastUser.agentID).pipe(
@@ -2605,7 +2605,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
               (actorRecord.mode === "subagent" || actorRecord.mode === "peer")
 
             // Fork path: read frozen ForkContext from Actor service (late-bound via
-            // spawnRef to break the Actor → SessionPrompt → Actor layer cycle).
+            // spawnRef to break the Actor �?SessionPrompt �?Actor layer cycle).
             // If forkCtx is missing (race / cleanup bug / spawn skipped), fail the
             // actor so the next prune turn can spawn a fresh fork.
             if (isForkAgent) {
@@ -2630,7 +2630,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
               // additions is empty for fork agents: system is taken verbatim from
               // forkCtx.system. Passed as `system` to handle.process for logging/replay.
               const additions: string[] = []
-              // Note: fork uses `tools` from resolveTools (not `forkCtx.tools`) — runtime
+              // Note: fork uses `tools` from resolveTools (not `forkCtx.tools`) �?runtime
               // tool dispatch needs execute closures, which `forkCtx.tools` does not carry.
               // Schema parity with parent is currently a consequence of checkpoint-writer
               // having no toolAllowlist (Task 2.6 + agent.test.ts guard). See ForkContext.tools
@@ -2640,12 +2640,12 @@ NOTE: At any point in time through this workflow you should feel free to ask the
                 agent,
                 // Fork inherits the parent agent's permission (captured at spawn into
                 // ForkContext). This drives llm.ts resolveTools/disabled() to the SAME
-                // visible tool set as the parent → prompt-cache parity on the inherited
+                // visible tool set as the parent �?prompt-cache parity on the inherited
                 // prefix. Scope: this affects tool VISIBILITY only; the per-call ask
                 // ruleset (built separately in resolveTools' ask closure) is unchanged.
                 // Parity is exact modulo non-default `session.permission`: the parent's
                 // visibility ruleset is merge(parent.permission, session.permission)
-                // while the fork's is merge(writer.permission, parentPermission) — so a
+                // while the fork's is merge(writer.permission, parentPermission) �?so a
                 // session-level rule pins the parent but not the fork. Still a strict
                 // improvement over the old bespoke "*":"deny" block (which always
                 // diverged). The `?? session.permission` is defense-in-depth only:
@@ -2752,12 +2752,12 @@ NOTE: At any point in time through this workflow you should feel free to ask the
               ...(format.type === "json_schema" ? [STRUCTURED_OUTPUT_SYSTEM_PROMPT] : []),
             ]
             // Note: `buildLLMRequestPrefix` also returns a `tools` field, but we
-            // intentionally don't use it here — the `tools` variable from `resolveTools`
+            // intentionally don't use it here �?the `tools` variable from `resolveTools`
             // (set earlier via `handle.process({tools: ...})`) carries `execute` closures
             // the AI SDK needs for runtime tool dispatch, while `buildLLMRequestPrefix`
             // produces schema-only tools. Schema bytes match between both paths (both call
             // registry.tools with identical args), so prefix cache parity holds.
-            // Main runLoop: no watermark — LLM must see the full msgs list,
+            // Main runLoop: no watermark �?LLM must see the full msgs list,
             // including this turn's intermediate assistant turns (tool reads,
             // task creates, etc.) so each step doesn't replay from the bare
             // user prompt. The watermark is for fork capture only (frozen
@@ -2855,11 +2855,11 @@ NOTE: At any point in time through this workflow you should feel free to ask the
               yield* slog.warn("degraded final on abnormal finish", { finish: handle.message.finish })
             if (result === "stop") return "break" as const
             if (!isBoundedComputation && result === "overflow") {
-              // Subagent overflow → per-actor compaction. Insert a boundary
+              // Subagent overflow �?per-actor compaction. Insert a boundary
               // tagged with the subagent's agent_id; the next runLoop iteration
               // will see a trimmed context (filterCompactedEffect stops at
               // the boundary).
-              // Gate must exclude "main" — see comment at the matching gate
+              // Gate must exclude "main" �?see comment at the matching gate
               // earlier in this file (~line 1716) and at checkpoint.ts:715.
               if (lastUser.agentID && lastUser.agentID !== "main") {
                 yield* compaction
@@ -2909,7 +2909,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
                 }
               }
 
-              // F39: no checkpoint — fall back to compaction (LLM-driven lossy summary).
+              // F39: no checkpoint �?fall back to compaction (LLM-driven lossy summary).
               yield* compaction
                 .create({
                   sessionID,
@@ -2988,7 +2988,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
       }
       const agentName = cmd.agent ?? input.agent ?? (yield* agents.defaultAgent())
 
-      // /goal — set or clear a session-level stop-condition goal. The condition
+      // /goal �?set or clear a session-level stop-condition goal. The condition
       // text itself becomes the prompt for this turn (the working agent starts
       // pursuing it immediately); the main runLoop then refuses to stop until
       // the judge says it's satisfied. See session/goal.ts.

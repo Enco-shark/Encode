@@ -27,11 +27,11 @@ describe("workflows routes", () => {
         // #given the workflow runtime layer is not running (late-bound ref unset)
         workflowRef.current = undefined
 
-        // #when â€” a valid session-shaped sessionID (now REQUIRED) is supplied
+        // #when â€?a valid session-shaped sessionID (now REQUIRED) is supplied
         const app = Server.Default().app
         const response = await app.request("/workflows?sessionID=ses_16ec185f2ffexEGkbWeMqWSucv", { method: "GET" })
 
-        // #then â€” runtime absent short-circuits to [] (the session passes validation)
+        // #then â€?runtime absent short-circuits to [] (the session passes validation)
         expect(response.status).toBe(200)
         expect(await response.json()).toEqual([])
       },
@@ -46,7 +46,7 @@ describe("workflows routes", () => {
         // #given the workflow runtime layer is not running
         workflowRef.current = undefined
 
-        // #when â€” a real minted-shape runID (wf_ + 26 base62) with no persisted run
+        // #when â€?a real minted-shape runID (wf_ + 26 base62) with no persisted run
         const app = Server.Default().app
         const response = await app.request("/workflows/wf_16ec185f2ffexEGkbWeMqWSucv/resume", { method: "POST" })
 
@@ -58,10 +58,10 @@ describe("workflows routes", () => {
   })
 
   // â”€â”€ P0 (MR104 #3): path traversal via unvalidated runID â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  // resume(runID) â†’ readScript(runID) â†’ scriptPath = join(scriptDir, runID + ".js").
+  // resume(runID) â†?readScript(runID) â†?scriptPath = join(scriptDir, runID + ".js").
   // A traversal runID escapes scriptDir, so the route MUST reject any runID that
   // is not exactly `wf_` + base62. The proof is that the request is REFUSED at the
-  // route's param validator (400) â€” it never reaches the runtime/launch, so no file
+  // route's param validator (400) â€?it never reaches the runtime/launch, so no file
   // outside scriptDir is ever opened.
   for (const evil of [
     "../../../etc/passwd",
@@ -75,7 +75,7 @@ describe("workflows routes", () => {
       await Instance.provide({
         directory: tmp.path,
         fn: async () => {
-          // #given the runtime is absent â€” so if validation let this through it would
+          // #given the runtime is absent â€?so if validation let this through it would
           // hit the early `{ resumed: false }`; the only way to a 400 is param rejection.
           workflowRef.current = undefined
 
@@ -83,7 +83,7 @@ describe("workflows routes", () => {
           const app = Server.Default().app
           const response = await app.request(`/workflows/${encodeURIComponent(evil)}/resume`, { method: "POST" })
 
-          // #then â€” rejected by the param validator before any path.join / file read.
+          // #then â€?rejected by the param validator before any path.join / file read.
           expect(response.status).toBe(400)
         },
       })
@@ -101,11 +101,11 @@ describe("workflows routes", () => {
         // requirement would surface as a 200 [] rather than passing by accident.)
         workflowRef.current = undefined
 
-        // #when â€” omit sessionID entirely
+        // #when â€?omit sessionID entirely
         const app = Server.Default().app
         const response = await app.request("/workflows", { method: "GET" })
 
-        // #then â€” rejected, NOT a 200 with the unfiltered all-runs branch.
+        // #then â€?rejected, NOT a 200 with the unfiltered all-runs branch.
         expect(response.status).toBe(400)
       },
     })
@@ -135,9 +135,9 @@ describe("workflows routes", () => {
       directory: tmp.path,
       fn: async () => {
         const exit = await Effect.runPromiseExit(WorkflowPersistence.readScript("../../../etc/passwd"))
-        // #then â€” the GUARD must reject it. Asserting only Exit.isFailure would
-        // also pass against unguarded code (ENOENT on `â€¦/etc/passwd.js`), so assert
-        // the failure carries the guard's message â€” this fails closed if safeRunID
+        // #then â€?the GUARD must reject it. Asserting only Exit.isFailure would
+        // also pass against unguarded code (ENOENT on `â€?etc/passwd.js`), so assert
+        // the failure carries the guard's message â€?this fails closed if safeRunID
         // is ever removed.
         expect(Exit.isFailure(exit)).toBe(true)
         if (Exit.isFailure(exit)) {
@@ -155,7 +155,7 @@ describe("workflows routes", () => {
         // #given a normally-minted runID with a persisted script
         const runID = "wf_16ec185f2ffexEGkbWeMqWSucv"
         await Effect.runPromise(WorkflowPersistence.writeScript(runID, "export const meta = {}\n"))
-        // #then â€” the guard does NOT break the legit path
+        // #then â€?the guard does NOT break the legit path
         const body = await Effect.runPromise(WorkflowPersistence.readScript(runID))
         expect(body).toContain("export const meta")
       },
@@ -167,12 +167,12 @@ describe("workflows routes", () => {
 // data (not the degenerate []). These run under the workflow test layer
 // (makeLayer) so WorkflowRuntime.layer is live and populates the module-global
 // `workflowRef` that the route reads through. Crucially the data path is the
-// process-global `:memory:` DB (test/preload sets MIMOCODE_DB=:memory:, and the
+// process-global `:memory:` DB (test/preload sets ENCODE_DB=:memory:, and the
 // storage Client is a per-process singleton): the run writes its WorkflowRunTable
-// row there, and the route's handler â€” run via AppRuntime, NOT this layer â€” reads
+// row there, and the route's handler â€?run via AppRuntime, NOT this layer â€?reads
 // the SAME DB. So `Server.Default().app.request("/workflows")` genuinely
 // exercises the HTTP route end-to-end against a real run. The
-// `x-mimocode-directory` header makes InstanceMiddleware re-enter the SAME cached
+// `x-ENCODE-directory` header makes InstanceMiddleware re-enter the SAME cached
 // tmpdir Instance the run used (one entry per directory in Instance's cache), so
 // resume's re-launch spawns in the run's own session context. We filter list by
 // sessionID to stay robust against any residue in the shared in-memory DB.
@@ -180,7 +180,7 @@ const it = testEffect(makeLayer())
 
 // Test ORDER is deliberate: the sandbox-free resume test runs FIRST and the
 // agent-spawning list test runs LAST. An agent() run forks a quickjs sandbox
-// (evalScript) whose teardown is CPU-sensitive â€” under load the 1ms pump interval
+// (evalScript) whose teardown is CPU-sensitive â€?under load the 1ms pump interval
 // can starve, leaving the forked fiber uninterruptible at scope close (the
 // pre-existing quickjs-under-Bun condition; see runtime.test.ts). Keeping the only
 // sandbox-bearing test last means its residue has no following evalScript test to
@@ -188,25 +188,25 @@ const it = testEffect(makeLayer())
 // in this order; the reverse order flakes ~30%+.
 //
 // NOTE on resume coverage: we assert the resume route over a LIVE runtime returns
-// the real { resumed: false } for an unknown run â€” this proves the route reaches
+// the real { resumed: false } for an unknown run â€?this proves the route reaches
 // the live `runtime.resume()` (distinct from the degenerate case above, where the
 // runtime is absent and the route short-circuits before calling resume). We do NOT
 // add an HTTP test for the positive { resumed: true } re-launch: a successful
 // resume forks a fresh evalScript whose teardown deadlocks under CI CPU load
-// regardless of how it is driven (HTTP or the service directly) â€” a runtime/sandbox
+// regardless of how it is driven (HTTP or the service directly) â€?a runtime/sandbox
 // limitation we cannot fix from a test. The re-launch semantics (resumed: true,
 // cached replay, zero-spawn resume) are covered in the warmed-up
 // test/workflow/runtime.test.ts suite.
-describe("workflows routes â€” live runtime", () => {
+describe("workflows routes â€?live runtime", () => {
   it.live("POST /workflows/:runID/resume reaches the LIVE runtime (resumed: false for an unknown run)", () =>
     provideTmpdirServer(
       Effect.fnUntraced(function* ({ dir }) {
-        // #given the workflow runtime IS live (the layer set the late-bound ref) â€”
+        // #given the workflow runtime IS live (the layer set the late-bound ref) â€?
         // this is what distinguishes this from the degenerate test above, where the
         // ref is undefined and the route returns early without calling resume().
         expect(workflowRef.current).toBeDefined()
 
-        // #when â€” POST resume over the REAL route for a runID with no persisted run.
+        // #when â€?POST resume over the REAL route for a runID with no persisted run.
         // Use a valid minted-shape runID (wf_ + 26 base62) so it passes the param
         // validator and genuinely reaches the live runtime.resume(), which loads no
         // row and returns { resumed: false }. (async wrapper normalizes Hono's
@@ -214,11 +214,11 @@ describe("workflows routes â€” live runtime", () => {
         const response = yield* Effect.promise(async () =>
           Server.Default().app.request(`/workflows/wf_00000000000000000000000000/resume`, {
             method: "POST",
-            headers: { "x-mimocode-directory": dir },
+            headers: { "x-ENCODE-directory": dir },
           }),
         )
 
-        // #then â€” the live runtime's real verdict flows back through the HTTP route.
+        // #then â€?the live runtime's real verdict flows back through the HTTP route.
         expect(response.status).toBe(200)
         expect(yield* Effect.promise(() => response.json())).toEqual({
           runID: "wf_00000000000000000000000000",
@@ -244,7 +244,7 @@ describe("workflows routes â€” live runtime", () => {
         const outcome = yield* runtime.wait({ runID, timeoutMs: 8000 })
         expect(outcome.status).toBe("completed")
 
-        // #when â€” drive the REAL HTTP route the TUI list reads. The directory header
+        // #when â€?drive the REAL HTTP route the TUI list reads. The directory header
         // makes InstanceMiddleware re-enter the same cached tmpdir Instance the run
         // used; sessionID scopes to this run. app.request's Hono overload is
         // `Promise<Response> | Response`, so the async wrapper normalizes it to a
@@ -252,7 +252,7 @@ describe("workflows routes â€” live runtime", () => {
         const response = yield* Effect.promise(async () =>
           Server.Default().app.request(`/workflows?sessionID=${parent.id}`, {
             method: "GET",
-            headers: { "x-mimocode-directory": dir },
+            headers: { "x-ENCODE-directory": dir },
           }),
         )
         expect(response.status).toBe(200)
@@ -262,7 +262,7 @@ describe("workflows routes â€” live runtime", () => {
           succeeded: number
         }>
 
-        // #then â€” the live run is visible over HTTP with its real fields: this is
+        // #then â€?the live run is visible over HTTP with its real fields: this is
         // the exact data path the TUI /workflows list reads (counter from a real spawn).
         const row = rows.find((r) => r.runID === runID)
         expect(row).toBeDefined()

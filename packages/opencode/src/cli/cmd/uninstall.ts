@@ -25,7 +25,7 @@ interface RemovalTargets {
 
 export const UninstallCommand = {
   command: "uninstall",
-  describe: "uninstall mimocode and remove all related files",
+  describe: "uninstall encode and remove all related files",
   builder: (yargs: Argv) =>
     yargs
       .option("keep-config", {
@@ -56,7 +56,7 @@ export const UninstallCommand = {
     UI.empty()
     UI.println(UI.logo("  "))
     UI.empty()
-    prompts.intro("Uninstall MiMoCode")
+    prompts.intro("Uninstall encode")
 
     const method = await AppRuntime.runPromise(Installation.Service.use((svc) => svc.method()))
     prompts.log.info(`Installation method: ${method}`)
@@ -115,30 +115,30 @@ async function showRemovalSummary(targets: RemovalTargets, method: Installation.
     const size = await getDirectorySize(dir.path)
     const sizeStr = formatSize(size)
     const status = dir.keep ? UI.Style.TEXT_DIM + "(keeping)" : ""
-    const prefix = dir.keep ? "â—‹" : "âœ“"
+    const prefix = dir.keep ? "â—? : "âœ?
 
     prompts.log.info(`  ${prefix} ${dir.label}: ${shortenPath(dir.path)} ${UI.Style.TEXT_DIM}(${sizeStr})${status}`)
   }
 
   if (targets.binary) {
-    prompts.log.info(`  âœ“ Binary: ${shortenPath(targets.binary)}`)
+    prompts.log.info(`  âœ?Binary: ${shortenPath(targets.binary)}`)
   }
 
   if (targets.shellConfig) {
-    prompts.log.info(`  âœ“ Shell PATH in ${shortenPath(targets.shellConfig)}`)
+    prompts.log.info(`  âœ?Shell PATH in ${shortenPath(targets.shellConfig)}`)
   }
 
   if (method !== "curl" && method !== "unknown") {
     const cmds: Record<string, string> = {
-      npm: "npm uninstall -g @mimo-ai/cli",
-      pnpm: "pnpm uninstall -g @mimo-ai/cli",
-      bun: "bun remove -g @mimo-ai/cli",
-      // TODO(mimocode): uncomment when published to these channels
-      // brew: "brew uninstall mimocode",
-      // choco: "choco uninstall mimocode",
-      // scoop: "scoop uninstall mimocode",
+      npm: "npm uninstall -g @encode-ai/cli",
+      pnpm: "pnpm uninstall -g @encode-ai/cli",
+      bun: "bun remove -g @encode-ai/cli",
+      // TODO(encode): uncomment when published to these channels
+      // brew: "brew uninstall encode",
+      // choco: "choco uninstall encode",
+      // scoop: "scoop uninstall encode",
     }
-    prompts.log.info(`  âœ“ Package: ${cmds[method] || method}`)
+    prompts.log.info(`  âœ?Package: ${cmds[method] || method}`)
   }
 }
 
@@ -181,13 +181,13 @@ async function executeUninstall(method: Installation.Method, targets: RemovalTar
 
   if (method !== "curl" && method !== "unknown") {
     const cmds: Record<string, string[]> = {
-      npm: ["npm", "uninstall", "-g", "@mimo-ai/cli"],
-      pnpm: ["pnpm", "uninstall", "-g", "@mimo-ai/cli"],
-      bun: ["bun", "remove", "-g", "@mimo-ai/cli"],
-      // TODO(mimocode): uncomment when published to these channels
-      // brew: ["brew", "uninstall", "mimocode"],
-      // choco: ["choco", "uninstall", "mimocode"],
-      // scoop: ["scoop", "uninstall", "mimocode"],
+      npm: ["npm", "uninstall", "-g", "@encode-ai/cli"],
+      pnpm: ["pnpm", "uninstall", "-g", "@encode-ai/cli"],
+      bun: ["bun", "remove", "-g", "@encode-ai/cli"],
+      // TODO(encode): uncomment when published to these channels
+      // brew: ["brew", "uninstall", "encode"],
+      // choco: ["choco", "uninstall", "encode"],
+      // scoop: ["scoop", "uninstall", "encode"],
     }
 
     const cmd = cmds[method]
@@ -213,7 +213,7 @@ async function executeUninstall(method: Installation.Method, targets: RemovalTar
     prompts.log.info(`  rm "${targets.binary}"`)
 
     const binDir = path.dirname(targets.binary)
-    if (binDir.includes(".mimocode")) {
+    if (binDir.includes(".encode")) {
       prompts.log.info(`  rmdir "${binDir}" 2>/dev/null`)
     }
   }
@@ -227,7 +227,7 @@ async function executeUninstall(method: Installation.Method, targets: RemovalTar
   }
 
   UI.empty()
-  prompts.log.success("Thank you for using MiMoCode!")
+  prompts.log.success("Thank you for using encode!")
 }
 
 async function getShellConfigFile(): Promise<string | null> {
@@ -264,7 +264,7 @@ async function getShellConfigFile(): Promise<string | null> {
     if (!exists) continue
 
     const content = await Filesystem.readText(file).catch(() => "")
-    if (content.includes("# mimocode") || content.includes(".mimocode/bin")) {
+    if (content.includes("# encode") || content.includes(".encode/bin")) {
       return file
     }
   }
@@ -282,21 +282,21 @@ async function cleanShellConfig(file: string) {
   for (const line of lines) {
     const trimmed = line.trim()
 
-    if (trimmed === "# mimocode") {
+    if (trimmed === "# encode") {
       skip = true
       continue
     }
 
     if (skip) {
       skip = false
-      if (trimmed.includes(".mimocode/bin") || trimmed.includes("fish_add_path")) {
+      if (trimmed.includes(".encode/bin") || trimmed.includes("fish_add_path")) {
         continue
       }
     }
 
     if (
-      (trimmed.startsWith("export PATH=") && trimmed.includes(".mimocode/bin")) ||
-      (trimmed.startsWith("fish_add_path") && trimmed.includes(".mimocode"))
+      (trimmed.startsWith("export PATH=") && trimmed.includes(".encode/bin")) ||
+      (trimmed.startsWith("fish_add_path") && trimmed.includes(".encode"))
     ) {
       continue
     }

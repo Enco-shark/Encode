@@ -1,16 +1,16 @@
 import { createMemo, createEffect, on, onCleanup, For, Show } from "solid-js"
 import type { JSX } from "solid-js"
 import { useSync } from "@/context/sync"
-import { checksum } from "@mimo-ai/shared/util/encode"
-import { findLast } from "@mimo-ai/shared/util/array"
+import { checksum } from "@encode-ai/shared/util/encode"
+import { findLast } from "@encode-ai/shared/util/array"
 import { same } from "@/utils/same"
-import { Icon } from "@mimo-ai/ui/icon"
-import { Accordion } from "@mimo-ai/ui/accordion"
-import { StickyAccordionHeader } from "@mimo-ai/ui/sticky-accordion-header"
-import { File } from "@mimo-ai/ui/file"
-import { Markdown } from "@mimo-ai/ui/markdown"
-import { ScrollView } from "@mimo-ai/ui/scroll-view"
-import type { Message, Part, UserMessage } from "@mimo-ai/sdk/v2/client"
+import { Icon } from "@encode-ai/ui/icon"
+import { Accordion } from "@encode-ai/ui/accordion"
+import { StickyAccordionHeader } from "@encode-ai/ui/sticky-accordion-header"
+import { File } from "@encode-ai/ui/file"
+import { Markdown } from "@encode-ai/ui/markdown"
+import { ScrollView } from "@encode-ai/ui/scroll-view"
+import type { Message, Part, UserMessage } from "@encode-ai/sdk/v2/client"
 import { useLanguage } from "@/context/language"
 import { useProviders } from "@/hooks/use-providers"
 import { useSessionLayout } from "@/pages/session/session-layout"
@@ -69,7 +69,7 @@ function RawMessage(props: {
         <Accordion.Trigger>
           <div class="flex items-center justify-between gap-2 w-full">
             <div class="min-w-0 truncate">
-              {props.message.role} <span class="text-text-base">â€¢ {props.message.id}</span>
+              {props.message.role} <span class="text-text-base">â€?{props.message.id}</span>
             </div>
             <div class="flex items-center gap-3">
               <div class="shrink-0 text-12-regular text-text-weak">{props.time(props.message.time.created)}</div>
@@ -162,13 +162,13 @@ export function SessionContextTab() {
 
   const providerLabel = createMemo(() => {
     const c = ctx()
-    if (!c) return "â€”"
+    if (!c) return "â€?
     return c.providerLabel
   })
 
   const modelLabel = createMemo(() => {
     const c = ctx()
-    if (!c) return "â€”"
+    if (!c) return "â€?
     return c.modelLabel
   })
 
@@ -197,7 +197,7 @@ export function SessionContextTab() {
   }
 
   const stats = [
-    { label: "context.stats.session", value: () => info()?.title ?? params.id ?? "â€”" },
+    { label: "context.stats.session", value: () => info()?.title ?? params.id ?? "â€? },
     { label: "context.stats.messages", value: () => counts().all.toLocaleString(language.intl()) },
     { label: "context.stats.provider", value: providerLabel },
     { label: "context.stats.model", value: modelLabel },

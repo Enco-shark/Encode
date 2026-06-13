@@ -2,7 +2,7 @@ import path from "path"
 import z from "zod"
 import { Effect } from "effect"
 import { InstanceState } from "@/effect"
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import { Bus } from "@/bus"
 import { assertExternalDirectoryEffect } from "./external-directory"
 import { SessionCwd } from "./session-cwd"
@@ -83,7 +83,7 @@ export const ChangeDirectoryTool = Tool.define(
           return {
             title: path.relative(ins.worktree, normalized) || ".",
             metadata: { from: currentCwd, to: normalized },
-            output: `Working directory changed: ${currentCwd} â†’ ${normalized}`,
+            output: `Working directory changed: ${currentCwd} â†?${normalized}`,
           }
         }),
     }

@@ -18,12 +18,12 @@ import type {
   ProviderListResponse,
   ProviderAuthMethod,
   VcsInfo,
-} from "@mimo-ai/sdk/v2"
+} from "@encode-ai/sdk/v2"
 import { createStore, produce, reconcile } from "solid-js/store"
 import { useProject } from "@tui/context/project"
 import { useEvent } from "@tui/context/event"
 import { useSDK } from "@tui/context/sdk"
-import { Binary } from "@mimo-ai/shared/util/binary"
+import { Binary } from "@encode-ai/shared/util/binary"
 import { createSimpleContext } from "./helper"
 import type { Snapshot } from "@/snapshot"
 import { useExit } from "./exit"
@@ -44,7 +44,7 @@ export type Task = SessionTaskResponse[number]
  * TUI-side view of a dynamic-workflow run (server route `GET /workflows`, bus
  * events `workflow.started/phase/finished`). The list route serializes the
  * runtime's `RunSummary` but is described as `z.array(z.any())`, so the SDK gen
- * surfaces it as `Array<unknown>` rather than a named export â€” mirror the
+ * surfaces it as `Array<unknown>` rather than a named export â€?mirror the
  * server's `RunSummary` shape here so the store and the dialog stay in lockstep.
  */
 export type WorkflowRun = {
@@ -743,7 +743,7 @@ export const { use: useSync, provider: SyncProvider } = createSimpleContext({
         return store.status
       },
       get ready() {
-        if (process.env.MIMOCODE_FAST_BOOT) return true
+        if (process.env.ENCODE_FAST_BOOT) return true
         return store.status !== "loading"
       },
       get path() {

@@ -17,7 +17,7 @@ import { Question } from "../../src/question"
 import { Todo } from "../../src/session/todo"
 import { Session } from "../../src/session"
 import { LLM } from "../../src/session/llm"
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import { SessionPrune } from "../../src/session/prune"
 import { SessionSummary } from "../../src/session/summary"
 import { Instruction } from "../../src/session/instruction"
@@ -262,7 +262,7 @@ describe("Actor.spawn lifecycle defaults (Plan 1 / Task 5)", () => {
           tools: ["read"],
           background: true,
           model: ref,
-          // no lifecycle provided â€” should default to "ephemeral"
+          // no lifecycle provided â€?should default to "ephemeral"
         })
 
         const row = yield* reg.get(result.sessionID, result.actorID)
@@ -332,7 +332,7 @@ describe("Actor.spawn lifecycle defaults (Plan 1 / Task 5)", () => {
           tools: ["read"],
           background: true,
           model: ref,
-          // no lifecycle provided â€” should default to "persistent"
+          // no lifecycle provided â€?should default to "persistent"
         })
 
         const row = yield* reg.get(result.sessionID, result.actorID)

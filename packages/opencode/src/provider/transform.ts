@@ -17,14 +17,14 @@ function mimeToModality(mime: string): Modality | undefined {
   return undefined
 }
 
-// MiMo vision support isn't reflected in models.dev modality data, so the
+// Encode vision support isn't reflected in models.dev modality data, so the
 // generic capability check would strip images before they reach the model.
-// mimo-auto and mimo-v2.5 accept images; mimo-v2.5-pro is text-only.
+// Encode-auto and encode-v2.5 accept images; encode-v2.5-pro is text-only.
 function supportsImageInput(model: Provider.Model): boolean {
-  if (model.providerID === "mimo" || model.providerID === "xiaomi") {
+  if (model.providerID === "Encode") {
     const id = model.id.toLowerCase()
     if (id.includes("v2.5-pro")) return false
-    if (id === "mimo-auto" || id.includes("v2.5")) return true
+    if (id === "Encode-auto" || id.includes("v2.5")) return true
   }
   // Claude and GPT models are all multimodal regardless of catalog data.
   const id = model.id.toLowerCase()
@@ -34,8 +34,8 @@ function supportsImageInput(model: Provider.Model): boolean {
   return model.capabilities.input.image
 }
 
-export const OUTPUT_TOKEN_MAX = Flag.MIMOCODE_EXPERIMENTAL_OUTPUT_TOKEN_MAX || 32_000
-const MIMO_OUTPUT_TOKEN_MAX = 128_000
+export const OUTPUT_TOKEN_MAX = Flag.ENCODE_EXPERIMENTAL_OUTPUT_TOKEN_MAX || 32_000
+const Encode_OUTPUT_TOKEN_MAX = 128_000
 
 // Maps npm package to the key the AI SDK expects for providerOptions
 function sdkKey(npm: string): string | undefined {
@@ -232,11 +232,11 @@ function normalizeMessages(
 }
 
 // Determines whether a model's provider respects inline cache_control / cachePoint
-// markers. Pure name matching (model.api.id.includes("claude")) is fragile â€” a Claude
+// markers. Pure name matching (model.api.id.includes("claude")) is fragile ï¿?a Claude
 // model behind an OpenAI-compatible proxy gets matched but markers are silently dropped.
 // See upstream opencode#26786.
 function supportsCacheMarkers(model: Provider.Model): boolean {
-  // Anthropic-only SDKs â€” always support inline markers
+  // Anthropic-only SDKs ï¿?always support inline markers
   if (model.api.npm === "@ai-sdk/anthropic" || model.api.npm === "@ai-sdk/google-vertex/anthropic") return true
   if (model.providerID === "anthropic" || model.providerID === "google-vertex-anthropic") return true
   // Bedrock cachePoint is a Converse API feature, works across model families
@@ -284,9 +284,9 @@ function applyCaching(msgs: ModelMessage[], model: Provider.Model): ModelMessage
   }
 
   // Strategy: place cache breakpoints at stable prefix boundaries (max 4 allowed by Anthropic)
-  // 1. Last system message â€” system prompt never changes
-  // 2. Midpoint of conversation history â€” long prefix second-level cache
-  // 3. Message before the last user message â€” stable history boundary
+  // 1. Last system message ï¿?system prompt never changes
+  // 2. Midpoint of conversation history ï¿?long prefix second-level cache
+  // 3. Message before the last user message ï¿?stable history boundary
   const targets: ModelMessage[] = []
 
   const systemMsgs = msgs.filter((msg) => msg.role === "system")
@@ -378,8 +378,8 @@ function imageByteSize(image: string): number | undefined {
 }
 
 function limitImages(msgs: ModelMessage[]): ModelMessage[] {
-  const maxImages = Flag.MIMOCODE_MAX_PROMPT_IMAGES
-  const maxSize = Flag.MIMOCODE_MAX_PROMPT_IMAGE_SIZE
+  const maxImages = Flag.ENCODE_MAX_PROMPT_IMAGES
+  const maxSize = Flag.ENCODE_MAX_PROMPT_IMAGE_SIZE
   if (maxImages === undefined && maxSize === undefined) return msgs
 
   const total = msgs.reduce(
@@ -458,7 +458,7 @@ export function temperature(model: Provider.Model) {
   if (id.includes("glm-4.6")) return 1.0
   if (id.includes("glm-4.7")) return 1.0
   if (id.includes("minimax-m2")) return 1.0
-  if (id.includes("mimo")) return 1.0
+  if (id.includes("Encode")) return 1.0
   if (id.includes("kimi-k2")) {
     // kimi-k2-thinking & kimi-k2.5 && kimi-k2p5 && kimi-k2-5
     if (["thinking", "k2.", "k2p", "k2-5"].some((s) => id.includes(s))) {
@@ -1064,7 +1064,7 @@ export function smallOptions(model: Provider.Model) {
 }
 
 // Maps model ID prefix to provider slug used in providerOptions.
-// Example: "amazon/nova-2-lite" â†’ "bedrock"
+// Example: "amazon/nova-2-lite" ï¿?"bedrock"
 const SLUG_OVERRIDES: Record<string, string> = {
   amazon: "bedrock",
 }
@@ -1111,8 +1111,8 @@ export function providerOptions(model: Provider.Model, options: { [x: string]: a
 }
 
 export function maxOutputTokens(model: Provider.Model): number {
-  if (model.providerID === "mimo" || model.providerID === "xiaomi" || model.id.toLowerCase().includes("mimo")) {
-    return MIMO_OUTPUT_TOKEN_MAX
+  if (model.providerID === "Encode" || model.id.toLowerCase().includes("Encode")) {
+    return Encode_OUTPUT_TOKEN_MAX
   }
   return Math.min(model.limit.output, OUTPUT_TOKEN_MAX) || OUTPUT_TOKEN_MAX
 }
@@ -1153,7 +1153,7 @@ function flattenDiscriminatedUnion(schema: JSONSchema.BaseSchema | JSONSchema7):
 
   // Merge non-discriminator properties from every variant. Track which variants
   // each property appeared in so the description can tell the model
-  // "(only when action='X'|'Y')" â€” flat schemas tempt some models (notably
+  // "(only when action='X'|'Y')" ï¿?flat schemas tempt some models (notably
   // gpt-5.5) to fill every property regardless of which action they chose.
   const properties: Record<string, any> = {}
   const propertyOwners: Record<string, unknown[]> = {}
@@ -1173,7 +1173,7 @@ function flattenDiscriminatedUnion(schema: JSONSchema.BaseSchema | JSONSchema7):
   }
   if (discriminator) {
     for (const [key, owners] of Object.entries(propertyOwners)) {
-      if (owners.length === variants.length) continue // present in every variant â€” no annotation
+      if (owners.length === variants.length) continue // present in every variant ï¿?no annotation
       const tag = `(only when ${discriminator}=${owners.map((o) => JSON.stringify(o)).join("|")})`
       const original = (properties[key] as Record<string, any>).description as string | undefined
       properties[key] = {
@@ -1235,7 +1235,7 @@ export function schema(model: Provider.Model, schema: JSONSchema.BaseSchema | JS
   // - OpenAI/Azure: "schema must have type 'object' and not have 'oneOf'/'anyOf'"
   // - Bedrock: "input_schema.type: Field required"
   // - Anthropic proxies to Bedrock: same Bedrock error
-  // Flatten unconditionally â€” all providers accept a flat `type: "object"` schema,
+  // Flatten unconditionally ï¿?all providers accept a flat `type: "object"` schema,
   // and zod's runtime parse still enforces per-variant required fields strictly.
   schema = flattenDiscriminatedUnion(schema)
 

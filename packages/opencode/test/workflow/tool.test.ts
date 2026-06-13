@@ -18,7 +18,7 @@ import { Question } from "../../src/question"
 import { Todo } from "../../src/session/todo"
 import { Session } from "../../src/session"
 import { LLM } from "../../src/session/llm"
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import { SessionPrune } from "../../src/session/prune"
 import { SessionSummary } from "../../src/session/summary"
 import { Instruction } from "../../src/session/instruction"
@@ -186,7 +186,7 @@ function makeLayer() {
   const actor = Actor.layer.pipe(
     Layer.provideMerge(prompt),
     Layer.provideMerge(taskRegistry),
-    // dev's Actor.layer now resolves TaskRegistry.Service (spawn.ts) â€” provide it
+    // dev's Actor.layer now resolves TaskRegistry.Service (spawn.ts) â€?provide it
     // here too, matching test/actor/spawn.test.ts.
     Layer.provide(TaskRegistry.defaultLayer),
     // provideMerge (not provide) so Inbox.Service stays in the output context for
@@ -258,14 +258,14 @@ function providerCfg(url: string) {
 }
 
 describe("WorkflowTool run", () => {
-  // The workflow tool is flag-gated (src/tool/registry.ts) â€” it only appears in
+  // The workflow tool is flag-gated (src/tool/registry.ts) â€?it only appears in
   // the agent's tool list when this is true. The agent-loop test below needs it.
-  const originalFlag = Flag.MIMOCODE_EXPERIMENTAL_WORKFLOW_TOOL
+  const originalFlag = Flag.ENCODE_EXPERIMENTAL_WORKFLOW_TOOL
   beforeAll(() => {
-    Flag.MIMOCODE_EXPERIMENTAL_WORKFLOW_TOOL = true
+    Flag.ENCODE_EXPERIMENTAL_WORKFLOW_TOOL = true
   })
   afterAll(() => {
-    Flag.MIMOCODE_EXPERIMENTAL_WORKFLOW_TOOL = originalFlag
+    Flag.ENCODE_EXPERIMENTAL_WORKFLOW_TOOL = originalFlag
   })
 
   it.live("run returns a run_id immediately, then completes in the background", () =>
@@ -359,8 +359,8 @@ describe("WorkflowTool run", () => {
     ),
   )
 
-  // The hop all prior tests skipped: a real agent turn â€” model emits a `workflow`
-  // tool-call â†’ ToolRegistry dispatches it â†’ WorkflowRuntime runs it. Earlier tests
+  // The hop all prior tests skipped: a real agent turn â€?model emits a `workflow`
+  // tool-call â†?ToolRegistry dispatches it â†?WorkflowRuntime runs it. Earlier tests
   // either drove the runtime directly or called execute() by hand; none proved the
   // agent loop actually invokes the tool.
   it.live("an agent given the workflow tool calls it through the loop and the runtime runs it", () =>
@@ -390,7 +390,7 @@ describe("WorkflowTool run", () => {
         const result = yield* prompt.loop({ sessionID: session.id })
         expect(result.info.role).toBe("assistant")
 
-        // PROOF 1: the agent actually invoked the `workflow` tool â€” a completed tool
+        // PROOF 1: the agent actually invoked the `workflow` tool â€?a completed tool
         // part named "workflow" exists in the conversation.
         type CompletedToolPart = MessageV2.ToolPart & { state: MessageV2.ToolStateCompleted }
         const msgs = yield* MessageV2.filterCompactedEffect(session.id)
@@ -403,7 +403,7 @@ describe("WorkflowTool run", () => {
         expect(toolPart).toBeDefined()
         expect(toolPart?.state.output).toContain("run_id")
 
-        // PROOF 2: the tool actually started a run in the runtime â€” a persisted run
+        // PROOF 2: the tool actually started a run in the runtime â€?a persisted run
         // record exists for this session.
         const runtime = yield* WorkflowRuntime.Service
         const runs = yield* runtime.list({ sessionID: session.id })
@@ -413,7 +413,7 @@ describe("WorkflowTool run", () => {
     ),
     // Real agent loop + an inner workflow spawn through the full stack legitimately
     // exceeds the 5s default on a cold provider/server warmup (it's order-dependent
-    // otherwise â€” green only when a prior test warms the layer). Give it headroom.
+    // otherwise â€?green only when a prior test warms the layer). Give it headroom.
     30000,
   )
 
@@ -430,7 +430,7 @@ describe("WorkflowTool run", () => {
         const path = yield* Effect.promise(() => import("path"))
         const sub = path.join(dir, "scratch")
         mkdirSync(sub, { recursive: true })
-        // The script writes a file then checks it exists â€” all within the workspace.
+        // The script writes a file then checks it exists â€?all within the workspace.
         const script = [
           `export const meta = { name: "t", description: "d" }`,
           `await writeFile("out.txt", "hi")`,
@@ -465,7 +465,7 @@ describe("WorkflowTool parameters schema", () => {
     // Option A (handler-enforced xor): both `name` and `script` are optional at
     // the zod level, so each single-field run variant parses on its own. The
     // run handler rejects the neither-case at runtime (Effect.fail listing known
-    // built-ins), which Effect.orDie surfaces to the model as a defect â€” so the
+    // built-ins), which Effect.orDie surfaces to the model as a defect â€?so the
     // empty-run case is intentionally NOT asserted here.
     expect(workflowParameters.safeParse({ operation: "run", name: "deep-research" }).success).toBe(true)
     expect(workflowParameters.safeParse({ operation: "run", script: "export const meta = {}" }).success).toBe(true)

@@ -58,7 +58,7 @@ describe("WorkflowRuntime workflow() inline child", () => {
           title: "wf nest inline",
           permission: [{ permission: "*", pattern: "*", action: "allow" }],
         })
-        // The child runs one agent â†’ "child-done". The parent has no agent of its
+        // The child runs one agent â†?"child-done". The parent has no agent of its
         // own; it just runs the child and wraps the result.
         yield* llm.text("child-done")
         const child = [
@@ -91,7 +91,7 @@ describe("WorkflowRuntime workflow() inline child", () => {
         })
         const child = [`export const meta = { name: "c", description: "d" }`, `return 1`].join("\n")
         // The orchestrator tries to root the child at an absolute path outside the
-        // parent workspace â†’ resolveInWorkspace throws â†’ the run fails loud.
+        // parent workspace â†?resolveInWorkspace throws â†?the run fails loud.
         // workspace lives in the THIRD positional arg: workflow(spec, args, opts).
         const parentScript = [
           `export const meta = { name: "p", description: "d" }`,
@@ -118,8 +118,8 @@ describe("WorkflowRuntime workflow() by name + dataflow", () => {
           title: "wf nest named",
           permission: [{ permission: "*", pattern: "*", action: "allow" }],
         })
-        // Write two saved workflows into the project's .mimocode/workflows.
-        const wfDir = path.join(dir, ".mimocode", "workflows")
+        // Write two saved workflows into the project's .encode/workflows.
+        const wfDir = path.join(dir, ".encode", "workflows")
         mkdirSync(wfDir, { recursive: true })
         writeFileSync(
           path.join(wfDir, "produce.js"),
@@ -158,11 +158,11 @@ describe("WorkflowRuntime global concurrency ceiling", () => {
         })
         // DETERMINISTIC concurrency probe (no peak-tracking race): all 8 agents'
         // replies block on one gate promise. The server counts a request the instant
-        // it ARRIVES (hits++ before it blocks on the gate), and hits is monotonic â€” so
+        // it ARRIVES (hits++ before it blocks on the gate), and hits is monotonic â€?so
         // while the gate is held, llm.calls is EXACTLY the number of agents that
         // acquired a permit and reached the LLM. With a global ceiling of 2, exactly 2
         // arrive and the other 6 wait at the semaphore; a per-run-only cap (the bug)
-        // would let each child run 2 â†’ 4 arrive.
+        // would let each child run 2 â†?4 arrive.
         let release = () => {}
         const gate = new Promise<void>((r) => (release = r))
         for (let i = 0; i < 8; i++) yield* llm.hold("done", gate)
@@ -187,7 +187,7 @@ describe("WorkflowRuntime global concurrency ceiling", () => {
         // erroneously-unblocked agents ample time to also arrive.
         yield* llm.wait(2)
         yield* Effect.sleep("500 millis")
-        expect(yield* llm.calls).toBe(2) // EXACTLY the ceiling â€” 6 still blocked at the semaphore
+        expect(yield* llm.calls).toBe(2) // EXACTLY the ceiling â€?6 still blocked at the semaphore
         // Release the gate so every agent drains; the run completes.
         release()
         const outcome = yield* runtime.wait({ runID })
@@ -195,9 +195,9 @@ describe("WorkflowRuntime global concurrency ceiling", () => {
         expect((outcome as { result: number[] }).result).toEqual([4, 4])
       }),
       // The global ceiling of 2 comes from CONFIG (a pure process/config property),
-      // NOT from a per-run start() input â€” a per-run input could only narrow its own
+      // NOT from a per-run start() input â€?a per-run input could only narrow its own
       // run's cap, never the process-wide global. Config.get() reads this from the
-      // tmpdir's mimocode.json.
+      // tmpdir's encode.json.
       { git: true, config: (url) => ({ ...providerCfg(url), workflow: { maxConcurrentAgents: 2 } }) },
     ),
     30000,
@@ -217,7 +217,7 @@ describe("WorkflowRuntime workflow() journal (two-level resume)", () => {
         yield* llm.text("child-done")
         // The child appends a marker to a workspace file on EVERY execution, then
         // returns its agent result. The marker is a real side effect NOT covered by
-        // any journal (journals only cache agent()/phase/log) â€” so it counts how many
+        // any journal (journals only cache agent()/phase/log) â€?so it counts how many
         // times the child's BODY actually ran. The child's own agent-journal would
         // replay "child-done" on a relaunch, so the result value alone can't tell a
         // parent-journal replay (child skipped) apart from a child relaunch (child
@@ -238,7 +238,7 @@ describe("WorkflowRuntime workflow() journal (two-level resume)", () => {
         expect((out1 as { result: unknown }).result).toBe("child-done")
         const callsAfterFirst = yield* llm.calls
         // Resume the orchestrator: the workflow() result is journaled in the PARENT, so
-        // the child sub-run is NOT relaunched â€” its body never re-runs. The orchestrator
+        // the child sub-run is NOT relaunched â€?its body never re-runs. The orchestrator
         // completes with the cached value, the marker file stays at one "x", and no new
         // LLM request is made (the child never spawns its agent again).
         const r = yield* runtime.resume({ runID })
@@ -270,7 +270,7 @@ describe("WorkflowRuntime nested cancel", () => {
           title: "wf nest cancel",
           permission: [{ permission: "*", pattern: "*", action: "allow" }],
         })
-        yield* llm.hang // the child's agent hangs â†’ child in-flight at cancel
+        yield* llm.hang // the child's agent hangs â†?child in-flight at cancel
         const child = [`export const meta = { name: "c", description: "d" }`, `return await agent("hang")`].join("\n")
         const orchestrator = [
           `export const meta = { name: "o", description: "d" }`,
@@ -303,9 +303,9 @@ describe("WorkflowRuntime cycle + depth safety", () => {
           title: "wf cycle",
           permission: [{ permission: "*", pattern: "*", action: "allow" }],
         })
-        const wfDir = path.join(dir, ".mimocode", "workflows")
+        const wfDir = path.join(dir, ".encode", "workflows")
         mkdirSync(wfDir, { recursive: true })
-        // loop.js calls itself by name â†’ cycle.
+        // loop.js calls itself by name â†?cycle.
         writeFileSync(
           path.join(wfDir, "loop.js"),
           [`export const meta = { name: "loop", description: "d" }`, `return await workflow("loop")`].join("\n"),
@@ -330,7 +330,7 @@ describe("WorkflowRuntime cycle + depth safety", () => {
           title: "wf depth",
           permission: [{ permission: "*", pattern: "*", action: "allow" }],
         })
-        // Nested inline children, started with maxDepth 1 â†’ the 2nd level exceeds it.
+        // Nested inline children, started with maxDepth 1 â†?the 2nd level exceeds it.
         const inner = `export const meta = { name: "i", description: "d" }\nreturn 1`
         const mid = `export const meta = { name: "m", description: "d" }\nreturn await workflow(${JSON.stringify(inner)})`
         const top = `export const meta = { name: "o", description: "d" }\nreturn await workflow(${JSON.stringify(mid)})`
@@ -361,10 +361,10 @@ describe("WorkflowRuntime child failure event", () => {
           title: "wf child fail",
           permission: [{ permission: "*", pattern: "*", action: "allow" }],
         })
-        // The child throws a plain (NON-structural) error â†’ the CHILD run FAILS
+        // The child throws a plain (NON-structural) error â†?the CHILD run FAILS
         // immediately, deterministically (no agent, no deadline race that could fail
-        // the parent first). workflow() sees a runtime "failed" outcome â€” not a
-        // WORKFLOW_STRUCTURAL_ERROR marker â€” so it resolves to null (never-throw); the
+        // the parent first). workflow() sees a runtime "failed" outcome â€?not a
+        // WORKFLOW_STRUCTURAL_ERROR marker â€?so it resolves to null (never-throw); the
         // parent run COMPLETES "null" and the event records the child's failure.
         const child = [`export const meta = { name: "c", description: "d" }`, `throw new Error("kaboom")`].join("\n")
         const orchestrator = [
@@ -402,11 +402,11 @@ describe("WorkflowRuntime config maxDepth", () => {
           title: "wf cfg depth",
           permission: [{ permission: "*", pattern: "*", action: "allow" }],
         })
-        // 2 levels of inline nesting; config sets maxDepth 1 â†’ level 2 exceeds it.
+        // 2 levels of inline nesting; config sets maxDepth 1 â†?level 2 exceeds it.
         const inner = `export const meta = { name: "i", description: "d" }\nreturn 1`
         const mid = `export const meta = { name: "m", description: "d" }\nreturn await workflow(${JSON.stringify(inner)})`
         const top = `export const meta = { name: "o", description: "d" }\nreturn await workflow(${JSON.stringify(mid)})`
-        // No maxDepth in start() â€” it must come from config.
+        // No maxDepth in start() â€?it must come from config.
         const { runID } = yield* runtime.start({ script: top, sessionID: parent.id, parentActorID: "main", model: ref })
         const outcome = yield* runtime.wait({ runID })
         expect(outcome.status).toBe("failed")

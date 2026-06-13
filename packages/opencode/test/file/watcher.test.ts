@@ -19,8 +19,8 @@ const describeWatcher = FileWatcher.hasNativeBinding() && !process.env.CI ? desc
 
 const watcherConfigLayer = ConfigProvider.layer(
   ConfigProvider.fromUnknown({
-    MIMOCODE_EXPERIMENTAL_FILEWATCHER: "true",
-    MIMOCODE_EXPERIMENTAL_DISABLE_FILEWATCHER: "false",
+    ENCODE_EXPERIMENTAL_FILEWATCHER: "true",
+    ENCODE_EXPERIMENTAL_DISABLE_FILEWATCHER: "false",
   }),
 )
 
@@ -192,7 +192,7 @@ describeWatcher("FileWatcher", () => {
     // Start and immediately stop the watcher (withWatcher disposes on exit)
     await withWatcher(tmp.path, Effect.void)
 
-    // Now write a file â€” no watcher should be listening
+    // Now write a file â€?no watcher should be listening
     await Instance.provide({
       directory: tmp.path,
       fn: () =>

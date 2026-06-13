@@ -17,7 +17,7 @@ import { Question } from "../../src/question"
 import { Todo } from "../../src/session/todo"
 import { Session } from "../../src/session"
 import { LLM } from "../../src/session/llm"
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import { SessionPrune } from "../../src/session/prune"
 import { SessionSummary } from "../../src/session/summary"
 import { Instruction } from "../../src/session/instruction"
@@ -58,12 +58,12 @@ import { progressPath } from "../../src/session/checkpoint-paths"
 // (subagent-progress-checker) demands a tasks/<TID>/progress.md, does the agent's
 // own permission ruleset decide whether the file can ever be written?
 //
-//   - `general` has permission defaults ("*":"allow") â†’ write/edit survive
-//     Permission.disabled â†’ the postStop "use the Write tool" nudge is satisfiable
-//     â†’ progress.md lands.
-//   - `explore` has "*":"deny" (read-only) â†’ write/edit are stripped from its
-//     LLM-visible tool set by Permission.disabled â†’ the same nudge references a
-//     tool it cannot call â†’ no file unless it falls back to bash.
+//   - `general` has permission defaults ("*":"allow") â†?write/edit survive
+//     Permission.disabled â†?the postStop "use the Write tool" nudge is satisfiable
+//     â†?progress.md lands.
+//   - `explore` has "*":"deny" (read-only) â†?write/edit are stripped from its
+//     LLM-visible tool set by Permission.disabled â†?the same nudge references a
+//     tool it cannot call â†?no file unless it falls back to bash.
 //
 // We assert the permission-layer fact directly (deterministic, model-free) AND
 // drive the general path end-to-end with a scripted LLM that writes the file.
@@ -269,7 +269,7 @@ const FIVE_SECTION_BODY = [
 describe("postStop progress.md is gated by the subagent's write permission", () => {
   // PERMISSION-LAYER FACT (deterministic, no LLM): the exact predicate that
   // decides whether the postStop "use the Write tool" nudge can ever succeed.
-  // agents.get reads config, which needs an Instance context â€” so run it inside
+  // agents.get reads config, which needs an Instance context â€?so run it inside
   // provideTmpdirServer like the end-to-end case.
   it.live("explore disables write/edit; general keeps them", () =>
     provideTmpdirServer(
@@ -282,13 +282,13 @@ describe("postStop progress.md is gated by the subagent's write permission", () 
         const exploreDisabled = Permission.disabled(toolIds, explore.permission)
         const generalDisabled = Permission.disabled(toolIds, general.permission)
 
-        // explore ("*":deny) strips write+edit â†’ postStop nudge is unsatisfiable.
+        // explore ("*":deny) strips write+edit â†?postStop nudge is unsatisfiable.
         expect(exploreDisabled.has("write")).toBe(true)
         expect(exploreDisabled.has("edit")).toBe(true)
         expect(exploreDisabled.has("read")).toBe(false) // read explicitly allowed
         expect(exploreDisabled.has("bash")).toBe(false) // bash explicitly allowed (fallback path)
 
-        // general ("*":allow) keeps write+edit â†’ nudge is satisfiable.
+        // general ("*":allow) keeps write+edit â†?nudge is satisfiable.
         expect(generalDisabled.has("write")).toBe(false)
         expect(generalDisabled.has("edit")).toBe(false)
       }),
@@ -300,7 +300,7 @@ describe("postStop progress.md is gated by the subagent's write permission", () 
   // progress.md is re-prompted by postStop; on the next turn it calls Write to the
   // canonical progress path; the file lands on disk with all 5 required sections.
   // Session permission is left DEFAULT (no "*":allow override) so the agent's OWN
-  // ruleset is what governs â€” general's defaults ("*":allow) keep write enabled.
+  // ruleset is what governs â€?general's defaults ("*":allow) keep write enabled.
   it.live("general bound to task_id writes progress.md when postStop re-prompts", () =>
     provideTmpdirServer(
       Effect.fnUntraced(function* ({ llm }) {
@@ -313,10 +313,10 @@ describe("postStop progress.md is gated by the subagent's write permission", () 
 
         const target = progressPath(parent.id, task.id)
 
-        // Turn 1 (spawn): finish WITHOUT writing the journal â†’ postStop sees the
+        // Turn 1 (spawn): finish WITHOUT writing the journal â†?postStop sees the
         // file missing and re-prompts with output.continue=true.
         yield* llm.text("**Status**: success\n**Summary**: did the work (forgot the journal)")
-        // Turn 2 (postStop re-entry): obey the nudge â€” write the 5-section file.
+        // Turn 2 (postStop re-entry): obey the nudge â€?write the 5-section file.
         yield* llm.tool("write", { filePath: target, content: FIVE_SECTION_BODY })
         // Turn 2 still needs a terminal assistant message after the tool result.
         yield* llm.text("**Status**: success\n**Summary**: wrote progress.md")
@@ -359,7 +359,7 @@ describe("postStop progress.md is gated by the subagent's write permission", () 
 
   // CONTRAST (scripted LLM): the SAME path with `explore` (read-only). explore's "*":deny
   // makes canWrite=false (computed in forkWork from agentInfo.permission), so the postStop
-  // progress checker SKIPS â€” no nudge, no wasted re-entry turns â€” and no progress.md lands.
+  // progress checker SKIPS â€?no nudge, no wasted re-entry turns â€?and no progress.md lands.
   // explore's findings are delivered to the caller via finalText, which is the read-only
   // contract. (Contrast: the `general` case above, where canWrite=true and the file lands.)
   it.live("explore bound to task_id skips the progress check (no journal, clean finish)", () =>
@@ -374,7 +374,7 @@ describe("postStop progress.md is gated by the subagent's write permission", () 
         const target = progressPath(parent.id, task.id)
 
         // Single turn: explore delivers findings as finalText. postStop must NOT re-prompt
-        // (canWrite=false â†’ checker skips), so one terminal turn is all that's consumed.
+        // (canWrite=false â†?checker skips), so one terminal turn is all that's consumed.
         // Extra slack turns are provided but should go unused.
         yield* llm.text("**Status**: success\n**Summary**: explored, findings in body")
         yield* llm.text("**Status**: success\n**Summary**: (unused)")

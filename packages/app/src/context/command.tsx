@@ -1,5 +1,5 @@
-import { createSimpleContext } from "@mimo-ai/ui/context"
-import { useDialog } from "@mimo-ai/ui/context/dialog"
+import { createSimpleContext } from "@encode-ai/ui/context"
+import { useDialog } from "@encode-ai/ui/context/dialog"
 import { type Accessor, createEffect, createMemo, onCleanup, onMount } from "solid-js"
 import { createStore } from "solid-js/store"
 import { makeEventListener } from "@solid-primitives/event-listener"
@@ -177,17 +177,17 @@ export function formatKeybind(config: string, t?: (key: KeyLabel) => string): st
   const kb = keybinds[0]
   const parts: string[] = []
 
-  if (kb.ctrl) parts.push(IS_MAC ? "‚åÉ" : keyText("common.key.ctrl", t))
-  if (kb.alt) parts.push(IS_MAC ? "‚å•" : keyText("common.key.alt", t))
-  if (kb.shift) parts.push(IS_MAC ? "‚áß" : keyText("common.key.shift", t))
-  if (kb.meta) parts.push(IS_MAC ? "‚åò" : keyText("common.key.meta", t))
+  if (kb.ctrl) parts.push(IS_MAC ? "‚å? : keyText("common.key.ctrl", t))
+  if (kb.alt) parts.push(IS_MAC ? "‚å? : keyText("common.key.alt", t))
+  if (kb.shift) parts.push(IS_MAC ? "‚á? : keyText("common.key.shift", t))
+  if (kb.meta) parts.push(IS_MAC ? "‚å? : keyText("common.key.meta", t))
 
   if (kb.key) {
     const keys: Record<string, string> = {
-      arrowup: "‚Üë",
-      arrowdown: "‚Üì",
-      arrowleft: "‚Üê",
-      arrowright: "‚Üí",
+      arrowup: "‚Ü?,
+      arrowdown: "‚Ü?,
+      arrowleft: "‚Ü?,
+      arrowright: "‚Ü?,
       comma: ",",
       plus: "+",
     }

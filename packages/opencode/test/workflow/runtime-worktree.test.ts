@@ -41,7 +41,7 @@ describe("WorkflowRuntime worktree isolation", () => {
         yield* llm.tool("write", { filePath: "port.rs", content: "// rust" })
         yield* llm.text("done")
         // A worktree is a fresh checkout of HEAD; uncommitted files (like the
-        // fixture's mimocode.json provider config) do NOT propagate. Commit it so
+        // fixture's encode.json provider config) do NOT propagate. Commit it so
         // the isolated agent's worktree Instance can resolve the test provider.
         yield* Effect.promise(() => $`git add -A && git commit -q -m wf-config`.cwd(dir).quiet().nothrow())
         const script = [
@@ -110,13 +110,13 @@ describe("WorkflowRuntime worktree isolation", () => {
         // Two agents racing on the same global LLM queue: bind each one's turns to
         // its OWN prompt sentinel (the agent-scoped task echoed in the request body)
         // so dispatch is deterministic regardless of which agent's request lands
-        // first. Plain FIFO push would interleave non-deterministically â€” one agent
+        // first. Plain FIFO push would interleave non-deterministically â€?one agent
         // could consume the other's `text("done")` as its first turn and finish
         // pristine. The sentinels are uppercase/underscore tokens that cannot occur
         // in the system prompt or tool descriptions (a substring like "alpha" would
         // false-match "alphanumeric" in the prompt and make BOTH matchers fire).
         // Each agent: one write tool call (matched), then a final text turn (matched).
-        // Both write the SAME relative path on purpose â€” the property under test is
+        // Both write the SAME relative path on purpose â€?the property under test is
         // that distinct worktrees keep them from clobbering each other.
         const isA = (h: { body: unknown }) => JSON.stringify(h.body).includes("WF_TASK_ONE")
         const isB = (h: { body: unknown }) => JSON.stringify(h.body).includes("WF_TASK_TWO")
@@ -138,8 +138,8 @@ describe("WorkflowRuntime worktree isolation", () => {
         expect(outcome.status).toBe("completed")
         const dirs = (outcome as { result: (string | null)[] }).result
         expect(dirs.filter(Boolean).length).toBe(2)
-        expect(dirs[0]).not.toBe(dirs[1]) // disjoint trees â€” no clobber
-        // Teardown: both worktrees are CHANGED (kept) â€” remove them so the fixture's
+        expect(dirs[0]).not.toBe(dirs[1]) // disjoint trees â€?no clobber
+        // Teardown: both worktrees are CHANGED (kept) â€?remove them so the fixture's
         // fs.rm doesn't hit the ~28s retry storm from live .git/worktrees entries.
         const wt = yield* Worktree.Service
         for (const d of dirs) if (d) yield* wt.remove({ directory: d }).pipe(Effect.ignore)
@@ -170,7 +170,7 @@ describe("WorkflowRuntime worktree isolation", () => {
         // before returning an envelope), so a deterministic filesystem assertion is
         // not available. The reliable guard is that cancel COMPLETES without throwing
         // (it now calls worktree.remove for the in-flight worktree, best-effort) and
-        // the run lands cancelled â€” a regression where cancel throws on worktree
+        // the run lands cancelled â€?a regression where cancel throws on worktree
         // removal would fail right here.
         yield* runtime.cancel({ runID })
         const s = yield* runtime.status({ runID })
@@ -190,7 +190,7 @@ describe("WorkflowRuntime worktree isolation", () => {
           title: "wf reclaim on deadline",
           permission: [{ permission: "*", pattern: "*", action: "allow" }],
         })
-        yield* llm.hang // the isolated agent hangs â†’ run will hit the deadline
+        yield* llm.hang // the isolated agent hangs â†?run will hit the deadline
         yield* Effect.promise(() => $`git add -A && git commit -q -m wf-config`.cwd(dir).quiet().nothrow())
         const root = path.join(Global.Path.data, "worktree", Instance.project.id)
         const script = [
@@ -223,7 +223,7 @@ describe("WorkflowRuntime worktree isolation", () => {
           title: "wf isolate agent-timeout",
           permission: [{ permission: "*", pattern: "*", action: "allow" }],
         })
-        yield* llm.hang // the isolated agent hangs â†’ its per-agent timeout fires
+        yield* llm.hang // the isolated agent hangs â†?its per-agent timeout fires
         yield* Effect.promise(() => $`git add -A && git commit -q -m wf-config`.cwd(dir).quiet().nothrow())
         const root = path.join(Global.Path.data, "worktree", Instance.project.id)
         const script = [
@@ -232,7 +232,7 @@ describe("WorkflowRuntime worktree isolation", () => {
         ].join("\n")
         // agentTimeoutMs (NOT scriptDeadlineMs) bounds the hung agent. Unlike the
         // deadline (which FAILS the run), a per-agent timeout resolves that agent to
-        // null and lets the run COMPLETE â€” and its in-flight worktree must be
+        // null and lets the run COMPLETE â€?and its in-flight worktree must be
         // reclaimed via the isolated path's nullâ†’not-success disposition (the M3
         // branch). scriptDeadline far above so a PASS proves the per-agent path fired.
         const { runID } = yield* runtime.start({
@@ -245,7 +245,7 @@ describe("WorkflowRuntime worktree isolation", () => {
         })
         const outcome = yield* runtime.wait({ runID })
         // Completed (graceful timeoutâ†’null), with the agent's deliverable nullish.
-        // (The host returns null; the sandbox marshals host null â†’ guest undefined â€”
+        // (The host returns null; the sandbox marshals host null â†?guest undefined â€?
         // same sentinel convention as the shared-path timeout test.)
         expect(outcome.status).toBe("completed")
         const result = (outcome as { result: unknown }).result

@@ -5,7 +5,7 @@ import type { TextareaRenderable } from "@opentui/core"
 import { useKeybind } from "../../context/keybind"
 import { selectedForeground, tint, useTheme } from "../../context/theme"
 import { useLanguage } from "../../context/language"
-import type { QuestionAnswer, QuestionRequest } from "@mimo-ai/sdk/v2"
+import type { QuestionAnswer, QuestionRequest } from "@encode-ai/sdk/v2"
 import { useSDK } from "../../context/sdk"
 import { SplitBorder } from "../../component/border"
 import { useTextareaKeybindings } from "../../component/textarea-keybindings"
@@ -358,11 +358,11 @@ export function QuestionPrompt(props: { request: QuestionRequest }) {
                         </box>
                         <box backgroundColor={active() ? theme.backgroundElement : undefined}>
                           <text fg={active() ? theme.secondary : picked() ? theme.success : theme.text}>
-                            {multi() ? `[${picked() ? "âœ“" : " "}] ${opt.label}` : opt.label}
+                            {multi() ? `[${picked() ? "âœ? : " "}] ${opt.label}` : opt.label}
                           </text>
                         </box>
                         <Show when={!multi()}>
-                          <text fg={theme.success}>{picked() ? "âœ“" : ""}</text>
+                          <text fg={theme.success}>{picked() ? "âœ? : ""}</text>
                         </Show>
                       </box>
 
@@ -387,12 +387,12 @@ export function QuestionPrompt(props: { request: QuestionRequest }) {
                     </box>
                     <box backgroundColor={other() ? theme.backgroundElement : undefined}>
                       <text fg={other() ? theme.secondary : customPicked() ? theme.success : theme.text}>
-                        {multi() ? `[${customPicked() ? "âœ“" : " "}] Type your own answer` : "Type your own answer"}
+                        {multi() ? `[${customPicked() ? "âœ? : " "}] Type your own answer` : "Type your own answer"}
                       </text>
                     </box>
 
                     <Show when={!multi()}>
-                      <text fg={theme.success}>{customPicked() ? "âœ“" : ""}</text>
+                      <text fg={theme.success}>{customPicked() ? "âœ? : ""}</text>
                     </Show>
                   </box>
                   <Show when={store.editing}>
@@ -463,7 +463,7 @@ export function QuestionPrompt(props: { request: QuestionRequest }) {
         <box flexDirection="row" gap={2}>
           <Show when={!single()}>
             <text fg={theme.text}>
-              {"â‡†"} <span style={{ fg: theme.textMuted }}>tab</span>
+              {"â‡?} <span style={{ fg: theme.textMuted }}>tab</span>
             </text>
           </Show>
           <Show when={!confirm()}>

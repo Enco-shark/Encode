@@ -2,7 +2,7 @@ import path from "path"
 import { pathToFileURL } from "url"
 import { Effect } from "effect"
 import matter from "gray-matter"
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import { Path as GlobalPath } from "@/global"
 import { InstallationLocal, InstallationVersion } from "@/installation/version"
 import { Log } from "@/util"
@@ -11,7 +11,7 @@ import { loadComposeBundle as loadComposeBundleDev } from "./bundle.macro"
 import { fallbackSanitization } from "@/config/markdown"
 
 /// Bun macros only resolve in the static import graph of an entry point.
-/// In dynamic import() chains (e.g. plugin tests), the macro is unavailable â€”
+/// In dynamic import() chains (e.g. plugin tests), the macro is unavailable â€?
 /// fall back to a normal runtime import of the same function.
 /// `typeof loadComposeBundle` is always "undefined" even after macro expansion
 /// (Bun replaces the call site, not the binding), so use try/catch instead.

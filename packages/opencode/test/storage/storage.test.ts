@@ -1,7 +1,7 @@
 import { describe, expect } from "bun:test"
 import path from "path"
 import { Effect, Exit, Layer } from "effect"
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import * as CrossSpawnSpawner from "../../src/effect/cross-spawn-spawner"
 import { Git } from "../../src/git"
 import { Global } from "../../src/global"
@@ -25,7 +25,7 @@ const scope = Effect.fnUntraced(function* () {
 
 // remap(root) rewrites any path under Global.Path.data to live under `root` instead.
 // Used by remappedFs to build an AppFileSystem that Storage thinks is the real global
-// data dir but actually targets a tmp dir â€” letting migration tests stage legacy layouts.
+// data dir but actually targets a tmp dir â€?letting migration tests stage legacy layouts.
 // NOTE: only the 6 methods below are intercepted. If Storage starts using a different
 // AppFileSystem method that touches Global.Path.data, add it here.
 function remap(root: string, file: string) {
@@ -53,7 +53,7 @@ function remappedFs(root: string) {
   ).pipe(Layer.provide(AppFileSystem.defaultLayer))
 }
 
-// Layer.fresh forces a new Storage instance â€” without it, Effect's in-test layer cache
+// Layer.fresh forces a new Storage instance â€?without it, Effect's in-test layer cache
 // returns the outer testEffect's Storage (which uses the real AppFileSystem), not a new
 // one built on top of remappedFs.
 const remappedStorage = (root: string) =>

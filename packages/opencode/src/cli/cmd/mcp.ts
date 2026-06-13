@@ -23,11 +23,11 @@ import { Effect } from "effect"
 function getAuthStatusIcon(status: MCP.AuthStatus): string {
   switch (status) {
     case "authenticated":
-      return "âœ“"
+      return "âœ?
     case "expired":
-      return "âš "
+      return "âš?
     case "not_authenticated":
-      return "âœ—"
+      return "âœ?
   }
 }
 
@@ -133,7 +133,7 @@ export const McpListCommand = cmd({
 
         if (servers.length === 0) {
           prompts.log.warn("No MCP servers configured")
-          prompts.outro("Add servers with: mimo mcp add")
+          prompts.outro("Add servers with: Encode mcp add")
           return
         }
 
@@ -147,29 +147,29 @@ export const McpListCommand = cmd({
           let hint = ""
 
           if (!status) {
-            statusIcon = "â—‹"
+            statusIcon = "â—?
             statusText = "not initialized"
           } else if (status.status === "connected") {
-            statusIcon = "âœ“"
+            statusIcon = "âœ?
             statusText = "connected"
             if (hasOAuth && hasStoredTokens) {
               hint = " (OAuth)"
             }
           } else if (status.status === "disabled") {
-            statusIcon = "â—‹"
+            statusIcon = "â—?
             statusText = "disabled"
           } else if (status.status === "pending") {
-            statusIcon = "â—‹"
+            statusIcon = "â—?
             statusText = "pending approval"
           } else if (status.status === "needs_auth") {
-            statusIcon = "âš "
+            statusIcon = "âš?
             statusText = "needs authentication"
           } else if (status.status === "needs_client_registration") {
-            statusIcon = "âœ—"
+            statusIcon = "âœ?
             statusText = "needs client registration"
             hint = "\n    " + status.error
           } else {
-            statusIcon = "âœ—"
+            statusIcon = "âœ?
             statusText = "failed"
             hint = "\n    " + status.error
           }
@@ -212,7 +212,7 @@ export const McpAuthCommand = cmd({
 
         if (servers.length === 0) {
           prompts.log.warn("No OAuth-capable MCP servers configured")
-          prompts.log.info("Remote MCP servers support OAuth by default. Add a remote server in mimocode.json:")
+          prompts.log.info("Remote MCP servers support OAuth by default. Add a remote server in encode.json:")
           prompts.log.info(`
   "mcp": {
     "my-server": {
@@ -424,11 +424,11 @@ export const McpLogoutCommand = cmd({
 })
 
 async function resolveConfigPath(baseDir: string, global = false) {
-  // Check for existing config files (prefer .jsonc over .json, check .mimocode/ subdirectory too)
-  const candidates = [path.join(baseDir, "mimocode.json"), path.join(baseDir, "mimocode.jsonc")]
+  // Check for existing config files (prefer .jsonc over .json, check .encode/ subdirectory too)
+  const candidates = [path.join(baseDir, "encode.json"), path.join(baseDir, "encode.jsonc")]
 
   if (!global) {
-    candidates.push(path.join(baseDir, ".mimocode", "mimocode.json"), path.join(baseDir, ".mimocode", "mimocode.jsonc"))
+    candidates.push(path.join(baseDir, ".encode", "encode.json"), path.join(baseDir, ".encode", "encode.jsonc"))
   }
 
   for (const candidate of candidates) {
@@ -437,7 +437,7 @@ async function resolveConfigPath(baseDir: string, global = false) {
     }
   }
 
-  // Default to mimocode.json if none exist
+  // Default to encode.json if none exist
   return candidates[0]
 }
 
@@ -524,7 +524,7 @@ export const McpAddCommand = cmd({
         if (type === "local") {
           const command = await prompts.text({
             message: "Enter command to run",
-            placeholder: "e.g., mimo x @modelcontextprotocol/server-filesystem",
+            placeholder: "e.g., Encode x @modelcontextprotocol/server-filesystem",
             validate: (x) => (x && x.length > 0 ? undefined : "Required"),
           })
           if (prompts.isCancel(command)) throw new UI.CancelledError()
@@ -713,7 +713,7 @@ export const McpDebugCommand = cmd({
               params: {
                 protocolVersion: "2024-11-05",
                 capabilities: {},
-                clientInfo: { name: "mimocode-debug", version: InstallationVersion },
+                clientInfo: { name: "encode-debug", version: InstallationVersion },
               },
               id: 1,
             }),
@@ -761,7 +761,7 @@ export const McpDebugCommand = cmd({
 
             try {
               const client = new Client({
-                name: "mimocode-debug",
+                name: "encode-debug",
                 version: InstallationVersion,
               })
               await client.connect(transport)

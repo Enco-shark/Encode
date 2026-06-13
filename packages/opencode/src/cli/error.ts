@@ -1,4 +1,4 @@
-import { NamedError } from "@mimo-ai/shared/util/error"
+import { NamedError } from "@encode-ai/shared/util/error"
 import { errorFormat } from "@/util/error"
 
 interface ErrorLike {
@@ -32,8 +32,8 @@ export function FormatError(input: unknown) {
     return [
       `Model not found: ${data?.providerID}/${data?.modelID}`,
       ...(suggestions.length ? ["Did you mean: " + suggestions.join(", ")] : []),
-      `Try: \`mimo models\` to list available models`,
-      `Or check your config (mimocode.json) provider/model names`,
+      `Try: \`Encode models\` to list available models`,
+      `Or check your config (encode.json) provider/model names`,
     ].join("\n")
   }
 
@@ -67,7 +67,7 @@ export function FormatError(input: unknown) {
     const issues: Array<{ message: string; path: string[] }> = Array.isArray(data?.issues) ? data.issues : []
     return [
       `Configuration is invalid${path && path !== "config" ? ` at ${path}` : ""}` + (message ? `: ${message}` : ""),
-      ...issues.map((issue) => "â†³ " + issue.message + " " + issue.path.join(".")),
+      ...issues.map((issue) => "â†?" + issue.message + " " + issue.path.join(".")),
     ].join("\n")
   }
 

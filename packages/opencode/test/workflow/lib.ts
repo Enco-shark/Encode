@@ -16,7 +16,7 @@ import { Question } from "../../src/question"
 import { Todo } from "../../src/session/todo"
 import { Session } from "../../src/session"
 import { LLM } from "../../src/session/llm"
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import { SessionPrune } from "../../src/session/prune"
 import { SessionSummary } from "../../src/session/summary"
 import { Instruction } from "../../src/session/instruction"
@@ -172,7 +172,7 @@ export function makeLayer() {
   const actor = Actor.layer.pipe(
     Layer.provideMerge(prompt),
     Layer.provideMerge(taskRegistry),
-    // dev's Actor.layer now resolves TaskRegistry.Service (spawn.ts) â€” provide it
+    // dev's Actor.layer now resolves TaskRegistry.Service (spawn.ts) â€?provide it
     // here too, matching test/actor/spawn.test.ts.
     Layer.provide(TaskRegistry.defaultLayer),
     // provideMerge (not provide) so Inbox.Service stays in the output context for
@@ -185,7 +185,7 @@ export function makeLayer() {
     WorkflowRuntime.layer.pipe(
       Layer.provideMerge(actor),
       // provideMerge (not provide) so Worktree.Service stays in the output
-      // context â€” the worktree-isolation test resolves it to clean up the kept
+      // context â€?the worktree-isolation test resolves it to clean up the kept
       // worktree before the tmpdir fixture finalizer runs.
       Layer.provideMerge(Worktree.defaultLayer),
     ),

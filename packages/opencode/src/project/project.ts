@@ -14,7 +14,7 @@ import { resolveMainGitDir, resolveProjectId } from "./project-id"
 import { Effect, Layer, Path, Scope, Context, Stream, Types, Schema } from "effect"
 import { ChildProcess, ChildProcessSpawner } from "effect/unstable/process"
 import { NodePath } from "@effect/platform-node"
-import { AppFileSystem } from "@mimo-ai/shared/filesystem"
+import { AppFileSystem } from "@encode-ai/shared/filesystem"
 import * as CrossSpawnSpawner from "@/effect/cross-spawn-spawner"
 import { zod } from "@/util/effect-zod"
 import { withStatics } from "@/util/schema"
@@ -23,8 +23,8 @@ async function setupProjectIdEnvironment(workingDir: string): Promise<void> {
   const mainGit = resolveMainGitDir(workingDir)
   if (!mainGit) return
 
-  const localFile = nodePath.join(workingDir, ".mimocode-project-id")
-  const idFile = nodePath.join(mainGit, "mimocode-project-id")
+  const localFile = nodePath.join(workingDir, ".ENCODE-project-id")
+  const idFile = nodePath.join(mainGit, "ENCODE-project-id")
 
   if (await Bun.file(localFile).exists()) {
     if (!(await Bun.file(idFile).exists())) {
@@ -34,14 +34,14 @@ async function setupProjectIdEnvironment(workingDir: string): Promise<void> {
     await nodeFs.unlink(localFile).catch(() => {})
   }
 
-  // Belt-and-suspenders: ensure .git/info/exclude lists .mimocode-project-id
+  // Belt-and-suspenders: ensure .git/info/exclude lists .ENCODE-project-id
   const excludeFile = nodePath.join(mainGit, "info", "exclude")
   await nodeFs.mkdir(nodePath.dirname(excludeFile), { recursive: true })
   const existing = await Bun.file(excludeFile)
     .text()
     .catch(() => "")
-  if (!existing.includes(".mimocode-project-id")) {
-    await nodeFs.appendFile(excludeFile, "\n.mimocode-project-id\n")
+  if (!existing.includes(".ENCODE-project-id")) {
+    await nodeFs.appendFile(excludeFile, "\n.ENCODE-project-id\n")
   }
 }
 
@@ -174,7 +174,7 @@ export const layer: Layer.Layer<
         }),
       )
 
-    const fakeVcs = Schema.decodeUnknownSync(Schema.optional(ProjectVcs))(Flag.MIMOCODE_FAKE_VCS)
+    const fakeVcs = Schema.decodeUnknownSync(Schema.optional(ProjectVcs))(Flag.ENCODE_FAKE_VCS)
 
     const resolveGitPath = (cwd: string, name: string) => {
       if (!name) return cwd
@@ -194,7 +194,7 @@ export const layer: Layer.Layer<
       type DiscoveryResult = { id: ProjectID; worktree: string; sandbox: string; vcs: Info["vcs"] }
 
       const data: DiscoveryResult = yield* Effect.gen(function* () {
-        if (Flag.MIMOCODE_DISABLE_GIT) {
+        if (Flag.ENCODE_DISABLE_GIT) {
           return {
             id: ProjectID.global,
             worktree: directory,
@@ -273,7 +273,7 @@ export const layer: Layer.Layer<
             time: { created: Date.now(), updated: Date.now() },
           }
 
-      if (Flag.MIMOCODE_EXPERIMENTAL_ICON_DISCOVERY) yield* discover(existing).pipe(Effect.ignore, Effect.forkIn(scope))
+      if (Flag.ENCODE_EXPERIMENTAL_ICON_DISCOVERY) yield* discover(existing).pipe(Effect.ignore, Effect.forkIn(scope))
 
       const result: Info = {
         ...existing,
