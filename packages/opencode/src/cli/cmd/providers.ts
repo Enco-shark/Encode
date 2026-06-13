@@ -214,30 +214,6 @@ export function resolvePluginProviders(input: {
   return result
 }
 
-async function EncodeFreeLogin() {
-  const spinner = prompts.spinner()
-  spinner.start(t("cli.providers.Encode_free.verifying"))
-  try {
-    const { fingerprint, exp } = await EncodeFree.verify()
-    spinner.stop(t("cli.providers.Encode_free.ready"))
-    const expDate = new Date(exp).toISOString()
-    prompts.log.success(t("cli.providers.Encode_free.default_set"))
-    prompts.log.info(
-      [
-        `Endpoint:    ${EncodeFree.chatBaseUrl}/chat`,
-        `Fingerprint: ${fingerprint.slice(0, 12)}�?{fingerprint.slice(-4)}`,
-        `Token exp:   ${expDate}`,
-      ].join("\n"),
-    )
-    prompts.log.info(t("cli.providers.Encode_free.usage_hint"))
-    prompts.outro("Done")
-  } catch (err) {
-    spinner.stop(t("cli.providers.Encode_free.failed"), 1)
-    prompts.log.error(err instanceof Error ? err.message : String(err))
-    prompts.outro("Done")
-  }
-}
-
 async function EncodeLogin() {
   const hooks = await AppRuntime.runPromise(
     Effect.gen(function* () {
@@ -516,8 +492,8 @@ export const ProvidersLoginCommand = cmd({
         ]
 
         let provider: string
-        if (args.provider === "Encode" || args.provider === "Encode-free") {
-          await EncodeFreeLogin()
+        if (args.provider === "Encode") {
+          await EncodeLogin()
           return
         } else if (args.provider) {
           const input = args.provider
@@ -530,20 +506,6 @@ export const ProvidersLoginCommand = cmd({
           }
           provider = match.value
         } else {
-          const choice = await prompts.select({
-            message: t("cli.providers.select"),
-            options: [
-              { label: "Encode Auto (free)", value: "Encode-free", hint: t("cli.providers.Encode_free.hint") },
-              { label: t("cli.providers.other"), value: "__other__" },
-            ],
-          })
-          if (prompts.isCancel(choice)) throw new UI.CancelledError()
-
-          if (choice === "Encode-free") {
-            await EncodeFreeLogin()
-            return
-          }
-
           const selected = await prompts.autocomplete({
             message: t("cli.providers.select"),
             maxItems: 8,
