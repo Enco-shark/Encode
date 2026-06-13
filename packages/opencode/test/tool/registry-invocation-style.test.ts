@@ -25,15 +25,15 @@ describe("ToolRegistry.tools: invocation style resolution", () => {
         const general = yield* agents.get("general")
         if (!general) throw new Error("no general agent")
         const tools = yield* reg.tools({
-          providerID: ProviderID.opencode,
-          modelID: ModelID.make("opencode/claude-sonnet-4-6"),
-          agent: general,
-        })
-        const task = tools.find((t) => t.id === "task")
-        expect(task).toBeDefined()
-        // JSON mode → parameters is an object wrapping an `operation` discriminated
-        // union (discriminator "action"). Confirm `operation` is present and `script`
-        // (the shell-mode shape) is not.
+          providerID: ProviderID.encode,
+            modelID: ModelID.make("encode/claude-sonnet-4-6"),
+            agent: general,
+          })
+          const task = tools.find((t) => t.id === "task")
+          expect(task).toBeDefined()
+          // JSON mode → parameters is an object wrapping an `operation` discriminated
+          // union (discriminator "action"). Confirm `operation` is present and `script`
+          // (the shell-mode shape) is not.
         const schema = task!.parameters as any
         expect(schema.shape?.operation ?? schema._def?.shape?.operation).toBeDefined()
         expect(schema.shape?.script ?? schema._def?.shape?.script).toBeUndefined()
@@ -52,8 +52,8 @@ describe("ToolRegistry.tools: invocation style resolution", () => {
             const general = yield* agents.get("general")
             if (!general) throw new Error("no general agent")
             const tools = yield* reg.tools({
-              providerID: ProviderID.opencode,
-              modelID: ModelID.make("opencode/claude-sonnet-4-6"),
+              providerID: ProviderID.encode,
+              modelID: ModelID.make("encode/claude-sonnet-4-6"),
               agent: general,
             })
             const task = tools.find((t) => t.id === "task")
@@ -76,8 +76,8 @@ describe("ToolRegistry.tools: invocation style resolution", () => {
           const general = yield* agents.get("general")
           if (!general) throw new Error("no general agent")
           const tools = yield* reg.tools({
-            providerID: ProviderID.opencode,
-            modelID: ModelID.make("opencode/claude-sonnet-4-6"),
+            providerID: ProviderID.encode,
+            modelID: ModelID.make("encode/claude-sonnet-4-6"),
             agent: general,
           })
           const read = tools.find((t) => t.id === "read")
@@ -102,8 +102,8 @@ describe("ToolRegistry.tools: shell mode end-to-end on task", () => {
           const general = yield* agents.get("general")
           if (!general) throw new Error("no general agent")
           const tools = yield* reg.tools({
-            providerID: ProviderID.opencode,
-            modelID: ModelID.make("opencode/claude-sonnet-4-6"),
+            providerID: ProviderID.encode,
+            modelID: ModelID.make("encode/claude-sonnet-4-6"),
             agent: general,
           })
           const task = tools.find((t) => t.id === "task")!

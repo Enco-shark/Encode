@@ -105,7 +105,7 @@ async function pluginProject(source: string) {
         path.join(dir, "encode.json"),
         JSON.stringify(
           {
-            $schema: "https://opencode.ai/config.json",
+            $schema: "https://encode.ai/config.json",
             plugin: [pathToFileURL(file).href],
           },
           null,
@@ -117,7 +117,7 @@ async function pluginProject(source: string) {
 }
 
 describe("triggerActorPreStop", () => {
-  test("no hooks â†?continue=false, empty contributors", async () => {
+  test("no hooks ï¿½?continue=false, empty contributors", async () => {
     await using tmp = await tmpdir({})
     const out = await Instance.provide({
       directory: tmp.path,
@@ -136,7 +136,7 @@ describe("triggerActorPreStop", () => {
     expect(out.contributingHookIDs).toEqual([])
   })
 
-  test("hook returns continue=true â†?aggregated continue=true with reason", async () => {
+  test("hook returns continue=true ï¿½?aggregated continue=true with reason", async () => {
     await using tmp = await pluginProject(
       [
         "export default async () => ({",
@@ -195,7 +195,7 @@ describe("triggerActorPreStop", () => {
     expect(out.continue).toBe(false)
   })
 
-  test("hook throwing â†?other hooks still run, error logged not raised", async () => {
+  test("hook throwing ï¿½?other hooks still run, error logged not raised", async () => {
     await using tmp = await tmpdir({
       init: async (dir) => {
         const a = path.join(dir, "plugin-a.ts")
@@ -224,7 +224,7 @@ describe("triggerActorPreStop", () => {
         await Bun.write(
           path.join(dir, "encode.json"),
           JSON.stringify({
-            $schema: "https://opencode.ai/config.json",
+            $schema: "https://encode.ai/config.json",
             plugin: [pathToFileURL(a).href, pathToFileURL(b).href],
           }),
         )
@@ -247,7 +247,7 @@ describe("triggerActorPreStop", () => {
     expect(out.reason).toBe("still here")
   })
 
-  test("continue=true without reason â†?ignored with warning", async () => {
+  test("continue=true without reason ï¿½?ignored with warning", async () => {
     await using tmp = await pluginProject(
       [
         "export default async () => ({",
@@ -277,7 +277,7 @@ describe("triggerActorPreStop", () => {
 })
 
 describe("actor.preStop ReAct loop", () => {
-  test("hook returns continue=true once â†?subagent runs second turn â†?final delivery has second-turn finalText", async () => {
+  test("hook returns continue=true once ï¿½?subagent runs second turn ï¿½?final delivery has second-turn finalText", async () => {
     const server = startScriptedLLMServer([
       { lines: textStopResponse("first turn output") },
       { lines: textStopResponse("goodbye") },
@@ -303,7 +303,7 @@ describe("actor.preStop ReAct loop", () => {
           await Bun.write(
             path.join(dir, "encode.json"),
             JSON.stringify({
-              $schema: "https://opencode.ai/config.json",
+              $schema: "https://encode.ai/config.json",
               plugin: [pathToFileURL(file).href],
               enabled_providers: ["alibaba"],
               provider: {
@@ -356,13 +356,13 @@ describe("actor.preStop ReAct loop", () => {
     }
   })
 
-  test("hook always asks for re-entry â†?caps at MAX_PRE_REACT, delivers last finalText", async () => {
+  test("hook always asks for re-entry ï¿½?caps at MAX_PRE_REACT, delivers last finalText", async () => {
     const server = startScriptedLLMServer([
       { lines: textStopResponse("turn1") },
       { lines: textStopResponse("turn2") },
       { lines: textStopResponse("turn3") },
       { lines: textStopResponse("turn4") },
-      // 5th would not be needed â€?cap stops at 4 turns total (1 + 3 re-entries)
+      // 5th would not be needed ï¿½?cap stops at 4 turns total (1 + 3 re-entries)
       { lines: textStopResponse("turn5_unused") },
     ])
     try {
@@ -384,7 +384,7 @@ describe("actor.preStop ReAct loop", () => {
           await Bun.write(
             path.join(dir, "encode.json"),
             JSON.stringify({
-              $schema: "https://opencode.ai/config.json",
+              $schema: "https://encode.ai/config.json",
               plugin: [pathToFileURL(file).href],
               enabled_providers: ["alibaba"],
               provider: {
@@ -473,7 +473,7 @@ describe("actor.postStop ReAct loop", () => {
           await Bun.write(
             path.join(dir, "encode.json"),
             JSON.stringify({
-              $schema: "https://opencode.ai/config.json",
+              $schema: "https://encode.ai/config.json",
               plugin: [pathToFileURL(file).href],
               enabled_providers: ["alibaba"],
               provider: {
@@ -533,7 +533,7 @@ describe("actor.postStop ReAct loop", () => {
   })
 
   test("postStop caps at MAX_POST_REACT re-entries", async () => {
-    // postStop hook that always requests continuation â†?should cap at MAX_POST_REACT (3).
+    // postStop hook that always requests continuation ï¿½?should cap at MAX_POST_REACT (3).
     // Total LLM calls: 1 (delivery) + 3 (postStop re-entries) = 4.
     // Caller's finalText is still from the delivery turn (not a postStop turn).
     const server = startScriptedLLMServer([
@@ -541,7 +541,7 @@ describe("actor.postStop ReAct loop", () => {
       { lines: textStopResponse("post1") },
       { lines: textStopResponse("post2") },
       { lines: textStopResponse("post3") },
-      // 5th would not be needed â€?cap stops at 4 turns total (1 + 3 re-entries)
+      // 5th would not be needed ï¿½?cap stops at 4 turns total (1 + 3 re-entries)
       { lines: textStopResponse("post4_unused") },
     ])
     try {
@@ -563,7 +563,7 @@ describe("actor.postStop ReAct loop", () => {
           await Bun.write(
             path.join(dir, "encode.json"),
             JSON.stringify({
-              $schema: "https://opencode.ai/config.json",
+              $schema: "https://encode.ai/config.json",
               plugin: [pathToFileURL(file).href],
               enabled_providers: ["alibaba"],
               provider: {
@@ -625,11 +625,11 @@ describe("actor.postStop ReAct loop", () => {
 
   test("postStop LLM failure breaks loop without affecting caller", async () => {
     // Delivery turn succeeds; postStop turn returns HTTP 400 (no retry),
-    // which the Effect.catch swallow converts to undefined â†?loop breaks.
+    // which the Effect.catch swallow converts to undefined ï¿½?loop breaks.
     // Caller still receives delivery finalText; no exception escapes.
     const server = startScriptedLLMServer([
       { lines: textStopResponse("delivered") },     // delivery turn
-      { lines: [], status: 400 },                   // postStop turn â€?HTTP 400 triggers LLM error (no retry)
+      { lines: [], status: 400 },                   // postStop turn ï¿½?HTTP 400 triggers LLM error (no retry)
     ])
     try {
       await using tmp = await tmpdir({
@@ -652,7 +652,7 @@ describe("actor.postStop ReAct loop", () => {
           await Bun.write(
             path.join(dir, "encode.json"),
             JSON.stringify({
-              $schema: "https://opencode.ai/config.json",
+              $schema: "https://encode.ai/config.json",
               plugin: [pathToFileURL(file).href],
               enabled_providers: ["alibaba"],
               provider: {
@@ -698,11 +698,11 @@ describe("actor.postStop ReAct loop", () => {
           ),
       })
 
-      // Caller sees delivery snapshot â€?postStop failure does NOT propagate
+      // Caller sees delivery snapshot ï¿½?postStop failure does NOT propagate
       expect(callerFinalText).toBe("delivered")
       // Server saw 2 calls: delivery + 1 postStop attempt (which failed)
       expect(server.captures.length).toBe(2)
-      // No exception escaped â€?test reaches this assertion cleanly
+      // No exception escaped ï¿½?test reaches this assertion cleanly
     } finally {
       await server.stop()
     }
@@ -735,7 +735,7 @@ describe("actor.preStop matcher behaviour (integration)", () => {
           await Bun.write(
             path.join(dir, "encode.json"),
             JSON.stringify({
-              $schema: "https://opencode.ai/config.json",
+              $schema: "https://encode.ai/config.json",
               plugin: [pathToFileURL(file).href],
               enabled_providers: ["alibaba"],
               provider: {
@@ -778,7 +778,7 @@ describe("actor.preStop matcher behaviour (integration)", () => {
           ),
       })
 
-      // Default matcher excludes built-in agents â€?hook should NOT have fired
+      // Default matcher excludes built-in agents ï¿½?hook should NOT have fired
       expect(await Bun.file(markerPath).exists()).toBe(false)
     } finally {
       await server.stop()
@@ -814,7 +814,7 @@ describe("actor.preStop matcher behaviour (integration)", () => {
           await Bun.write(
             path.join(dir, "encode.json"),
             JSON.stringify({
-              $schema: "https://opencode.ai/config.json",
+              $schema: "https://encode.ai/config.json",
               plugin: [pathToFileURL(file).href],
               enabled_providers: ["alibaba"],
               provider: {
@@ -857,7 +857,7 @@ describe("actor.preStop matcher behaviour (integration)", () => {
           ),
       })
 
-      // Array form bypasses built-in exclusion â€?hook SHOULD have fired
+      // Array form bypasses built-in exclusion ï¿½?hook SHOULD have fired
       expect(await Bun.file(markerPath).exists()).toBe(true)
     } finally {
       await server.stop()
@@ -894,7 +894,7 @@ describe("actor.preStop matcher behaviour (integration)", () => {
           await Bun.write(
             path.join(dir, "encode.json"),
             JSON.stringify({
-              $schema: "https://opencode.ai/config.json",
+              $schema: "https://encode.ai/config.json",
               plugin: [pathToFileURL(file).href],
               enabled_providers: ["alibaba"],
               provider: {
@@ -926,7 +926,7 @@ describe("actor.preStop matcher behaviour (integration)", () => {
               const actor = yield* Actor.Service
               const session = yield* Session.Service
 
-              // Built-in spawn first â€?hook should NOT fire
+              // Built-in spawn first ï¿½?hook should NOT fire
               const sess1 = yield* session.create({ title: "matcher-regex-builtin" })
               const r1 = yield* actor.spawn({
                 mode: "subagent",
@@ -939,7 +939,7 @@ describe("actor.preStop matcher behaviour (integration)", () => {
               })
               yield* Deferred.await(r1.outcome)
 
-              // Non-builtin spawn â€?hook SHOULD fire
+              // Non-builtin spawn ï¿½?hook SHOULD fire
               const sess2 = yield* session.create({ title: "matcher-regex-custom" })
               const r2 = yield* actor.spawn({
                 mode: "subagent",
@@ -956,7 +956,7 @@ describe("actor.preStop matcher behaviour (integration)", () => {
       })
 
       const content = await Bun.file(markerPath).text().catch(() => "")
-      // review-auth is non-builtin â†?should appear; explore is builtin â†?should not
+      // review-auth is non-builtin ï¿½?should appear; explore is builtin ï¿½?should not
       expect(content).toContain("review-auth")
       expect(content).not.toContain("explore")
     } finally {
@@ -994,7 +994,7 @@ describe("actor.preStop matcher behaviour (integration)", () => {
           await Bun.write(
             path.join(dir, "encode.json"),
             JSON.stringify({
-              $schema: "https://opencode.ai/config.json",
+              $schema: "https://encode.ai/config.json",
               plugin: [pathToFileURL(file).href],
               enabled_providers: ["alibaba"],
               provider: {
@@ -1028,7 +1028,7 @@ describe("actor.preStop matcher behaviour (integration)", () => {
               const actor = yield* Actor.Service
               const session = yield* Session.Service
 
-              // Peer spawn â€?mode filter should exclude this
+              // Peer spawn ï¿½?mode filter should exclude this
               const sess1 = yield* session.create({ title: "matcher-mode-peer" })
               const r1 = yield* actor.spawn({
                 mode: "peer",
@@ -1041,7 +1041,7 @@ describe("actor.preStop matcher behaviour (integration)", () => {
               })
               yield* Deferred.await(r1.outcome)
 
-              // Subagent spawn â€?mode filter should include this
+              // Subagent spawn ï¿½?mode filter should include this
               const sess2 = yield* session.create({ title: "matcher-mode-subagent" })
               const r2 = yield* actor.spawn({
                 mode: "subagent",
@@ -1070,7 +1070,7 @@ describe("actor.postStop spawning child actors", () => {
   test("hook spawns child without infinite recursion when guarded by agentType check", async () => {
     // Approach A: test body simulates both spawns; postStop hook records which
     // agentType fired. Demonstrates that two related actors (outer + progress-maintainer)
-    // each run postStop exactly once â€?total LLM calls is bounded at 2.
+    // each run postStop exactly once ï¿½?total LLM calls is bounded at 2.
     const markerPath = path.join("/tmp", `recursion-${Date.now()}-${Math.random()}`)
 
     const server = startScriptedLLMServer([
@@ -1097,7 +1097,7 @@ describe("actor.postStop spawning child actors", () => {
           await Bun.write(
             path.join(dir, "encode.json"),
             JSON.stringify({
-              $schema: "https://opencode.ai/config.json",
+              $schema: "https://encode.ai/config.json",
               plugin: [pathToFileURL(file).href],
               enabled_providers: ["alibaba"],
               provider: {
@@ -1172,7 +1172,7 @@ describe("actor.postStop spawning child actors", () => {
       const content = await Bun.file(markerPath).text().catch(() => "")
       const lines = content.split("\n").filter(Boolean)
 
-      // Each actor fires postStop exactly once â€?no infinite recursion
+      // Each actor fires postStop exactly once ï¿½?no infinite recursion
       expect(lines.length).toBe(2)
       expect(lines).toContain("outer")
       expect(lines).toContain("progress-maintainer")
@@ -1207,7 +1207,7 @@ describe("hook observability events", () => {
           await Bun.write(
             path.join(dir, "encode.json"),
             JSON.stringify({
-              $schema: "https://opencode.ai/config.json",
+              $schema: "https://encode.ai/config.json",
               plugin: [pathToFileURL(file).href],
               enabled_providers: ["alibaba"],
               provider: {
@@ -1301,7 +1301,7 @@ describe("hook observability events", () => {
           await Bun.write(
             path.join(dir, "encode.json"),
             JSON.stringify({
-              $schema: "https://opencode.ai/config.json",
+              $schema: "https://encode.ai/config.json",
               plugin: [pathToFileURL(file).href],
               enabled_providers: ["alibaba"],
               provider: {
@@ -1392,7 +1392,7 @@ describe("hook observability events", () => {
           await Bun.write(
             path.join(dir, "encode.json"),
             JSON.stringify({
-              $schema: "https://opencode.ai/config.json",
+              $schema: "https://encode.ai/config.json",
               plugin: [pathToFileURL(file).href],
               enabled_providers: ["alibaba"],
               provider: {
@@ -1458,7 +1458,7 @@ describe("hook observability events", () => {
           ),
       })
 
-      // With MAX_PRE_REACT=3: iteration fires at 1, 2, 3 then cap hits â†?3 re-entries
+      // With MAX_PRE_REACT=3: iteration fires at 1, 2, 3 then cap hits ï¿½?3 re-entries
       expect(reenteredEvents.length).toBe(3)
       expect(reenteredEvents.every((e) => e.phase === "pre")).toBe(true)
       // Cap fires once

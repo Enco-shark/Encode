@@ -15,7 +15,7 @@ import { Config } from "../config"
 import { Bus } from "../bus"
 import { BusEvent } from "../bus/bus-event"
 import { Log } from "../util"
-import { createOpencodeClient } from "@encode-ai/sdk"
+import { createEncodeClient } from "@encode-ai/sdk"
 import { Flag } from "../flag/flag"
 import { CodexAuthPlugin } from "./codex"
 import { encodeAuthPlugin, AnthropicProxyPlugin } from "./Encode"
@@ -217,7 +217,7 @@ export const layer = Layer.effect(
 
         const { Server } = yield* Effect.promise(() => import("../server/server"))
 
-        const client = createOpencodeClient({
+        const client = createEncodeClient({
           baseUrl: "http://localhost:4096",
           directory: ctx.directory,
           headers: Flag.ENCODE_SERVER_PASSWORD
@@ -400,10 +400,10 @@ export const layer = Layer.effect(
           let hookOutcome: "success" | "error" = "success"
           // TODO: pass an AbortSignal to fn so plugin authors can wire cooperative
           // cancellation into their fetch / DB calls. Effect interrupt only stops
-          // the awaiting fiber �?the underlying Promise keeps running and may
+          // the awaiting fiber �?the underlying Promise keeps running and may
           // bus.publish events after the actor has been cleaned up. See spec
           // Future work for full discussion. Strict in-process cancellation
-          // (子进程隔�? is out of scope; AbortSignal is the in-process ceiling.
+          // (子进程隔�? is out of scope; AbortSignal is the in-process ceiling.
           yield* Effect.tryPromise({
             try: () => fn(input as never, o),
             catch: (err) => err,

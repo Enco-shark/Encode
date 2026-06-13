@@ -73,28 +73,63 @@ npm install -g @encode-ai/cli
 
 ### 目标驱动
 
-`/goal` 命令为会话设置停止条件。当代理尝试停止时，独立评判模型会评估对话以确定条件是否真正满足 — 防止自主工作中过早"乐观停止"。
+`/goal` 命令为会话设置停止条件。当代理尝试停止时，独立评判模型会评估对话以确定条件是否真正满足 — 防止自主工作中过早"乐观停止"。使用 `/goal clear` 清除目标。
 
-### Compose 模式
+### Compose 模式与技能系统
 
 Compose 模式为规范驱动开发提供结构化工作流。内置规划、执行、代码审查、TDD、调试、验证和合并技能 — 编排从规范到交付代码的完整生命周期。
 
+技能以 `SKILL.md` 文件形式存储，可组合复用。内置 compose 技能包包含并行执行、规划、TDD、头脑风暴和创建新技能等子技能。
+
+### 工作流引擎
+
+完整的动态工作流运行时，支持沙箱执行、持久化、工作区和嵌套工作流调用。内置 `/deep-research` 工作流 — 并行展开网络搜索、抓取来源、对抗性验证声明并返回带引用的报告。
+
 ### Dream & Distill
 
-- **`/dream`** — 扫描近期会话痕迹，将持久知识提取到项目记忆，并移除过时条目
-- **`/distill`** — 发现近期工作中的重复手动工作流，并将高置信度候选项打包成可重用技能、子代理或命令
+- **`/dream`** — 扫描近期会话痕迹，将持久知识提取到项目记忆，并移除过时条目。支持自动运行（默认每 7 天），通过 `config.dream.auto` 配置
+- **`/distill`** — 发现近期工作中的重复手动工作流，并将高置信度候选项打包成可重用技能、子代理或命令。支持自动运行（默认每 30 天），通过 `config.distill.auto` 配置
+
+### 内置命令
+
+| 命令 | 描述 |
+|--------|------|
+| `/init` | 初始化项目配置 |
+| `/review` | 代码审查 |
+| `/dream` | 提取持久知识到项目记忆 |
+| `/distill` | 将重复工作流打包为可复用技能 |
+| `/goal` | 设置/清除停止条件 |
+| `/deep-research` | 深度研究（实验性） |
+
+### MCP 支持
+
+完整的 Model Context Protocol 支持，包含 OAuth 提供商集成。可从 Claude Code 的 `.claude.json` 配置文件导入 MCP 服务器。
+
+### 插件系统
+
+插件架构支持生命周期钩子、工作区适配器和 npm 自动安装。
+
+### LSP 集成
+
+内置 Language Server Protocol 支持，为 TUI 提供代码智能补全。
+
+### 预测下一个提示（实验性）
+
+每轮对话结束后预测用户可能的下一个提示，以内联幽灵文本显示（按 `Tab` 接受）。
 
 ---
 
 ## 配置
 
-Encode 通过项目目录中的 `.encode/encode.json` 进行配置（或全局 `~/.config/encode/encode.json`）。主要选项包括：
+Encode 通过项目目录中的 `.ENCODE/ENCODE.json`（或 `ENCODE.jsonc`）进行配置。全局配置位于 `~/.config/ENCODE/ENCODE.jsonc`（macOS 为 `~/Library/Application Support/ENCODE/`）。主要选项包括：
 
 - 提供商和模型选择
 - 代理权限和自定义代理
 - 检查点和记忆行为
 - MCP 服务器连接
 - 按键绑定和主题
+- Dream/Distill 自动运行间隔
+- 工作流并发与深度限制
 
 Max Mode（并行 best-of-N 推理与评判选择）可通过配置中的 `experimental.maxMode` 启用。
 
@@ -112,7 +147,7 @@ bun turbo typecheck      # 类型检查
 
 ## 与 OpenCode 的关系
 
-Encode 基于 [OpenCode](https://github.com/anomalyco/opencode) 的 fork 构建。保留了 OpenCode 的所有核心能力（多提供商、TUI、LSP、MCP、插件），并添加了持久化记忆、智能上下文管理、子代理编排、目标驱动自主循环、Compose 工作流，以及通过 dream/distill 实现的自我改进。
+Encode 基于 [OpenCode](https://github.com/anomalyco/opencode) 的 fork 构建。保留了 OpenCode 的所有核心能力（多提供商、TUI、LSP、MCP、插件），并添加了持久化记忆、智能上下文管理、子代理编排、目标驱动自主循环、Compose 工作流、技能系统、工作流引擎、深度研究，以及通过 dream/distill 实现的自我改进。
 
 ---
 

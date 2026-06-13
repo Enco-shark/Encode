@@ -4,7 +4,7 @@
  * Drives a real Session.prompt(...) call through main runLoop's multi-step
  * iteration against a scripted HTTP LLM stub. Asserts that each successive
  * /chat/completions request contains strictly more messages than the previous
- * one â€?i.e. history is monotonically growing across steps.
+ * one ï¿½?i.e. history is monotonically growing across steps.
  *
  * This catches a different failure mode than the unit test in
  * test/session/llm-request-prefix.test.ts: this fires if main runLoop is
@@ -50,7 +50,7 @@ function run<A, E>(fx: Effect.Effect<A, E, SessionPrompt.Service | Session.Servi
 describe("main runLoop history monotonic-growth invariant", () => {
   test("each step's /chat/completions request strictly contains previous step's messages", async () => {
     // Create the tmp dir first (without init) so we know the real path before
-    // constructing responses â€?this avoids any post-start mutation of the
+    // constructing responses ï¿½?this avoids any post-start mutation of the
     // responses array.
     await using tmp = await tmpdir({ git: true })
 
@@ -72,7 +72,7 @@ describe("main runLoop history monotonic-growth invariant", () => {
       await Bun.write(
         path.join(tmp.path, "encode.json"),
         JSON.stringify({
-          $schema: "https://opencode.ai/config.json",
+          $schema: "https://encode.ai/config.json",
           enabled_providers: ["alibaba"],
           provider: {
             alibaba: {
@@ -138,7 +138,7 @@ describe("main runLoop history monotonic-growth invariant", () => {
       await Bun.write(
         path.join(tmp.path, "encode.json"),
         JSON.stringify({
-          $schema: "https://opencode.ai/config.json",
+          $schema: "https://encode.ai/config.json",
           enabled_providers: ["alibaba"],
           provider: {
             alibaba: {

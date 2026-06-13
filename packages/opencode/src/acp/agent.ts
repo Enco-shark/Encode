@@ -46,7 +46,7 @@ import { Config } from "@/config"
 import { ConfigMCP } from "@/config/mcp"
 import { z } from "zod"
 import { LoadAPIKeyError } from "ai"
-import type { AssistantMessage, Event, OpencodeClient, SessionMessageResponse, ToolPart } from "@encode-ai/sdk/v2"
+import type { AssistantMessage, Event, EncodeClient, SessionMessageResponse, ToolPart } from "@encode-ai/sdk/v2"
 import { applyPatch } from "diff"
 import { InstallationVersion } from "@/installation/version"
 
@@ -58,7 +58,7 @@ const DEFAULT_VARIANT_VALUE = "default"
 const log = Log.create({ service: "acp-agent" })
 
 async function getContextLimit(
-  sdk: OpencodeClient,
+  sdk: EncodeClient,
   providerID: ProviderID,
   modelID: ModelID,
   directory: string,
@@ -78,7 +78,7 @@ async function getContextLimit(
 
 async function sendUsageUpdate(
   connection: AgentSideConnection,
-  sdk: OpencodeClient,
+  sdk: EncodeClient,
   sessionID: string,
   directory: string,
 ): Promise<void> {
@@ -126,7 +126,7 @@ async function sendUsageUpdate(
     })
 }
 
-export async function init({ sdk: _sdk }: { sdk: OpencodeClient }) {
+export async function init({ sdk: _sdk }: { sdk: EncodeClient }) {
   return {
     create: (connection: AgentSideConnection, fullConfig: ACPConfig) => {
       return new Agent(connection, fullConfig)
@@ -137,7 +137,7 @@ export async function init({ sdk: _sdk }: { sdk: OpencodeClient }) {
 export class Agent implements ACPAgent {
   private connection: AgentSideConnection
   private config: ACPConfig
-  private sdk: OpencodeClient
+  private sdk: EncodeClient
   private sessionManager: ACPSessionManager
   private eventAbort = new AbortController()
   private eventStarted = false
@@ -505,18 +505,18 @@ export class Agent implements ACPAgent {
     log.info("initialize", { protocolVersion: params.protocolVersion })
 
     const authMethod: AuthMethod = {
-      description: "Run `opencode auth login` in the terminal",
-      name: "Login with opencode",
-      id: "opencode-login",
+      description: "Run `encode auth login` in the terminal",
+      name: "Login with encode",
+      id: "encode-login",
     }
 
     // If client supports terminal-auth capability, use that instead.
     if (params.clientCapabilities?._meta?.["terminal-auth"] === true) {
       authMethod._meta = {
         "terminal-auth": {
-          command: "opencode",
+          command: "encode",
           args: ["auth", "login"],
-          label: "OpenCode Login",
+          label: "Encode Login",
         },
       }
     }
@@ -541,7 +541,7 @@ export class Agent implements ACPAgent {
       },
       authMethods: [authMethod],
       agentInfo: {
-        name: "OpenCode",
+        name: "Encode",
         version: InstallationVersion,
       },
     }
@@ -949,12 +949,12 @@ export class Agent implements ACPAgent {
         }
       } else if (part.type === "file") {
         // Replay file attachments as appropriate ACP content blocks.
-        // OpenCode stores files internally as { type: "file", url, filename, mime }.
+        // Encode stores files internally as { type: "file", url, filename, mime }.
         // We convert these back to ACP blocks based on the URL scheme and MIME type:
-        // - file:// URLs â†?resource_link
-        // - data: URLs with image/* â†?image block
-        // - data: URLs with text/* or application/json â†?resource with text
-        // - data: URLs with other types â†?resource with blob
+        // - file:// URLs ï¿½?resource_link
+        // - data: URLs with image/* ï¿½?image block
+        // - data: URLs with text/* or application/json ï¿½?resource with text
+        // - data: URLs with other types ï¿½?resource with blob
         const url = part.url
         const filename = part.filename ?? "file"
         const mime = part.mime || "application/octet-stream"
@@ -1707,9 +1707,9 @@ function buildVariantMeta(input: {
   variant?: string
   availableVariants: string[]
 }) {
-  return {
-    opencode: {
-      modelId: `${input.model.providerID}/${input.model.modelID}`,
+    return {
+      encode: {
+        modelId: `${input.model.providerID}/${input.model.modelID}`,
       variant: input.variant ?? null,
       availableVariants: input.availableVariants,
     },

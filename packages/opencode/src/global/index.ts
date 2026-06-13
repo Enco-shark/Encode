@@ -3,9 +3,9 @@ import path from "path"
 import os from "os"
 import { Filesystem } from "../util"
 import { Flock } from "@encode-ai/shared/util/flock"
-import { resolveEncodeHome } from "@encode-ai/shared/global"
+import { resolveENCODEHome } from "@encode-ai/shared/global"
 
-const { data, cache, config, state } = resolveEncodeHome()
+const { data, cache, config, state } = resolveENCODEHome()
 
 export const Path = {
   // HOME/USERPROFILE read directly because Bun caches os.homedir() at startup.

@@ -125,7 +125,7 @@ function makeAgent(): Agent.Info {
 
 function tmpConfig(providerID: string, baseURL: string) {
   return JSON.stringify({
-    $schema: "https://opencode.ai/config.json",
+    $schema: "https://encode.ai/config.json",
     enabled_providers: [providerID],
     provider: {
       [providerID]: { options: { apiKey: "test-key", baseURL } },
@@ -133,8 +133,8 @@ function tmpConfig(providerID: string, baseURL: string) {
   })
 }
 
-describe("session.llm system prompt â€?memory-instructions guard", () => {
-  test("main agent (no agentID) â€?'# Memory system' IS appended", async () => {
+describe("session.llm system prompt ï¿½?memory-instructions guard", () => {
+  test("main agent (no agentID) ï¿½?'# Memory system' IS appended", async () => {
     const server = queueState.server!
     const providerID = "alibaba"
     const modelID = "qwen-plus"
@@ -191,7 +191,7 @@ describe("session.llm system prompt â€?memory-instructions guard", () => {
     })
   })
 
-  test("system-spawned actor â€?'# Memory system' is NOT appended", async () => {
+  test("system-spawned actor ï¿½?'# Memory system' is NOT appended", async () => {
     const server = queueState.server!
     const providerID = "alibaba"
     const modelID = "qwen-plus"
@@ -211,7 +211,7 @@ describe("session.llm system prompt â€?memory-instructions guard", () => {
       directory: tmp.path,
       fn: async () => {
         const resolved = await getModel(ProviderID.make(providerID), ModelID.make(fixture.model.id))
-        // Create a real session row first â€?actor_registry.session_id is a FK to session.id.
+        // Create a real session row first ï¿½?actor_registry.session_id is a FK to session.id.
         const sessionRt = ManagedRuntime.make(SessionNs.defaultLayer)
         let sessionID: SessionID
         try {
@@ -275,7 +275,7 @@ describe("session.llm system prompt â€?memory-instructions guard", () => {
     })
   })
 
-  test("main agent (no agentID) â€?Active recall protocol IS in system prompt (F4a)", async () => {
+  test("main agent (no agentID) ï¿½?Active recall protocol IS in system prompt (F4a)", async () => {
     const server = queueState.server!
     const providerID = "alibaba"
     const modelID = "qwen-plus"

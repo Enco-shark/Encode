@@ -73,28 +73,63 @@ The primary agent can create subagents on demand. Subagents share the current se
 
 ### Goal / Stop Condition
 
-The `/goal` command sets a stopping condition for a session. When the agent tries to stop, an independent judge model evaluates the conversation to decide whether the condition is truly satisfied — preventing premature "optimistic stops" during autonomous work.
+The `/goal` command sets a stopping condition for a session. When the agent tries to stop, an independent judge model evaluates the conversation to decide whether the condition is truly satisfied — preventing premature "optimistic stops" during autonomous work. Use `/goal clear` to remove the goal.
 
-### Compose Mode
+### Compose Mode & Skills System
 
 Compose mode provides a structured workflow for specs-driven development. It includes built-in skills for planning, execution, code review, TDD, debugging, verification, and merging — orchestrating the full lifecycle from spec to shipped code.
 
+Skills are stored as `SKILL.md` files and are composable and reusable. The built-in compose skill bundle includes sub-skills for parallel execution, planning, TDD, brainstorming, and creating new skills.
+
+### Workflow Engine
+
+A full dynamic workflow runtime with sandboxed execution, persistence, workspace support, and nested workflow calls. Includes a built-in `/deep-research` workflow — fans out web searches, fetches sources, adversarially verifies claims, and returns a cited report.
+
 ### Dream & Distill
 
-- **`/dream`** — scans recent session traces, extracts persistent knowledge into project memory, and removes outdated entries
-- **`/distill`** — discovers repeated manual workflows in recent work and packages high-confidence candidates into reusable skills, subagents, or commands
+- **`/dream`** — scans recent session traces, extracts persistent knowledge into project memory, and removes outdated entries. Supports automatic execution (default every 7 days), configurable via `config.dream.auto`
+- **`/distill`** — discovers repeated manual workflows in recent work and packages high-confidence candidates into reusable skills, subagents, or commands. Supports automatic execution (default every 30 days), configurable via `config.distill.auto`
+
+### Built-in Commands
+
+| Command | Description |
+|--------|------|
+| `/init` | Initialize project configuration |
+| `/review` | Code review |
+| `/dream` | Extract persistent knowledge into project memory |
+| `/distill` | Package repeated workflows into reusable skills |
+| `/goal` | Set / clear stop condition |
+| `/deep-research` | Deep research (experimental) |
+
+### MCP Support
+
+Full Model Context Protocol support with OAuth provider integration. Can import MCP servers from Claude Code's `.claude.json` config files.
+
+### Plugin System
+
+Plugin architecture with lifecycle hooks, workspace adaptors, and auto-installation from npm.
+
+### LSP Integration
+
+Built-in Language Server Protocol support for code intelligence within the TUI.
+
+### Predict Next Prompt (Experimental)
+
+Predicts the user's likely next prompt after each turn and shows it as inline ghost text (press `Tab` to accept).
 
 ---
 
 ## Configuration
 
-Encode is configured via `.encode/encode.json` in the project directory (or `~/.config/encode/encode.json` globally). Key options include:
+Encode is configured via `.ENCODE/ENCODE.json` (or `ENCODE.jsonc`) in the project directory. Global config lives at `~/.config/ENCODE/ENCODE.jsonc` (`~/Library/Application Support/ENCODE/` on macOS). Key options include:
 
 - Provider and model selection
 - Agent permissions and custom agents
 - Checkpoint and memory behavior
 - MCP server connections
 - Keybindings and theme
+- Dream/Distill auto-run intervals
+- Workflow concurrency and depth limits
 
 Max Mode (parallel best-of-N reasoning with judge selection) can be enabled via `experimental.maxMode` in the config.
 
@@ -112,7 +147,7 @@ bun turbo typecheck      # Type check
 
 ## Relationship to OpenCode
 
-Encode is built as a fork of [OpenCode](https://github.com/anomalyco/opencode). It keeps all core OpenCode capabilities (multiple providers, TUI, LSP, MCP, plugins) and adds persistent memory, intelligent context management, subagent orchestration, goal-driven autonomous loops, compose workflows, and self-improvement via dream/distill.
+Encode is built as a fork of [OpenCode](https://github.com/anomalyco/opencode). It keeps all core OpenCode capabilities (multiple providers, TUI, LSP, MCP, plugins) and adds persistent memory, intelligent context management, subagent orchestration, goal-driven autonomous loops, compose workflows, a skills system, a workflow engine, deep research, and self-improvement via dream/distill.
 
 ---
 

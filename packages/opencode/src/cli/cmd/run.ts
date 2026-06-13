@@ -7,7 +7,7 @@ import { Flag } from "../../flag/flag"
 import { bootstrap } from "../bootstrap"
 import { EOL } from "os"
 import { Filesystem, Log } from "../../util"
-import { createOpencodeClient, type OpencodeClient, type ToolPart } from "@encode-ai/sdk/v2"
+import { createEncodeClient, type EncodeClient, type ToolPart } from "@encode-ai/sdk/v2"
 import { Server } from "../../server/server"
 import { Provider } from "../../provider"
 import { Agent } from "../../agent/agent"
@@ -69,7 +69,7 @@ function fallback(part: ToolPart) {
     ("title" in state && state.title ? state.title : undefined) ||
     (input && typeof input === "object" && Object.keys(input).length > 0 ? JSON.stringify(input) : "Unknown")
   inline({
-    icon: "âš?,
+    icon: "ï¿½?,
     title: `${part.tool} ${title}`,
   })
 }
@@ -82,7 +82,7 @@ function glob(info: ToolProps<typeof GlobTool>) {
   const description =
     num === undefined ? suffix : `${suffix}${suffix ? " Â· " : ""}${num} ${num === 1 ? "match" : "matches"}`
   inline({
-    icon: "âœ?,
+    icon: "ï¿½?,
     title,
     ...(description && { description }),
   })
@@ -96,7 +96,7 @@ function grep(info: ToolProps<typeof GrepTool>) {
   const description =
     num === undefined ? suffix : `${suffix}${suffix ? " Â· " : ""}${num} ${num === 1 ? "match" : "matches"}`
   inline({
-    icon: "âœ?,
+    icon: "ï¿½?,
     title,
     ...(description && { description }),
   })
@@ -110,7 +110,7 @@ function read(info: ToolProps<typeof ReadTool>) {
   })
   const description = pairs.length ? `[${pairs.map(([key, value]) => `${key}=${value}`).join(", ")}]` : undefined
   inline({
-    icon: "â†?,
+    icon: "ï¿½?,
     title: `Read ${file}`,
     ...(description && { description }),
   })
@@ -119,7 +119,7 @@ function read(info: ToolProps<typeof ReadTool>) {
 function write(info: ToolProps<typeof WriteTool>) {
   block(
     {
-      icon: "â†?,
+      icon: "ï¿½?,
       title: `Write ${normalizePath(info.input.filePath)}`,
     },
     info.part.state.status === "completed" ? info.part.state.output : undefined,
@@ -138,7 +138,7 @@ function edit(info: ToolProps<typeof EditTool>) {
   const diff = info.metadata.diff
   block(
     {
-      icon: "â†?,
+      icon: "ï¿½?,
       title: `Edit ${title}`,
     },
     diff,
@@ -147,14 +147,14 @@ function edit(info: ToolProps<typeof EditTool>) {
 
 function codesearch(info: ToolProps<typeof CodeSearchTool>) {
   inline({
-    icon: "â—?,
+    icon: "ï¿½?,
     title: `Exa Code Search "${info.input.query}"`,
   })
 }
 
 function websearch(info: ToolProps<typeof WebSearchTool>) {
   inline({
-    icon: "â—?,
+    icon: "ï¿½?,
     title: `Web Search "${info.input.query}"`,
   })
 }
@@ -166,7 +166,7 @@ function task(info: ToolProps<typeof ActorTool>) {
     typeof op?.subagent_type === "string" && op.subagent_type.trim().length > 0 ? op.subagent_type : "unknown"
   const agent = Locale.titlecase(subagent)
   const desc = typeof op?.description === "string" && op.description.trim().length > 0 ? op.description : undefined
-  const icon = status === "error" ? "âœ? : status === "running" ? "â€? : "âœ?
+  const icon = status === "error" ? "ï¿½? : status === "running" ? "ï¿½? : "ï¿½?
   const name = desc ?? `${agent} Task`
   inline({
     icon,
@@ -177,7 +177,7 @@ function task(info: ToolProps<typeof ActorTool>) {
 
 function skill(info: ToolProps<typeof SkillTool>) {
   inline({
-    icon: "â†?,
+    icon: "ï¿½?,
     title: `Skill "${info.input.name}"`,
   })
 }
@@ -364,7 +364,7 @@ export const RunCommand = cmd({
       return message.slice(0, 50) + (message.length > 50 ? "..." : "")
     }
 
-    async function session(sdk: OpencodeClient) {
+    async function session(sdk: EncodeClient) {
       const baseID = args.continue ? (await sdk.session.list()).data?.find((s) => !s.parentID)?.id : args.session
 
       if (baseID && args.fork) {
@@ -379,7 +379,7 @@ export const RunCommand = cmd({
       return result.data?.id
     }
 
-    async function share(sdk: OpencodeClient, sessionID: string) {
+    async function share(sdk: EncodeClient, sessionID: string) {
       const cfg = await sdk.config.get()
       if (!cfg.data) return
       if (cfg.data.share !== "auto" && !Flag.ENCODE_AUTO_SHARE && !args.share) return
@@ -394,7 +394,7 @@ export const RunCommand = cmd({
       }
     }
 
-    async function execute(sdk: OpencodeClient) {
+    async function execute(sdk: EncodeClient) {
       function tool(part: ToolPart) {
         try {
           if (part.tool === "bash") return bash(props<typeof BashTool>(part))
@@ -466,7 +466,7 @@ export const RunCommand = cmd({
                   continue
                 }
                 inline({
-                  icon: "âœ?,
+                  icon: "ï¿½?,
                   title: `${part.tool} failed`,
                 })
                 UI.error(part.state.error)
@@ -678,7 +678,7 @@ export const RunCommand = cmd({
         const auth = `Basic ${Buffer.from(`${username}:${password}`).toString("base64")}`
         return { Authorization: auth }
       })()
-      const sdk = createOpencodeClient({ baseUrl: args.attach, directory, headers })
+      const sdk = createEncodeClient({ baseUrl: args.attach, directory, headers })
       return await execute(sdk)
     }
 
@@ -687,7 +687,7 @@ export const RunCommand = cmd({
         const request = new Request(input, init)
         return Server.Default().app.fetch(request)
       }) as typeof globalThis.fetch
-      const sdk = createOpencodeClient({ baseUrl: "http://opencode.internal", fetch: fetchFn })
+      const sdk = createEncodeClient({ baseUrl: "http://opencode.internal", fetch: fetchFn })
       await execute(sdk)
     })
   },

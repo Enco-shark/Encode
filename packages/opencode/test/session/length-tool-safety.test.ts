@@ -64,7 +64,7 @@ describe("length + tool safety contract", () => {
       await Bun.write(
         path.join(tmp.path, "encode.json"),
         JSON.stringify({
-          $schema: "https://opencode.ai/config.json",
+          $schema: "https://encode.ai/config.json",
           enabled_providers: ["alibaba"],
           provider: {
             alibaba: {

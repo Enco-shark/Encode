@@ -31,7 +31,7 @@ async function project(source: string) {
         path.join(dir, "ENCODE.json"),
         JSON.stringify(
           {
-            $schema: "https://opencode.ai/config.json",
+            $schema: "https://encode.ai/config.json",
             plugin: [pathToFileURL(file).href],
           },
           null,

@@ -272,7 +272,7 @@ describe("session.prompt regression", () => {
           await Bun.write(
             path.join(dir, "encode.json"),
             JSON.stringify({
-              $schema: "https://opencode.ai/config.json",
+              $schema: "https://encode.ai/config.json",
               enabled_providers: ["alibaba"],
               provider: {
                 alibaba: {
@@ -346,7 +346,7 @@ describe("session.prompt regression", () => {
           await Bun.write(
             path.join(dir, "encode.json"),
             JSON.stringify({
-              $schema: "https://opencode.ai/config.json",
+              $schema: "https://encode.ai/config.json",
               enabled_providers: ["alibaba"],
               provider: {
                 alibaba: {
@@ -590,7 +590,7 @@ describe("session.agent-resolution", () => {
 
 // F37: subagent context isolation. encode's spawnSubagent shares
 // sessionID with the parent and slices via agent_id. Without filtering
-// at the prompt-build call site (prompt.ts â†?runLoop â†?
+// at the prompt-build call site (prompt.ts ï¿½?runLoop ï¿½?
 // filterCompactedEffect), a subagent's LLM call would receive the
 // parent's full conversation, causing it to drift off-task. Bug
 // surfaced in v8.3 T18 turn 25 (explore-1 spawn went off and
@@ -620,7 +620,7 @@ describe("session.prompt F37 subagent context isolation", () => {
           await Bun.write(
             path.join(dir, "encode.json"),
             JSON.stringify({
-              $schema: "https://opencode.ai/config.json",
+              $schema: "https://encode.ai/config.json",
               enabled_providers: ["alibaba"],
               provider: {
                 alibaba: {
@@ -655,7 +655,7 @@ describe("session.prompt F37 subagent context isolation", () => {
                 parts: [{ type: "text", text: "MAIN_AGENT_SECRET_TASK_X" }],
               })
 
-              // Subagent slice â€?separate agent_id. Pre-populate one entry
+              // Subagent slice ï¿½?separate agent_id. Pre-populate one entry
               // so the slice has prior history visible to the subagent.
               yield* prompt.prompt({
                 sessionID: session.id,
@@ -666,7 +666,7 @@ describe("session.prompt F37 subagent context isolation", () => {
               })
 
               // Trigger LLM call for the subagent. This is the F37 path:
-              // runLoop is called with agentID="actor-1" â†?filterCompactedEffect
+              // runLoop is called with agentID="actor-1" ï¿½?filterCompactedEffect
               // scopes msgs to only the subagent's slice.
               yield* prompt.prompt({
                 sessionID: session.id,

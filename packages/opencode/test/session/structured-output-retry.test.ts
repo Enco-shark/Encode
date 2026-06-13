@@ -34,7 +34,7 @@ function writeConfig(dir: string, origin: string) {
   return Bun.write(
     path.join(dir, "encode.json"),
     JSON.stringify({
-      $schema: "https://opencode.ai/config.json",
+      $schema: "https://encode.ai/config.json",
       enabled_providers: ["alibaba"],
       provider: {
         alibaba: { options: { apiKey: "test-key", baseURL: `${origin}/v1` } },
@@ -50,7 +50,7 @@ const schema = {
   required: ["answer"],
 }
 
-describe("structured-output retry â€?integration", () => {
+describe("structured-output retry ï¿½?integration", () => {
   test("plain text stop is repaired, second call produces structured output", async () => {
     await using tmp = await tmpdir({ git: true })
     const stub = startScriptedLLMServer([

@@ -40,10 +40,10 @@ type Result = Awaited<ReturnType<typeof streamText>>
 /**
  * Match transient errors that the PERSISTENT_RETRY layer should retry.
  *
- * - HTTP 429 / 5xx / 529 ‚Ä?capacity / overload responses
- * - ECONNRESET / EPIPE / ETIMEDOUT ‚Ä?network errors typically caused by
+ * - HTTP 429 / 5xx / 529 ÔøΩ?capacity / overload responses
+ * - ECONNRESET / EPIPE / ETIMEDOUT ÔøΩ?network errors typically caused by
  *   stale keep-alive sockets or upstream proxy timeouts
- * - "SSE read timed out" ‚Ä?`provider.ts:wrapSSE` chunk-timeout fired
+ * - "SSE read timed out" ÔøΩ?`provider.ts:wrapSSE` chunk-timeout fired
  *   (configured per-provider via `chunkTimeout` in ENCODE.json). This
  *   is HTTP-byte-level: keep-alive comments still count as activity, so
  *   the error only fires when the underlying TCP stream is genuinely dead.
@@ -65,9 +65,9 @@ export function isTransientCapacityError(error: unknown): boolean {
  * each individual delay capped at 5 minutes, total attempts capped at 10.
  *
  * Worst-case total = 11 attempts √ó chunkTimeout + cumulative backoff
- *                  ‚â?11 √ó 8min + 9min ‚â?97 min (with DEFAULT_CHUNK_TIMEOUT = 8min).
+ *                  ÔøΩ?11 √ó 8min + 9min ÔøΩ?97 min (with DEFAULT_CHUNK_TIMEOUT = 8min).
  *
- * Intentionally NOT capped via Schedule.upTo() ‚Ä?retry persistence under
+ * Intentionally NOT capped via Schedule.upTo() ÔøΩ?retry persistence under
  * brief upstream outages is the design goal. Bounding per-attempt latency
  * via chunkTimeout is the primary lever for hang-time control.
  */
@@ -105,19 +105,19 @@ function buildMemoryInstructions(sessionID: SessionID, projectID: ProjectID, mem
 
 You have a persistent file-based memory system. Four file types:
 
-- Project memory at \`${memoryFile}\` ‚Ä?persistent across all sessions in this project. Contains: project context, rules, architecture decisions, durable cross-task knowledge.
-- Session checkpoint at \`${checkpointFile}\` ‚Ä?current session's structured state, written ONLY by the checkpoint-writer subagent. 11 sections covering active intent, next action, directives, task tree, current work, files, learnings, errors, live resources, design decisions, and open notes. Task content lives inside ¬ß4 Task tree and ¬ß5 Current work.
-- Per-task progress at \`${path.join(sessionMemoryDir, "tasks", "<id>", "progress.md")}\` ‚Ä?writer-derived splitover from session-level progress.md (not LLM-written). When you spawn a subagent on a task, the subagent may be handed this path for reading; you do not maintain it.
-- Global memory at \`${globalMemoryFile}\` ‚Ä?user-level preferences and cross-project feedback that persist across all projects. Auto-injected into rebuild context under the "## Global memory" header when present.
+- Project memory at \`${memoryFile}\` ÔøΩ?persistent across all sessions in this project. Contains: project context, rules, architecture decisions, durable cross-task knowledge.
+- Session checkpoint at \`${checkpointFile}\` ÔøΩ?current session's structured state, written ONLY by the checkpoint-writer subagent. 11 sections covering active intent, next action, directives, task tree, current work, files, learnings, errors, live resources, design decisions, and open notes. Task content lives inside ¬ß4 Task tree and ¬ß5 Current work.
+- Per-task progress at \`${path.join(sessionMemoryDir, "tasks", "<id>", "progress.md")}\` ÔøΩ?writer-derived splitover from session-level progress.md (not LLM-written). When you spawn a subagent on a task, the subagent may be handed this path for reading; you do not maintain it.
+- Global memory at \`${globalMemoryFile}\` ÔøΩ?user-level preferences and cross-project feedback that persist across all projects. Auto-injected into rebuild context under the "## Global memory" header when present.
 
-The checkpoint writer is the sole curator of the structured files. You don't maintain them mid-task ‚Ä?the writer extracts everything from the conversation at checkpoint events.
+The checkpoint writer is the sole curator of the structured files. You don't maintain them mid-task ÔøΩ?the writer extracts everything from the conversation at checkpoint events.
 
 ## When to Edit MEMORY.md directly
 
 You may Edit MEMORY.md when:
-- User states a project-level rule that should hold across sessions ‚Ü?## Rules
-- User states a project-level architectural decision ‚Ü?## Architecture decisions
-- A clearly durable cross-session fact emerges that you want available immediately, before the next checkpoint ‚Ü?## Discovered durable knowledge
+- User states a project-level rule that should hold across sessions ÔøΩ?## Rules
+- User states a project-level architectural decision ÔøΩ?## Architecture decisions
+- A clearly durable cross-session fact emerges that you want available immediately, before the next checkpoint ÔøΩ?## Discovered durable knowledge
 
 These are exceptions, not the norm. The writer covers most extraction at checkpoint time.
 
@@ -126,15 +126,15 @@ These are exceptions, not the norm. The writer covers most extraction at checkpo
 You have a single legal scratchpad at \`${path.join(sessionMemoryDir, "notes.md")}\`. Append entries to it when you want to record:
 
 - A quote (from the user, an article, a known engineer) that has lasting value but isn't a task-specific decision
-- An unresolved question ‚Ä?something you noticed but won't answer this turn
-- A cross-project observation ‚Ä?"we did this in project X, similar pattern here"
-- A note for future-self ‚Ä?context that would matter weeks later but doesn't fit any current task
+- An unresolved question ÔøΩ?something you noticed but won't answer this turn
+- A cross-project observation ÔøΩ?"we did this in project X, similar pattern here"
+- A note for future-self ÔøΩ?context that would matter weeks later but doesn't fit any current task
 
 Format each entry as:
   ## [turn N ¬∑ YYYY-MM-DDTHH:MM:SSZ]
   Free-form body. The writer reorganizes structured content at checkpoint time.
 
-This is your ONLY legal scratchpad ‚Ä?don't create \`learning.md\`, \`scratch.md\`, or any other ad-hoc memory file.
+This is your ONLY legal scratchpad ÔøΩ?don't create \`learning.md\`, \`scratch.md\`, or any other ad-hoc memory file.
 
 ## Subagent return format
 
@@ -152,9 +152,9 @@ If your spawn prompt didn't include this format (e.g., explore/title/summary age
 
 ## What NOT to do
 
-- Don't Edit checkpoint.md ‚Ä?that's the writer's domain.
+- Don't Edit checkpoint.md ÔøΩ?that's the writer's domain.
 - Don't create memory files other than notes.md (no learning.md, no scratch.md). Use notes.md for any free-form entry.
-- Don't ask the user about something memory may already record ‚Ä?search first via Grep / Read.
+- Don't ask the user about something memory may already record ÔøΩ?search first via Grep / Read.
 
 ## Active recall protocol
 
@@ -168,12 +168,12 @@ After a checkpoint rebuild, the following dumps may be already in your context (
 If these dumps are visible in your context:
 
 - Do NOT Read them again as whole files. The bytes are already in front of you.
-- For specific past details (a particular turn's content, a specific tool output, an old command), use Grep with a keyword pattern to target the exact item ‚Ä?do not pull a whole file.
+- For specific past details (a particular turn's content, a specific tool output, an old command), use Grep with a keyword pattern to target the exact item ÔøΩ?do not pull a whole file.
 - For files NOT in the rebuild dump (per-task splitover progress.md files for tasks you don't actively need, spillover files, older session checkpoints in other sessions), Read on demand.
 
-If a dump shows "‚ö†Ô∏è Truncated at ~N tokens. Read(<path>, offset=L) for the rest." ‚Ä?that file was budget-cut. Use Read with the offset only when you need the missing tail.
+If a dump shows "‚ö†Ô∏è Truncated at ~N tokens. Read(<path>, offset=L) for the rest." ÔøΩ?that file was budget-cut. Use Read with the offset only when you need the missing tail.
 
-Memory entries name functions, files, flags, paths ‚Ä?those are CLAIMS about a point in time when they were written. Verify before acting on a specific name.
+Memory entries name functions, files, flags, paths ÔøΩ?those are CLAIMS about a point in time when they were written. Verify before acting on a specific name.
 
 Don't ask the user about something memory may already record.
 `
@@ -269,7 +269,7 @@ const live: Layer.Layer<
             try: () => Instance.current?.project?.id as ProjectID | undefined,
             catch: () => undefined,
           }).pipe(Effect.orElseSucceed(() => undefined))) ?? ProjectID.global
-        // Bootstrap the memory.md ‚Ü?MEMORY.md migration at session start so a
+        // Bootstrap the memory.md ÔøΩ?MEMORY.md migration at session start so a
         // legacy lowercase file is renamed before the agent's first direct
         // Edit/Write (which would otherwise miss it on a case-sensitive FS, or
         // create an uppercase sibling and orphan the legacy content). The two
@@ -591,10 +591,10 @@ const live: Layer.Layer<
         headers: {
           ...(input.model.providerID.startsWith("opencode")
             ? {
-                "x-opencode-project": Instance.project.id,
-                "x-opencode-session": input.sessionID,
-                "x-opencode-request": input.user.id,
-                "x-opencode-client": Flag.ENCODE_CLIENT,
+                "x-encode-project": Instance.project.id,
+                "x-encode-session": input.sessionID,
+                "x-encode-request": input.user.id,
+                "x-encode-client": Flag.ENCODE_CLIENT,
               }
             : {
                 "x-session-affinity": input.sessionID,
@@ -604,13 +604,13 @@ const live: Layer.Layer<
           ...input.model.headers,
           ...headers,
         },
-        // AI SDK's internal retry loop is SILENT ‚Ä?it emits no events and does
+        // AI SDK's internal retry loop is SILENT ÔøΩ?it emits no events and does
         // not update session status, so the TUI shows only a dead spinner while
         // it runs. Its backoff is also UNCAPPED (delay *= 2 each attempt, capped
         // only by a retry-after header), so the prior default of 10 meant up to
-        // ~34 min (2+4+‚Ä?1024s) of invisible retrying before the error surfaced.
+        // ~34 min (2+4+ÔøΩ?1024s) of invisible retrying before the error surfaced.
         // We keep this layer short (absorb a couple of quick blips) and let the
-        // VISIBLE processor-level SessionRetry.policy own long-haul resilience ‚Ä?
+        // VISIBLE processor-level SessionRetry.policy own long-haul resilience ÔøΩ?
         // it publishes `type: "retry"` so the `[retrying attempt #N]` banner
         // shows, and its per-attempt delay is capped at 30s.
         maxRetries: input.retries ?? 2,

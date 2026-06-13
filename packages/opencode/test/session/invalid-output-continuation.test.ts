@@ -40,7 +40,7 @@ function writeConfig(dir: string, origin: string) {
   return Bun.write(
     path.join(dir, "ENCODE.json"),
     JSON.stringify({
-      $schema: "https://opencode.ai/config.json",
+      $schema: "https://encode.ai/config.json",
       enabled_providers: ["alibaba"],
       provider: {
         alibaba: { options: { apiKey: "test-key", baseURL: `${origin}/v1` } },
@@ -50,7 +50,7 @@ function writeConfig(dir: string, origin: string) {
   )
 }
 
-describe("invalid-output continuation â€?integration", () => {
+describe("invalid-output continuation ï¿½?integration", () => {
   test("empty stop step is nudged, second call produces a non-empty final assistant", async () => {
     await using tmp = await tmpdir({ git: true })
     const stub = startScriptedLLMServer([{ lines: emptyStopResponse() }, { lines: textStopResponse("final answer") }])
