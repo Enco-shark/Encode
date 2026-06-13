@@ -81,7 +81,7 @@ function buildAuthorizeUrl(publicKey: string, redirectUri: string): string {
   return `${PLATFORM_URL}/authorize?${params.toString()}`
 }
 
-export async function EncodeAuthPlugin(_input: PluginInput): Promise<Hooks> {
+export async function encodeAuthPlugin(_input: PluginInput): Promise<Hooks> {
   return {
     config: async (input) => {
       input.provider ??= {}
@@ -147,7 +147,7 @@ export async function EncodeAuthPlugin(_input: PluginInput): Promise<Hooks> {
                   clearTimeout(timeout)
                   resolve(result)
                 } catch (err) {
-                  log.error("mimo oauth decrypt failed", { error: err })
+                  log.error("encode oauth decrypt failed", { error: err })
                   res.writeHead(302, { Location: `${PLATFORM_URL}/authorize/callback?status=error&message=decrypt_failed` })
                   res.end()
                   reject(new Error("Decryption failed"))
@@ -189,8 +189,8 @@ export async function EncodeAuthPlugin(_input: PluginInput): Promise<Hooks> {
       ],
     },
     "chat.headers": async (input, output) => {
-      if (input.model.providerID !== "xiaomi") return
-      output.headers["X-Mimo-Source"] = "mimocode-cli"
+      if (input.model.providerID !== "encode") return
+      output.headers["X-Encode-Source"] = "encode-cli"
     },
   }
 }

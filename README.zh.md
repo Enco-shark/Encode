@@ -1,5 +1,9 @@
 <h1 align="center">Encode</h1>
 
+<p align="center">
+  <img src="assets/readme/Encode.png" alt="Encode" width="700">
+</p>
+
 <p align="center"><strong>开源 AI 编码助手，支持跨会话记忆。</strong></p>
 
 <p align="center">

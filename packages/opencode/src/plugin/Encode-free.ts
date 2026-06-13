@@ -1,4 +1,4 @@
-import type { Hooks, PluginInput } from "@mimo-ai/plugin"
+import type { Hooks, PluginInput } from "@encode-ai/plugin"
 import { Log } from "../util"
 import { Global } from "../global"
 import crypto from "crypto"
@@ -6,17 +6,17 @@ import os from "os"
 import path from "path"
 import fs from "fs"
 
-const log = Log.create({ service: "plugin.mimo-free" })
+const log = Log.create({ service: "plugin.encode-free" })
 
-const DEFAULT_BASE_URL = "https://api.xiaomimimo.com/"
-const BASE_URL = (process.env.MIMO_FREE_BASE_URL || DEFAULT_BASE_URL).replace(/\/+$/, "")
+const DEFAULT_BASE_URL = "https://api.encode.ai/"
+const BASE_URL = (process.env.ENCODE_FREE_BASE_URL || DEFAULT_BASE_URL).replace(/\/+$/, "")
 const BOOTSTRAP_URL = `${BASE_URL}/api/free-ai/bootstrap`
 const CHAT_BASE_URL = `${BASE_URL}/api/free-ai/openai`
 
 let fingerprintCache: string | undefined
 function getClientFingerprint(): string {
   if (fingerprintCache) return fingerprintCache
-  const file = path.join(Global.Path.data, "mimo-free-client")
+  const file = path.join(Global.Path.data, "encode-free-client")
   try {
     const existing = fs.readFileSync(file, "utf-8").trim()
     if (existing) {
@@ -64,10 +64,10 @@ async function bootstrap(): Promise<{ jwt: string; exp: number }> {
   })
   if (!res.ok) {
     const body = await res.text().catch(() => "")
-    throw new Error(`mimo-free bootstrap failed: ${res.status} ${body.slice(0, 200)}`)
+    throw new Error(`encode-free bootstrap failed: ${res.status} ${body.slice(0, 200)}`)
   }
   const data = (await res.json()) as { jwt?: string }
-  if (!data.jwt) throw new Error("mimo-free bootstrap response missing jwt")
+  if (!data.jwt) throw new Error("encode-free bootstrap response missing jwt")
   return { jwt: data.jwt, exp: parseExp(data.jwt) }
 }
 
@@ -86,7 +86,7 @@ async function getJwt(): Promise<string> {
   }
 }
 
-export const MimoFree = {
+export const EncodeFree = {
   baseUrl: BASE_URL,
   bootstrapUrl: BOOTSTRAP_URL,
   chatBaseUrl: CHAT_BASE_URL,
@@ -102,7 +102,7 @@ export const MimoFree = {
 function buildHeaders(init: any, jwt: string): Headers {
   const headers = new Headers(init?.headers)
   headers.set("Authorization", `Bearer ${jwt}`)
-  headers.set("X-Mimo-Source", "mimocode-cli-free")
+  headers.set("X-Encode-Source", "encode-cli-free")
   return headers
 }
 
@@ -119,12 +119,12 @@ async function wrappedFetch(input: any, init?: any): Promise<Response> {
   return fetch(rewritten, { ...init, headers: buildHeaders(init, retryJwt) })
 }
 
-export async function MimoFreeAuthPlugin(_input: PluginInput): Promise<Hooks> {
+export async function EncodeFreeAuthPlugin(_input: PluginInput): Promise<Hooks> {
   return {
     config: async (input) => {
       input.provider ??= {}
-      input.provider.mimo ??= {
-        name: "MiMo Auto (free)",
+      input.provider.encode ??= {
+        name: "Encode Auto (free)",
         npm: "@ai-sdk/openai-compatible",
         api: CHAT_BASE_URL,
         options: {
@@ -132,8 +132,8 @@ export async function MimoFreeAuthPlugin(_input: PluginInput): Promise<Hooks> {
           fetch: wrappedFetch,
         },
         models: {
-          "mimo-auto": {
-            name: "MiMo Auto",
+          "encode-auto": {
+            name: "Encode Auto",
             attachment: true,
             reasoning: true,
             tool_call: true,
