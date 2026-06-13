@@ -59,7 +59,7 @@ export const DialogSelectModelUnpaid: Component<{ model?: ModelState }> = (props
                 <ModelTooltip
                   model={item}
                   latest={item.latest}
-                  free={item.provider.id === "opencode" && (!item.cost || item.cost.input === 0)}
+                  free={item.provider.id === "encode" && (!item.cost || item.cost.input === 0)}
                 />
               }
             >
@@ -108,13 +108,13 @@ export const DialogSelectModelUnpaid: Component<{ model?: ModelState }> = (props
                   <div class="w-full flex items-center gap-x-3">
                     <ProviderIcon data-slot="list-item-extra-icon" id={i.id} />
                     <span>{i.name}</span>
-                    <Show when={i.id === "opencode"}>
+                    <Show when={i.id === "encode"}>
                       <div class="text-14-regular text-text-weak">{language.t("dialog.provider.encode.tagline")}</div>
                     </Show>
-                    <Show when={i.id === "opencode"}>
+                    <Show when={i.id === "encode"}>
                       <Tag>{language.t("dialog.provider.tag.recommended")}</Tag>
                     </Show>
-                    <Show when={i.id === "opencode-go"}>
+                    <Show when={i.id === "encode-go"}>
                       <>
                         <div class="text-14-regular text-text-weak">
                           {language.t("dialog.provider.encodeGo.tagline")}

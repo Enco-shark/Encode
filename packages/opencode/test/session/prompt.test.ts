@@ -1,6 +1,6 @@
 import path from "path"
 import { describe, expect, test } from "bun:test"
-import { NamedError } from "@encode-ai/shared/util/error"
+import { NamedError } from "@mimo-ai/shared/util/error"
 import { fileURLToPath } from "url"
 import { Effect, Layer } from "effect"
 import { Instance } from "../../src/project/instance"
@@ -270,9 +270,9 @@ describe("session.prompt regression", () => {
         git: true,
         init: async (dir) => {
           await Bun.write(
-            path.join(dir, "encode.json"),
+            path.join(dir, "mimocode.json"),
             JSON.stringify({
-              $schema: "https://encode.ai/config.json",
+              $schema: "https://opencode.ai/config.json",
               enabled_providers: ["alibaba"],
               provider: {
                 alibaba: {
@@ -344,9 +344,9 @@ describe("session.prompt regression", () => {
         git: true,
         init: async (dir) => {
           await Bun.write(
-            path.join(dir, "encode.json"),
+            path.join(dir, "mimocode.json"),
             JSON.stringify({
-              $schema: "https://encode.ai/config.json",
+              $schema: "https://opencode.ai/config.json",
               enabled_providers: ["alibaba"],
               provider: {
                 alibaba: {
@@ -588,9 +588,9 @@ describe("session.agent-resolution", () => {
   }, 30000)
 })
 
-// F37: subagent context isolation. encode's spawnSubagent shares
+// F37: subagent context isolation. Mimocode's spawnSubagent shares
 // sessionID with the parent and slices via agent_id. Without filtering
-// at the prompt-build call site (prompt.ts �?runLoop �?
+// at the prompt-build call site (prompt.ts → runLoop →
 // filterCompactedEffect), a subagent's LLM call would receive the
 // parent's full conversation, causing it to drift off-task. Bug
 // surfaced in v8.3 T18 turn 25 (explore-1 spawn went off and
@@ -618,9 +618,9 @@ describe("session.prompt F37 subagent context isolation", () => {
         git: true,
         init: async (dir) => {
           await Bun.write(
-            path.join(dir, "encode.json"),
+            path.join(dir, "mimocode.json"),
             JSON.stringify({
-              $schema: "https://encode.ai/config.json",
+              $schema: "https://opencode.ai/config.json",
               enabled_providers: ["alibaba"],
               provider: {
                 alibaba: {
@@ -655,7 +655,7 @@ describe("session.prompt F37 subagent context isolation", () => {
                 parts: [{ type: "text", text: "MAIN_AGENT_SECRET_TASK_X" }],
               })
 
-              // Subagent slice �?separate agent_id. Pre-populate one entry
+              // Subagent slice — separate agent_id. Pre-populate one entry
               // so the slice has prior history visible to the subagent.
               yield* prompt.prompt({
                 sessionID: session.id,
@@ -666,7 +666,7 @@ describe("session.prompt F37 subagent context isolation", () => {
               })
 
               // Trigger LLM call for the subagent. This is the F37 path:
-              // runLoop is called with agentID="actor-1" �?filterCompactedEffect
+              // runLoop is called with agentID="actor-1" → filterCompactedEffect
               // scopes msgs to only the subagent's slice.
               yield* prompt.prompt({
                 sessionID: session.id,

@@ -12,7 +12,7 @@
  *    the json_schema gate), so the loop runs another step instead of breaking.
  *  - Fork json_schema gate (prompt.ts:2050): a fork agent (contextMode "full")
  *    driven with a json_schema request that returns plain text writes
- *    StructuredOutputError �?proving the fork branch routes its own
+ *    StructuredOutputError — proving the fork branch routes its own
  *    handle.message/parts/processResult through classifyAssistantStep.
  */
 
@@ -64,9 +64,9 @@ function runFork<A, E>(fx: Effect.Effect<A, E, SessionPrompt.Service | Session.S
 
 function writeConfig(dir: string, origin: string) {
   return Bun.write(
-    path.join(dir, "encode.json"),
+    path.join(dir, "mimocode.json"),
     JSON.stringify({
-      $schema: "https://encode.ai/config.json",
+      $schema: "https://opencode.ai/config.json",
       enabled_providers: ["alibaba"],
       provider: {
         alibaba: { options: { apiKey: "test-key", baseURL: `${origin}/v1` } },
@@ -82,7 +82,7 @@ const JSON_SCHEMA = {
   retryCount: 0,
 }
 
-describe("classifier routing �?integration", () => {
+describe("classifier routing — integration", () => {
   test("main path continues on tool-call, existing-assistant top break exits on final", async () => {
     await using tmp = await tmpdir({ git: true })
     const readmePath = path.join(tmp.path, "README.md")
@@ -206,7 +206,7 @@ describe("classifier routing �?integration", () => {
                 agent: "build",
                 parts: [{ type: "text", text: "Say something disallowed." }],
               })
-              // Terminal on first occurrence �?exactly one LLM call, no retry.
+              // Terminal on first occurrence — exactly one LLM call, no retry.
               expect(stub.captures.length).toBe(1)
               expect(result.info.role).toBe("assistant")
               if (result.info.role === "assistant") {
@@ -385,7 +385,7 @@ describe("classifier routing �?integration", () => {
               // branch sends `forkCtx.system` verbatim as the request system, whereas
               // the main path would build the full system prompt. Without this guard
               // a non-shared ActorRegistry instance (isForkAgent=false) would fall to
-              // the main gate and also write StructuredOutputError �?a false pass.
+              // the main gate and also write StructuredOutputError — a false pass.
               const systemMsg = stub.captures[0]?.messages.find((m) => m.role === "system")
               expect(JSON.stringify(systemMsg?.content ?? "")).toContain("fork-system-prompt")
 
@@ -460,7 +460,7 @@ describe("classifier routing �?integration", () => {
               const systemMsg = stub.captures[0]?.messages.find((m) => m.role === "system")
               expect(JSON.stringify(systemMsg?.content ?? "")).toContain("fork-system-prompt")
 
-              // filtered handled before the fork json_schema gate �?ContentFilterError.
+              // filtered handled before the fork json_schema gate ⇒ ContentFilterError.
               expect(result.info.role).toBe("assistant")
               if (result.info.role === "assistant") {
                 expect(result.info.error?.name).toBe("ContentFilterError")

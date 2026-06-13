@@ -1,5 +1,5 @@
 import { App } from "@slack/bolt"
-import { createOpencode, type ToolPart } from "@encode-ai/sdk"
+import { createOpencode, type ToolPart } from "@mimo-ai/sdk"
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -13,11 +13,11 @@ console.log("- Bot token present:", !!process.env.SLACK_BOT_TOKEN)
 console.log("- Signing secret present:", !!process.env.SLACK_SIGNING_SECRET)
 console.log("- App token present:", !!process.env.SLACK_APP_TOKEN)
 
-console.log("🚀 Starting encode server...")
+console.log("🚀 Starting opencode server...")
 const opencode = await createOpencode({
   port: 0,
 })
-console.log("✅ Encode server ready")
+console.log("✅ Opencode server ready")
 
 const sessions = new Map<string, { client: any; server: any; sessionId: string; channel: string; thread: string }>()
 void (async () => {
@@ -63,7 +63,7 @@ app.message(async ({ message, say }) => {
     return
   }
 
-  console.log("�?Processing message:", message.text)
+  console.log("✅ Processing message:", message.text)
 
   const channel = message.channel
   const thread = (message as any).thread_ts || message.ts
@@ -72,7 +72,7 @@ app.message(async ({ message, say }) => {
   let session = sessions.get(sessionKey)
 
   if (!session) {
-    console.log("🆕 Creating new encode session...")
+    console.log("🆕 Creating new opencode session...")
     const { client, server } = opencode
 
     const createResult = await client.session.create({
@@ -80,7 +80,7 @@ app.message(async ({ message, say }) => {
     })
 
     if (createResult.error) {
-      console.error("�?Failed to create session:", createResult.error)
+      console.error("❌ Failed to create session:", createResult.error)
       await say({
         text: "Sorry, I had trouble creating a session. Please try again.",
         thread_ts: thread,
@@ -88,7 +88,7 @@ app.message(async ({ message, say }) => {
       return
     }
 
-    console.log("✅ Created encode session:", createResult.data.id)
+    console.log("✅ Created opencode session:", createResult.data.id)
 
     session = { client, server, sessionId: createResult.data.id, channel, thread }
     sessions.set(sessionKey, session)
@@ -101,16 +101,16 @@ app.message(async ({ message, say }) => {
     }
   }
 
-  console.log("📝 Sending to encode:", message.text)
+  console.log("📝 Sending to opencode:", message.text)
   const result = await session.client.session.prompt({
     path: { id: session.sessionId },
     body: { parts: [{ type: "text", text: message.text }] },
   })
 
-  console.log("📤 Encode response:", JSON.stringify(result, null, 2))
+  console.log("📤 Opencode response:", JSON.stringify(result, null, 2))
 
   if (result.error) {
-    console.error("�?Failed to send message:", result.error)
+    console.error("❌ Failed to send message:", result.error)
     await say({
       text: "Sorry, I had trouble processing your message. Please try again.",
       thread_ts: thread,

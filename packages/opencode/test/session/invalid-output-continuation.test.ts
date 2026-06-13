@@ -38,9 +38,9 @@ function run<A, E>(fx: Effect.Effect<A, E, SessionPrompt.Service | Session.Servi
 
 function writeConfig(dir: string, origin: string) {
   return Bun.write(
-    path.join(dir, "ENCODE.json"),
+    path.join(dir, "mimocode.json"),
     JSON.stringify({
-      $schema: "https://encode.ai/config.json",
+      $schema: "https://opencode.ai/config.json",
       enabled_providers: ["alibaba"],
       provider: {
         alibaba: { options: { apiKey: "test-key", baseURL: `${origin}/v1` } },
@@ -50,7 +50,7 @@ function writeConfig(dir: string, origin: string) {
   )
 }
 
-describe("invalid-output continuation �?integration", () => {
+describe("invalid-output continuation — integration", () => {
   test("empty stop step is nudged, second call produces a non-empty final assistant", async () => {
     await using tmp = await tmpdir({ git: true })
     const stub = startScriptedLLMServer([{ lines: emptyStopResponse() }, { lines: textStopResponse("final answer") }])
@@ -135,7 +135,7 @@ describe("invalid-output continuation �?integration", () => {
                 parts: [{ type: "text", text: "Answer my question." }],
               })
               // limit nudges + 1 final attempt that trips the terminal error.
-              expect(stub.captures.length).toBe(Flag.ENCODE_INVALID_OUTPUT_CONTINUATION_LIMIT + 1)
+              expect(stub.captures.length).toBe(Flag.MIMOCODE_INVALID_OUTPUT_CONTINUATION_LIMIT + 1)
               expect(result.info.role).toBe("assistant")
               if (result.info.role === "assistant") {
                 expect(result.info.error?.name).toBe("InvalidOutputError")

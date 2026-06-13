@@ -58,14 +58,14 @@ test("resolveModelRef resolves literals and groups (provider-aware)", async () =
   await using tmp = await tmpdir({
     init: async (dir) => {
       await Bun.write(
-        path.join(dir, "encode.json"),
+        path.join(dir, "mimocode.json"),
         JSON.stringify({
-          $schema: "https://encode.ai/config.json",
+          $schema: "https://opencode.ai/config.json",
           provider: PROVIDERS,
           model_groups: {
             // multi-member group: default alpha, plus beta member
             ultra: { default: "alpha/alpha-1", models: ["alpha/alpha-1", "beta/beta-1"] },
-            // default-only group (no beta member) �?context beta must fall back to default
+            // default-only group (no beta member) — context beta must fall back to default
             single: { default: "alpha/alpha-1", models: ["alpha/alpha-1"] },
             // string shorthand
             lite: "alpha/alpha-1",
@@ -86,17 +86,17 @@ test("resolveModelRef resolves literals and groups (provider-aware)", async () =
       expect(String(literal.providerID)).toBe("alpha")
       expect(String(literal.id)).toBe("alpha-1")
 
-      // 2. Group with no context provider �?group default.
+      // 2. Group with no context provider → group default.
       const def = await resolve("ultra")
       expect(String(def.providerID)).toBe("alpha")
       expect(String(def.id)).toBe("alpha-1")
 
-      // 3. Provider-aware: context beta �?the beta member, not the default.
+      // 3. Provider-aware: context beta → the beta member, not the default.
       const aware = await resolve("ultra", ProviderID.make("beta"))
       expect(String(aware.providerID)).toBe("beta")
       expect(String(aware.id)).toBe("beta-1")
 
-      // 4. Context provider absent from members �?group default.
+      // 4. Context provider absent from members → group default.
       const fallback = await resolve("single", ProviderID.make("beta"))
       expect(String(fallback.providerID)).toBe("alpha")
 
@@ -104,25 +104,25 @@ test("resolveModelRef resolves literals and groups (provider-aware)", async () =
       const shorthand = await resolve("lite")
       expect(String(shorthand.id)).toBe("alpha-1")
 
-      // 6. Unknown group name �?ModelGroupNotFoundError.
+      // 6. Unknown group name → ModelGroupNotFoundError.
       expect(resolve("nope")).rejects.toThrow(/ProviderModelGroupNotFoundError/)
     },
   })
 })
 
-// Member-skip needs beta actually disabled, which means beta must not load �?so
+// Member-skip needs beta actually disabled, which means beta must not load — so
 // this case uses its own instance/config where beta is in disabled_providers.
 test("resolveModelRef skips a member on a disabled provider", async () => {
   await using tmp = await tmpdir({
     init: async (dir) => {
       await Bun.write(
-        path.join(dir, "encode.json"),
+        path.join(dir, "mimocode.json"),
         JSON.stringify({
-          $schema: "https://encode.ai/config.json",
+          $schema: "https://opencode.ai/config.json",
           provider: PROVIDERS,
           disabled_providers: ["beta"],
           model_groups: {
-            // beta listed first but disabled �?provider-aware scan skips it �?default alpha
+            // beta listed first but disabled → provider-aware scan skips it → default alpha
             ultra: { default: "alpha/alpha-1", models: ["beta/beta-1", "alpha/alpha-1"] },
           },
         }),
@@ -147,9 +147,9 @@ test("getSmallModel resolves the lite group provider-aware", async () => {
   await using tmp = await tmpdir({
     init: async (dir) => {
       await Bun.write(
-        path.join(dir, "encode.json"),
+        path.join(dir, "mimocode.json"),
         JSON.stringify({
-          $schema: "https://encode.ai/config.json",
+          $schema: "https://opencode.ai/config.json",
           provider: PROVIDERS,
           model_groups: {
             lite: { default: "alpha/alpha-1", models: ["alpha/alpha-1", "beta/beta-1"] },
@@ -162,12 +162,12 @@ test("getSmallModel resolves the lite group provider-aware", async () => {
   await Instance.provide({
     directory: tmp.path,
     fn: async () => {
-      // Context beta has a lite member �?provider-aware pick (not the default, not the heuristic).
+      // Context beta has a lite member → provider-aware pick (not the default, not the heuristic).
       const beta = await getSmall(ProviderID.make("beta"))
       expect(String(beta?.providerID)).toBe("beta")
       expect(String(beta?.id)).toBe("beta-1")
 
-      // Context alpha �?its own member, which is also the group default.
+      // Context alpha → its own member, which is also the group default.
       const alpha = await getSmall(ProviderID.make("alpha"))
       expect(String(alpha?.providerID)).toBe("alpha")
       expect(String(alpha?.id)).toBe("alpha-1")
@@ -179,17 +179,17 @@ test("getSmallModel resolves the lite group provider-aware", async () => {
 // Info.modelRef / Info.model and (for a group) calling
 // resolveModelRef(modelRef, parentProvider). The agent config now exposes a
 // SINGLE `model` field that the loader routes by the presence of a `/`:
-//   - no `/`  �?tier/group name �?Info.modelRef (resolved provider-aware later)
-//   - has `/` �?literal provider/model �?Info.model (parsed eagerly)
+//   - no `/`  → tier/group name → Info.modelRef (resolved provider-aware later)
+//   - has `/` → literal provider/model → Info.model (parsed eagerly)
 // Assert both directions of that routing, plus that resolveModelRef resolves the
 // tier ref provider-aware against the parent's provider.
 test("agent model field routes literal vs tier name", async () => {
   await using tmp = await tmpdir({
     init: async (dir) => {
       await Bun.write(
-        path.join(dir, "encode.json"),
+        path.join(dir, "mimocode.json"),
         JSON.stringify({
-          $schema: "https://encode.ai/config.json",
+          $schema: "https://opencode.ai/config.json",
           provider: PROVIDERS,
           model_groups: {
             ultra: { default: "alpha/alpha-1", models: ["alpha/alpha-1", "beta/beta-1"] },
@@ -214,10 +214,10 @@ test("agent model field routes literal vs tier name", async () => {
       )
       expect(info.modelRef).toBe("ultra")
       expect(info.model).toBeUndefined()
-      // parent on beta �?beta member (provider-aware)
+      // parent on beta → beta member (provider-aware)
       const onBeta = await resolve(info.modelRef!, ProviderID.make("beta"))
       expect(String(onBeta.providerID)).toBe("beta")
-      // parent on alpha �?alpha member (the default)
+      // parent on alpha → alpha member (the default)
       const onAlpha = await resolve(info.modelRef!, ProviderID.make("alpha"))
       expect(String(onAlpha.providerID)).toBe("alpha")
 
@@ -246,9 +246,9 @@ test("per-call model accepts both group name and literal provider/model", async 
   await using tmp = await tmpdir({
     init: async (dir) => {
       await Bun.write(
-        path.join(dir, "encode.json"),
+        path.join(dir, "mimocode.json"),
         JSON.stringify({
-          $schema: "https://encode.ai/config.json",
+          $schema: "https://opencode.ai/config.json",
           provider: PROVIDERS,
           model_groups: {
             ultra: { default: "alpha/alpha-1", models: ["alpha/alpha-1", "beta/beta-1"] },
@@ -261,16 +261,16 @@ test("per-call model accepts both group name and literal provider/model", async 
   await Instance.provide({
     directory: tmp.path,
     fn: async () => {
-      // input.model = "ultra" (group name) �?provider-aware: context beta picks the beta member.
+      // input.model = "ultra" (group name) → provider-aware: context beta picks the beta member.
       const group = await resolve("ultra", ProviderID.make("beta"))
       expect(String(group.providerID)).toBe("beta")
 
-      // input.model = "beta/beta-1" (literal) �?exactly that model, IGNORING the alpha context provider.
+      // input.model = "beta/beta-1" (literal) → exactly that model, IGNORING the alpha context provider.
       const literalBeta = await resolve("beta/beta-1", ProviderID.make("alpha"))
       expect(String(literalBeta.providerID)).toBe("beta")
       expect(String(literalBeta.id)).toBe("beta-1")
 
-      // input.model = "alpha/alpha-1" (literal) �?alpha, no context provider.
+      // input.model = "alpha/alpha-1" (literal) → alpha, no context provider.
       const literalAlpha = await resolve("alpha/alpha-1")
       expect(String(literalAlpha.providerID)).toBe("alpha")
       expect(String(literalAlpha.id)).toBe("alpha-1")
@@ -281,14 +281,14 @@ test("per-call model accepts both group name and literal provider/model", async 
 // Built-in tiers (ultra/standard/lite) are reserved: they ALWAYS resolve. With no
 // model_groups configured at all, each falls back to the default model. Setting
 // top-level `model` makes defaultModel() return it deterministically, so a single
-// configured model becomes all three tiers �?zero-config never errors.
+// configured model becomes all three tiers — zero-config never errors.
 test("built-in tiers fall back to the default model when no model_groups configured", async () => {
   await using tmp = await tmpdir({
     init: async (dir) => {
       await Bun.write(
-        path.join(dir, "encode.json"),
+        path.join(dir, "mimocode.json"),
         JSON.stringify({
-          $schema: "https://encode.ai/config.json",
+          $schema: "https://opencode.ai/config.json",
           provider: PROVIDERS,
           model: "alpha/alpha-1",
         }),
@@ -315,9 +315,9 @@ test("configured built-in tier wins over fallback; unconfigured coexists", async
   await using tmp = await tmpdir({
     init: async (dir) => {
       await Bun.write(
-        path.join(dir, "encode.json"),
+        path.join(dir, "mimocode.json"),
         JSON.stringify({
-          $schema: "https://encode.ai/config.json",
+          $schema: "https://opencode.ai/config.json",
           provider: PROVIDERS,
           model: "alpha/alpha-1",
           model_groups: {
@@ -331,12 +331,12 @@ test("configured built-in tier wins over fallback; unconfigured coexists", async
   await Instance.provide({
     directory: tmp.path,
     fn: async () => {
-      // ultra is configured �?the configured group, NOT the default alpha.
+      // ultra is configured → the configured group, NOT the default alpha.
       const ultra = await resolve("ultra")
       expect(String(ultra.providerID)).toBe("beta")
       expect(String(ultra.id)).toBe("beta-1")
 
-      // standard is an unconfigured built-in �?default model.
+      // standard is an unconfigured built-in → default model.
       const standard = await resolve("standard")
       expect(String(standard.providerID)).toBe("alpha")
       expect(String(standard.id)).toBe("alpha-1")
@@ -350,9 +350,9 @@ test("unknown custom group name still throws", async () => {
   await using tmp = await tmpdir({
     init: async (dir) => {
       await Bun.write(
-        path.join(dir, "encode.json"),
+        path.join(dir, "mimocode.json"),
         JSON.stringify({
-          $schema: "https://encode.ai/config.json",
+          $schema: "https://opencode.ai/config.json",
           provider: PROVIDERS,
           model: "alpha/alpha-1",
           model_groups: {
@@ -375,7 +375,7 @@ test("unknown custom group name still throws", async () => {
 // `modelRef` string (a group/tier name or a literal provider/model). This is the
 // field HTTP/SDK callers use to start a prompt or shell with a tier name; it is
 // fed straight into resolveModelRef (covered above) and takes precedence over the
-// structured `model` field. Pure schema parse �?no Instance/LLM needed.
+// structured `model` field. Pure schema parse — no Instance/LLM needed.
 test("PromptInput and ShellInput accept modelRef", () => {
   const p = SessionPrompt.PromptInput.parse({ sessionID: "ses_x", modelRef: "ultra", parts: [] })
   expect(p.modelRef).toBe("ultra")

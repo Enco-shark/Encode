@@ -26,7 +26,7 @@ export interface RequestLike {
 export function paramToAttributeKey(key: string): string {
   const m = key.match(/^(.+)ID$/)
   if (m) return `${m[1].toLowerCase()}.id`
-  return `opencode.${key}`
+  return `encode.${key}`
 }
 
 export function requestAttributes(c: RequestLike): Record<string, string> {

@@ -311,11 +311,11 @@ export const layer = Layer.effect(
         if (tool.id === CodeSearchTool.id || tool.id === WebSearchTool.id) {
           if (tool.id === WebSearchTool.id) {
             return (
-              input.providerID === ProviderID.opencode ||
+              input.providerID === ProviderID.encode ||
               Flag.ENCODE_ENABLE_EXA
             )
           }
-          return input.providerID === ProviderID.opencode || Flag.ENCODE_ENABLE_EXA
+          return input.providerID === ProviderID.encode || Flag.ENCODE_ENABLE_EXA
         }
 
         const usePatch =

@@ -187,20 +187,20 @@ export const dict = {
 
   "home.zenCta.title": "Zugriff auf zuverlässige, optimierte Modelle für Coding-Agents",
   "home.zenCta.body":
-    "Zen gibt dir Zugriff auf ein handverlesenes Set an AI-Modellen, die Encode speziell für Coding-Agents getestet und bewertet hat. Keine Sorge wegen inkonsistenter Leistung und Qualität bei verschiedenen Anbietern �?nutze validierte Modelle, die funktionieren.",
+    "Zen gibt dir Zugriff auf ein handverlesenes Set an AI-Modellen, die Encode speziell für Coding-Agents getestet und bewertet hat. Keine Sorge wegen inkonsistenter Leistung und Qualität bei verschiedenen Anbietern – nutze validierte Modelle, die funktionieren.",
   "home.zenCta.link": "Erfahre mehr über Zen",
 
   "zen.title": "Encode Zen | Ein kuratiertes Set zuverlässiger, optimierter Modelle für Coding-Agents",
   "zen.hero.title": "Zuverlässige, optimierte Modelle für Coding-Agents",
   "zen.hero.body":
-    "Zen gibt dir Zugriff auf ein kuratiertes Set an AI-Modellen, die Encode speziell für Coding-Agents getestet und bewertet hat. Keine Sorge wegen inkonsistenter Leistung und Qualität �?nutze validierte Modelle, die funktionieren.",
+    "Zen gibt dir Zugriff auf ein kuratiertes Set an AI-Modellen, die Encode speziell für Coding-Agents getestet und bewertet hat. Keine Sorge wegen inkonsistenter Leistung und Qualität – nutze validierte Modelle, die funktionieren.",
 
   "zen.faq.q1": "Was ist Encode Zen?",
   "zen.faq.a1":
     "Zen ist ein kuratiertes Set an AI-Modellen, getestet und bewertet für Coding-Agents, erstellt vom Team hinter Encode.",
   "zen.faq.q2": "Was macht Zen genauer?",
   "zen.faq.a2":
-    "Zen bietet nur Modelle, die speziell für Coding-Agents getestet und bewertet wurden. Du würdest kein Buttermesser nehmen, um ein Steak zu schneiden �?nutze keine schlechten Modelle zum Coden.",
+    "Zen bietet nur Modelle, die speziell für Coding-Agents getestet und bewertet wurden. Du würdest kein Buttermesser nehmen, um ein Steak zu schneiden – nutze keine schlechten Modelle zum Coden.",
   "zen.faq.q3": "Ist Zen günstiger?",
   "zen.faq.a3":
     "Zen ist nicht gewinnorientiert. Zen gibt die Kosten der Modellanbieter an dich weiter. Je höher die Nutzung von Zen, desto besser kann Encode Preise verhandeln und diese an dich weitergeben.",
@@ -253,7 +253,7 @@ export const dict = {
 
   "go.title": "Encode Go | Kostengünstige Coding-Modelle für alle",
   "go.meta.description":
-    "Go beginnt bei $5 für den ersten Monat, danach $10/Monat, mit großzügigen 5-Stunden-Anfragelimits für GLM-5.1, GLM-5, Kimi K2.5, Kimi K2.6, encode-v2-Pro, encode-v2-Omni, Qwen3.5 Plus, Qwen3.6 Plus, MiniMax M2.5 und MiniMax M2.7.",
+    "Go beginnt bei $5 für den ersten Monat, danach $10/Monat, mit großzügigen 5-Stunden-Anfragelimits für GLM-5.1, GLM-5, Kimi K2.5, Kimi K2.6, MiMo-V2-Pro, MiMo-V2-Omni, Qwen3.5 Plus, Qwen3.6 Plus, MiniMax M2.5 und MiniMax M2.7.",
   "go.hero.title": "Kostengünstige Coding-Modelle für alle",
   "go.hero.body":
     "Go bringt Agentic Coding zu Programmierern auf der ganzen Welt. Mit großzügigen Limits und zuverlässigem Zugang zu den leistungsfähigsten Open-Source-Modellen, damit du mit leistungsstarken Agenten entwickeln kannst, ohne dir Gedanken über Kosten oder Verfügbarkeit zu machen.",
@@ -304,7 +304,7 @@ export const dict = {
   "go.problem.item2": "Großzügige Limits und zuverlässiger Zugang",
   "go.problem.item3": "Für so viele Programmierer wie möglich gebaut",
   "go.problem.item4":
-    "Beinhaltet GLM-5.1, GLM-5, Kimi K2.5, Kimi K2.6, encode-v2-Pro, encode-v2-Omni, Qwen3.5 Plus, Qwen3.6 Plus, MiniMax M2.5 und MiniMax M2.7",
+    "Beinhaltet GLM-5.1, GLM-5, Kimi K2.5, Kimi K2.6, MiMo-V2-Pro, MiMo-V2-Omni, Qwen3.5 Plus, Qwen3.6 Plus, MiniMax M2.5 und MiniMax M2.7",
   "go.how.title": "Wie Go funktioniert",
   "go.how.body":
     "Go beginnt bei $5 für den ersten Monat, danach $10/Monat. Du kannst es mit Encode oder jedem Agenten nutzen.",
@@ -330,7 +330,7 @@ export const dict = {
   "go.faq.a2": "Go umfasst die unten aufgeführten Modelle mit großzügigen Limits und zuverlässigem Zugriff.",
   "go.faq.q3": "Ist Go dasselbe wie Zen?",
   "go.faq.a3":
-    "Nein. Zen ist Pay-as-you-go, während Go bei $5 für den ersten Monat beginnt, danach $10/Monat, mit großzügigen Limits und zuverlässigem Zugang zu den Open-Source-Modellen GLM-5.1, GLM-5, Kimi K2.5, Kimi K2.6, encode-v2-Pro, encode-v2-Omni, Qwen3.5 Plus, Qwen3.6 Plus, MiniMax M2.5 und MiniMax M2.7.",
+    "Nein. Zen ist Pay-as-you-go, während Go bei $5 für den ersten Monat beginnt, danach $10/Monat, mit großzügigen Limits und zuverlässigem Zugang zu den Open-Source-Modellen GLM-5.1, GLM-5, Kimi K2.5, Kimi K2.6, MiMo-V2-Pro, MiMo-V2-Omni, Qwen3.5 Plus, Qwen3.6 Plus, MiniMax M2.5 und MiniMax M2.7.",
   "go.faq.q4": "Wie viel kostet Go?",
   "go.faq.a4.p1.beforePricing": "Go kostet",
   "go.faq.a4.p1.pricingLink": "$5 im ersten Monat",
@@ -354,7 +354,7 @@ export const dict = {
 
   "go.faq.q9": "Was ist der Unterschied zwischen kostenlosen Modellen und Go?",
   "go.faq.a9":
-    "Kostenlose Modelle beinhalten Big Pickle sowie Werbemodelle, die zum jeweiligen Zeitpunkt verfügbar sind, mit einem Kontingent von 200 Anfragen/Tag. Go beinhaltet GLM-5.1, GLM-5, Kimi K2.5, Kimi K2.6, encode-v2-Pro, encode-v2-Omni, Qwen3.5 Plus, Qwen3.6 Plus, MiniMax M2.5 und MiniMax M2.7 mit höheren Anfragekontingenten, die über rollierende Zeitfenster (5 Stunden, wöchentlich und monatlich) durchgesetzt werden, grob äquivalent zu $12 pro 5 Stunden, $30 pro Woche und $60 pro Monat (tatsächliche Anfragezahlen variieren je nach Modell und Nutzung).",
+    "Kostenlose Modelle beinhalten Big Pickle sowie Werbemodelle, die zum jeweiligen Zeitpunkt verfügbar sind, mit einem Kontingent von 200 Anfragen/Tag. Go beinhaltet GLM-5.1, GLM-5, Kimi K2.5, Kimi K2.6, MiMo-V2-Pro, MiMo-V2-Omni, Qwen3.5 Plus, Qwen3.6 Plus, MiniMax M2.5 und MiniMax M2.7 mit höheren Anfragekontingenten, die über rollierende Zeitfenster (5 Stunden, wöchentlich und monatlich) durchgesetzt werden, grob äquivalent zu $12 pro 5 Stunden, $30 pro Woche und $60 pro Monat (tatsächliche Anfragezahlen variieren je nach Modell und Nutzung).",
 
   "zen.api.error.rateLimitExceeded": "Ratenlimit überschritten. Bitte versuche es später erneut.",
   "zen.api.error.modelNotSupported": "Modell {{model}} wird nicht unterstützt",
@@ -442,7 +442,7 @@ export const dict = {
     "Wir haben Modelle speziell für Coding-Agents getestet und bewertet, um beste Leistung zu garantieren.",
   "workspace.newUser.feature.quality.title": "Höchste Qualität",
   "workspace.newUser.feature.quality.body":
-    "Zugriff auf Modelle, die für optimale Leistung konfiguriert sind �?keine Downgrades oder Routing zu billigeren Anbietern.",
+    "Zugriff auf Modelle, die für optimale Leistung konfiguriert sind – keine Downgrades oder Routing zu billigeren Anbietern.",
   "workspace.newUser.feature.lockin.title": "Kein Lock-in",
   "workspace.newUser.feature.lockin.body":
     "Nutze Zen mit jedem Coding-Agent und nutze weiterhin andere Anbieter mit Encode, wann immer du willst.",

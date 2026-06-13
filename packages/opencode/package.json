@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "name": "encode-ai-cli",
   "description": "AI-powered coding assistant with cross-session memory",
   "type": "module",
@@ -79,8 +79,7 @@
     "@babel/core": "7.28.4",
     "@effect/language-service": "0.84.2",
     "@octokit/webhooks-types": "7.6.1",
-    "@encode-ai/script": "workspace:*",
-    "@encode-ai/shared": "workspace:*",
+
     "@parcel/watcher-darwin-arm64": "2.5.1",
     "@parcel/watcher-darwin-x64": "2.5.1",
     "@parcel/watcher-linux-arm64-glibc": "2.5.1",
@@ -139,10 +138,7 @@
     "@clack/prompts": "1.0.0-alpha.1",
     "@effect/opentelemetry": "catalog:",
     "@effect/platform-node": "catalog:",
-    "@encode-ai/plugin": "workspace:*",
-    "@encode-ai/script": "workspace:*",
-    "@encode-ai/sdk": "workspace:*",
-    "@encode-ai/ui": "workspace:*",
+
     "@gitlab/opencode-gitlab-auth": "1.3.3",
     "@hono/node-server": "1.19.11",
     "@hono/node-ws": "1.3.0",

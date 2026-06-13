@@ -18,7 +18,7 @@ import { Question } from "../../src/question"
 import { Todo } from "../../src/session/todo"
 import { Session } from "../../src/session"
 import { LLM } from "../../src/session/llm"
-import { AppFileSystem } from "@encode-ai/shared/filesystem"
+import { AppFileSystem } from "@mimo-ai/shared/filesystem"
 import { SessionPrune } from "../../src/session/prune"
 import { SessionSummary } from "../../src/session/summary"
 import { Instruction } from "../../src/session/instruction"
@@ -341,7 +341,7 @@ describe("Actor.spawn fiber lifecycle", () => {
           task: "minimal task",
           context: "none",
           tools: ["read"],
-          background: false, // blocking â€?wait for completion
+          background: false, // blocking â€” wait for completion
           model: ref,
         })
         const outcome = yield* Deferred.await(result.outcome)
@@ -778,7 +778,7 @@ describe("Actor.spawn structured output (P3)", () => {
     required: ["ok", "count"],
   }
 
-  it.live("format=json_schema â†?outcome.structured carries the validated object, finalText dropped", () =>
+  it.live("format=json_schema â†’ outcome.structured carries the validated object, finalText dropped", () =>
     provideTmpdirServer(
       Effect.fnUntraced(function* ({ llm }) {
         const actor = yield* Actor.Service
@@ -792,7 +792,7 @@ describe("Actor.spawn structured output (P3)", () => {
         // SAME turn. Per Â§5.2 precedence, structured must win and finalText (the
         // preamble) must be dropped. (Must be one turn: a text-only turn under
         // json_schema would trip StructuredOutputError before a second turn runs.)
-        yield* llm.push(reply().text("Here is my analysisâ€?).tool("StructuredOutput", { ok: true, count: 3 }))
+        yield* llm.push(reply().text("Here is my analysisâ€¦").tool("StructuredOutput", { ok: true, count: 3 }))
 
         const result = yield* actor.spawn({
           mode: "subagent",
@@ -810,7 +810,7 @@ describe("Actor.spawn structured output (P3)", () => {
         expect(outcome.status).toBe("success")
         if (outcome.status === "success") {
           expect(outcome.structured).toEqual({ ok: true, count: 3 })
-          // Â§5.2: structured present â†?finalText dropped (no preamble duplication)
+          // Â§5.2: structured present â†’ finalText dropped (no preamble duplication)
           expect(outcome.finalText).toBeUndefined()
         }
       }),
@@ -818,7 +818,7 @@ describe("Actor.spawn structured output (P3)", () => {
     ),
   )
 
-  it.live("no format â†?outcome.finalText only, structured undefined", () =>
+  it.live("no format â†’ outcome.finalText only, structured undefined", () =>
     provideTmpdirServer(
       Effect.fnUntraced(function* ({ llm }) {
         const actor = yield* Actor.Service
@@ -859,7 +859,7 @@ describe("Actor.spawn onActorID pre-registration (MR104 #2)", () => {
   // spawn leaves an orphan. spawn exposes onActorID: fired synchronously inside
   // the spawn Effect, right after register(), before forkWork detaches. Proof:
   // by the time spawn RESOLVES to the caller, the callback has already run AND
-  // carries the SAME actorID the registry was populated with â€?so any consumer
+  // carries the SAME actorID the registry was populated with â€” so any consumer
   // (the workflow) is guaranteed to know the id the instant the actor exists.
   it.live("onActorID fires with the registered actorID before spawn resolves", () =>
     provideTmpdirServer(
@@ -872,7 +872,7 @@ describe("Actor.spawn onActorID pre-registration (MR104 #2)", () => {
           title: "onActorID timing",
           permission: [{ permission: "*", pattern: "*", action: "allow" }],
         })
-        // Hang so the background fiber is alive â€?the callback must fire on the
+        // Hang so the background fiber is alive â€” the callback must fire on the
         // SPAWN path (synchronously, pre-detach), not when the work completes.
         yield* llm.hang
 
@@ -889,7 +889,7 @@ describe("Actor.spawn onActorID pre-registration (MR104 #2)", () => {
           onActorID: (id) => seen.push(id),
         })
 
-        // Resolved â†?callback ALREADY ran exactly once, with the resolved actorID.
+        // Resolved â†’ callback ALREADY ran exactly once, with the resolved actorID.
         expect(seen).toEqual([result.actorID])
         // And the registry row for that id exists (register ran before the cb).
         const row = yield* reg.get(parent.id, result.actorID)
@@ -951,7 +951,7 @@ describe("Actor.spawn concurrent same-session result isolation", () => {
         const ra = oa.status === "success" ? oa.finalText : undefined
         const rb = ob.status === "success" ? ob.finalText : undefined
 
-        // a is ALPHA, b is BETA â€?each must carry its OWN result. Pre-fix, the
+        // a is ALPHA, b is BETA â€” each must carry its OWN result. Pre-fix, the
         // session-wide lastAssistant lookup collapses both onto whichever actor
         // persisted last, so ra === rb (both BETA, the newest ascending ID).
         expect(ra).toBe("RESULT_ALPHA")

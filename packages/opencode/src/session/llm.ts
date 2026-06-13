@@ -591,10 +591,10 @@ const live: Layer.Layer<
         headers: {
           ...(input.model.providerID.startsWith("encode")
             ? {
-                "x-opencode-project": Instance.project.id,
-                "x-opencode-session": input.sessionID,
-                "x-opencode-request": input.user.id,
-                "x-opencode-client": Flag.ENCODE_CLIENT,
+                "x-encode-project": Instance.project.id,
+                "x-encode-session": input.sessionID,
+                "x-encode-request": input.user.id,
+                "x-encode-client": Flag.ENCODE_CLIENT,
               }
             : {
                 "x-session-affinity": input.sessionID,

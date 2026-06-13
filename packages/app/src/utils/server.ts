@@ -1,20 +1,20 @@
-import { createOpencodeClient } from "@encode-ai/sdk/v2/client"
+import { createEncodeClient } from "@encode-ai/sdk/v2/client"
 import type { ServerConnection } from "@/context/server"
 
 export function createSdkForServer({
   server,
   ...config
-}: Omit<NonNullable<Parameters<typeof createOpencodeClient>[0]>, "baseUrl"> & {
+}: Omit<NonNullable<Parameters<typeof createEncodeClient>[0]>, "baseUrl"> & {
   server: ServerConnection.HttpBase
 }) {
   const auth = (() => {
     if (!server.password) return
     return {
-      Authorization: `Basic ${btoa(`${server.username ?? "opencode"}:${server.password}`)}`,
+      Authorization: `Basic ${btoa(`${server.username ?? "encode"}:${server.password}`)}`,
     }
   })()
 
-  return createOpencodeClient({
+  return createEncodeClient({
     ...config,
     headers: {
       ...(config.headers instanceof Headers ? Object.fromEntries(config.headers.entries()) : config.headers),

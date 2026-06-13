@@ -32,9 +32,9 @@ function run<A, E>(fx: Effect.Effect<A, E, SessionPrompt.Service | Session.Servi
 
 function writeConfig(dir: string, origin: string) {
   return Bun.write(
-    path.join(dir, "encode.json"),
+    path.join(dir, "mimocode.json"),
     JSON.stringify({
-      $schema: "https://encode.ai/config.json",
+      $schema: "https://opencode.ai/config.json",
       enabled_providers: ["alibaba"],
       provider: {
         alibaba: { options: { apiKey: "test-key", baseURL: `${origin}/v1` } },
@@ -50,7 +50,7 @@ const schema = {
   required: ["answer"],
 }
 
-describe("structured-output retry �?integration", () => {
+describe("structured-output retry — integration", () => {
   test("plain text stop is repaired, second call produces structured output", async () => {
     await using tmp = await tmpdir({ git: true })
     const stub = startScriptedLLMServer([

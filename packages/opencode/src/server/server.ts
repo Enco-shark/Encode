@@ -81,7 +81,7 @@ export async function openapi() {
       info: {
         title: "encode",
         version: "1.0.0",
-        description: "opencode api",
+        description: "encode api",
       },
       openapi: "3.1.1",
     },

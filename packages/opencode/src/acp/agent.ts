@@ -1573,7 +1573,7 @@ async function defaultModel(config: ACPConfig, cwd?: string): Promise<{ provider
   const opencodeProvider = providers.find((p) => p.id === "encode")
   if (opencodeProvider) {
     if (opencodeProvider.models["big-pickle"]) {
-      return { providerID: ProviderID.opencode, modelID: ModelID.make("big-pickle") }
+      return { providerID: ProviderID.encode, modelID: ModelID.make("big-pickle") }
     }
     const [best] = Provider.sort(Object.values(opencodeProvider.models))
     if (best) {
@@ -1595,7 +1595,7 @@ async function defaultModel(config: ACPConfig, cwd?: string): Promise<{ provider
 
   if (specified) return specified
 
-  return { providerID: ProviderID.opencode, modelID: ModelID.make("big-pickle") }
+  return { providerID: ProviderID.encode, modelID: ModelID.make("big-pickle") }
 }
 
 function parseUri(

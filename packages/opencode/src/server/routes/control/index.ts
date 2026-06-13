@@ -90,7 +90,7 @@ export function ControlPlaneRoutes(): Hono {
           info: {
             title: "encode",
             version: "0.0.3",
-            description: "opencode api",
+            description: "encode api",
           },
           openapi: "3.1.1",
         },
