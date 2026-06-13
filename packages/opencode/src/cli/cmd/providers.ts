@@ -10,7 +10,6 @@ import os from "os"
 import { Config } from "../../config"
 import { Global } from "../../global"
 import { Plugin } from "../../plugin"
-import { EncodeFree } from "../../plugin/Encode-free"
 import { t } from "../i18n"
 import { Instance } from "../../project/instance"
 import type { Hooks } from "@encode-ai/plugin"
@@ -226,7 +225,7 @@ async function EncodeFreeLogin() {
     prompts.log.info(
       [
         `Endpoint:    ${EncodeFree.chatBaseUrl}/chat`,
-        `Fingerprint: ${fingerprint.slice(0, 12)}ï¿?{fingerprint.slice(-4)}`,
+        `Fingerprint: ${fingerprint.slice(0, 12)}ï¿½?{fingerprint.slice(-4)}`,
         `Token exp:   ${expDate}`,
       ].join("\n"),
     )
