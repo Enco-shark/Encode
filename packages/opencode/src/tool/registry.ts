@@ -312,7 +312,6 @@ export const layer = Layer.effect(
           if (tool.id === WebSearchTool.id) {
             return (
               input.providerID === ProviderID.opencode ||
-              input.providerID === "xiaomi" ||
               Flag.ENCODE_ENABLE_EXA
             )
           }

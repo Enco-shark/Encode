@@ -173,7 +173,7 @@ export const dict = {
     "コマンドパレット（{highlight}Ctrl+P{/highlight}）でチャット内のユーザー名表示を切り替えます",
   "tui.tips.docker":
     "{highlight}docker run -it --rm ghcr.io/anomalyco/opencode{/highlight} でコンテナ版を実行できます",
-  "tui.tips.zen": "MiMo Code と組み合わせて {highlight}/connect{/highlight} で厳選されたモデルを使えます",
+  "tui.tips.zen": "{highlight}/connect{/highlight} で希望の LLM プロバイダーを設定できます",
   "tui.tips.agents_md": "プロジェクトの {highlight}AGENTS.md{/highlight} を Git にコミットしてチームで共有します",
   "tui.tips.review": "{highlight}/review{/highlight} で未コミット変更、ブランチ、PR をレビューします",
   "tui.tips.help": "{highlight}/help{/highlight} または {highlight}Ctrl+X H{/highlight} でヘルプを表示します",
@@ -344,7 +344,7 @@ export const dict = {
   "tui.command.voice.control.title": "音声制御を切り替え（マルチモーダル）",
   "tui.command.voice.control.title_on": "音声制御：有効（マルチモーダル） — クリックで無効化",
   "tui.command.voice.control.title_off": "音声制御：無効（高速ASR） — クリックで有効化",
-  "tui.voice.error.no_auth": "まず MiMo アカウントにログインしてください",
+  "tui.voice.error.no_auth": "音声機能は利用できません",
   "tui.voice.error.no_recorder": "録音ツールが見つかりません。sox をインストールしてください",
   "tui.voice.error.too_short": "録音時間が短すぎます",
   "tui.voice.error.network": "文字起こしに失敗しました。ネットワークを確認してください",
@@ -358,23 +358,22 @@ export const dict = {
   "tui.command.plugins.list.title": "プラグイン",
   "tui.command.plugins.install.title": "プラグインをインストール",
 
-  // MiMo Auto (free) — TUI login dialog
-  "tui.dialog.login.Encode_free": "MiMo Auto (free)",
+  // Encode (free) — TUI login dialog
+  "tui.dialog.login.Encode_free": "Encode (無料)",
   "tui.dialog.login.Encode_free.desc": "ログイン不要の匿名無料チャネル",
-  "tui.dialog.login.Encode_free.success": "MiMo Auto (free) の準備完了 — デフォルトモデルを Encode/Encode-auto に設定しました",
-  "tui.dialog.login.Encode_free.unavailable": "MiMo Auto (free) プロバイダーが読み込まれていません",
+  "tui.dialog.login.Encode_free.success": "Encode (無料) の準備完了 — デフォルトモデルを Encode/Encode-auto に設定しました",
+  "tui.dialog.login.Encode_free.unavailable": "Encode (無料) プロバイダーが読み込まれていません",
 
   // CLI: providers command (auth login)
   "cli.providers.select": "プロバイダーを選択",
   "cli.providers.other": "その他のプロバイダー",
   "cli.providers.Encode.recommended_hint": "推奨",
   "cli.providers.Encode_free.hint": "匿名無料チャネル / Encode-auto",
-  "cli.providers.Encode_free.verifying": "MiMo Auto (free) チャネルを検証中...",
-  "cli.providers.Encode_free.ready": "MiMo Auto (free) チャネル準備完了",
-  "cli.providers.Encode_free.failed": "MiMo Auto (free) の自己診断に失敗",
+  "cli.providers.Encode_free.verifying": "Encode (無料) チャネルを検証中...",
+  "cli.providers.Encode_free.ready": "Encode (無料) チャネル準備完了",
+  "cli.providers.Encode_free.failed": "Encode (無料) の自己診断に失敗",
   "cli.providers.Encode_free.default_set": "デフォルトモデルを Encode/Encode-auto に設定（1M コンテキスト、無料）",
-  "cli.providers.Encode_free.usage_hint":
-    "ログイン不要 — そのまま Encode を実行できます。有料/上位モデルを利用する場合は MiMo ブラウザログインを選択してください。",
+  "cli.providers.Encode_free.usage_hint": "ログイン不要 — そのまま Encode を実行できます。",
   "cli.providers.Encode_login.decrypt_retry": "復号に失敗しました、再試行してください（残り {remaining} 回）",
   "cli.providers.Encode_login.decrypt_exhausted": "復号に失敗しました、最大再試行回数に達しました",
 

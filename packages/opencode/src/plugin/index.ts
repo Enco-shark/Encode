@@ -19,7 +19,6 @@ import { createEncodeClient } from "@encode-ai/sdk"
 import { Flag } from "../flag/flag"
 import { CodexAuthPlugin } from "./codex"
 import { encodeAuthPlugin, AnthropicProxyPlugin } from "./Encode"
-import { EncodeFreeAuthPlugin } from "./Encode-free"
 import { Session } from "../session"
 import type { SessionID } from "../session/schema"
 import { NamedError } from "@encode-ai/shared/util/error"
@@ -122,7 +121,6 @@ export class Service extends Context.Service<Service, Interface>()("@opencode/Pl
 
 // Built-in plugins that are directly imported (not installed from npm)
 const INTERNAL_PLUGINS: PluginInstance[] = [
-  EncodeFreeAuthPlugin,
   encodeAuthPlugin,
   AnthropicProxyPlugin,
   CodexAuthPlugin,

@@ -18,7 +18,7 @@ import { win32DisableProcessedInput, win32InstallCtrlCGuard } from "./win32"
 import { Flag } from "@/flag/flag"
 import semver from "semver"
 import { DialogProvider, useDialog } from "@tui/ui/dialog"
-import { DialogMimoLogin } from "@tui/component/dialog-Encode-login"
+import { DialogProviderLogin } from "@tui/component/dialog-Encode-login"
 import { ErrorComponent } from "@tui/component/error-component"
 import { PluginRouteMissing } from "@tui/component/plugin-route-missing"
 import { ProjectProvider } from "@tui/context/project"
@@ -614,7 +614,7 @@ function App(props: { onSnapshot?: () => Promise<string[]> }) {
         name: "login",
       },
       onSelect: () => {
-        dialog.replace(() => <DialogMimoLogin />)
+        dialog.replace(() => <DialogProviderLogin />)
       },
       category: "provider",
     },
@@ -626,7 +626,7 @@ function App(props: { onSnapshot?: () => Promise<string[]> }) {
         name: "connect",
       },
       onSelect: () => {
-        dialog.replace(() => <DialogMimoLogin />)
+        dialog.replace(() => <DialogProviderLogin />)
       },
       category: "provider",
     },
@@ -637,7 +637,6 @@ function App(props: { onSnapshot?: () => Promise<string[]> }) {
         name: "logout",
       },
       onSelect: async () => {
-        await sdk.client.auth.remove({ providerID: "xiaomi" })
         await sdk.client.instance.dispose()
         await sync.bootstrap()
         toast.show({ message: t("tui.command.logout.toast"), variant: "info" })
@@ -773,7 +772,7 @@ function App(props: { onSnapshot?: () => Promise<string[]> }) {
         aliases: ["docs"],
       },
       onSelect: () => {
-        open("https://Encode.xiaomi.com/coder/docs").catch(() => {})
+        open("https://github.com/Enco-shark/Encode").catch(() => {})
         dialog.clear()
       },
       category: "system",

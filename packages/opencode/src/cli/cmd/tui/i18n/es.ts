@@ -226,7 +226,7 @@ export const dict = {
   "tui.tips.docker":
     "Ejecuta {highlight}docker run -it --rm ghcr.io/anomalyco/opencode{/highlight} para uso en contenedor",
   "tui.tips.zen":
-    "Usa {highlight}/connect{/highlight} con MiMo Code para modelos seleccionados y probados",
+    "Usa {highlight}/connect{/highlight} para configurar tu proveedor LLM preferido",
   "tui.tips.agents_md":
     "Sube el {highlight}AGENTS.md{/highlight} de tu proyecto a Git para compartirlo con el equipo",
   "tui.tips.review":
@@ -403,7 +403,7 @@ export const dict = {
   "tui.command.voice.control.title": "Alternar control de voz (multimodal)",
   "tui.command.voice.control.title_on": "Control de voz: activado (multimodal) — clic para desactivar",
   "tui.command.voice.control.title_off": "Control de voz: desactivado (ASR rápido) — clic para activar",
-  "tui.voice.error.no_auth": "Inicia sesión en MiMo primero",
+  "tui.voice.error.no_auth": "La función de voz no está disponible",
   "tui.voice.error.no_recorder": "No se encontró herramienta de grabación, instala sox",
   "tui.voice.error.too_short": "Grabación demasiado corta",
   "tui.voice.error.network": "La transcripción falló, verifica tu red",

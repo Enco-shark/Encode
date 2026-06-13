@@ -227,17 +227,8 @@ export function Prompt(props: PromptProps) {
     }
     if (state === "finishing") return
     // Start streaming
-    const xiaomi = sync.data.provider.find((p) => p.id === "xiaomi")
-    if (!xiaomi?.key) {
-      toast.show({ message: t("tui.voice.error.no_auth"), variant: "error" })
-      return
-    }
-    if (!Voice.isAvailable()) {
-      toast.show({ message: t("tui.voice.error.no_recorder"), variant: "error" })
-      return
-    }
-    const apiKey = xiaomi.key
-    const baseUrl = (xiaomi.options?.baseURL as string) || "https://api.xiaomiEncode.com/v1"
+    toast.show({ message: "Voice feature is not available", variant: "error" })
+    return
 
     const av: NonNullable<typeof activeVoice> = {
       handle: undefined!,

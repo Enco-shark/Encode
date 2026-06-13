@@ -17,11 +17,11 @@ function mimeToModality(mime: string): Modality | undefined {
   return undefined
 }
 
-// MiMo vision support isn't reflected in models.dev modality data, so the
+// Encode vision support isn't reflected in models.dev modality data, so the
 // generic capability check would strip images before they reach the model.
 // Encode-auto and Encode-v2.5 accept images; Encode-v2.5-pro is text-only.
 function supportsImageInput(model: Provider.Model): boolean {
-  if (model.providerID === "Encode" || model.providerID === "xiaomi") {
+  if (model.providerID === "Encode") {
     const id = model.id.toLowerCase()
     if (id.includes("v2.5-pro")) return false
     if (id === "Encode-auto" || id.includes("v2.5")) return true
@@ -1111,7 +1111,7 @@ export function providerOptions(model: Provider.Model, options: { [x: string]: a
 }
 
 export function maxOutputTokens(model: Provider.Model): number {
-  if (model.providerID === "Encode" || model.providerID === "xiaomi" || model.id.toLowerCase().includes("Encode")) {
+  if (model.providerID === "Encode" || model.id.toLowerCase().includes("Encode")) {
     return MIMO_OUTPUT_TOKEN_MAX
   }
   return Math.min(model.limit.output, OUTPUT_TOKEN_MAX) || OUTPUT_TOKEN_MAX

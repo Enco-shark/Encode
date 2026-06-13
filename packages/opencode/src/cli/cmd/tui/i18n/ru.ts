@@ -229,7 +229,7 @@ export const dict = {
   "tui.tips.docker":
     "Выполните {highlight}docker run -it --rm ghcr.io/anomalyco/opencode{/highlight} для контейнерного запуска",
   "tui.tips.zen":
-    "Используйте {highlight}/connect{/highlight} с MiMo Code для подобранных и протестированных моделей",
+    "Используйте {highlight}/connect{/highlight} для настройки предпочитаемого LLM-провайдера",
   "tui.tips.agents_md":
     "Закоммитьте {highlight}AGENTS.md{/highlight} вашего проекта в Git для общего доступа в команде",
   "tui.tips.review":
@@ -404,7 +404,7 @@ export const dict = {
   "tui.command.voice.control.title": "Переключить голосовое управление (мультимодальное)",
   "tui.command.voice.control.title_on": "Голосовое управление: включено (мультимодальное) — нажмите для отключения",
   "tui.command.voice.control.title_off": "Голосовое управление: отключено (быстрый ASR) — нажмите для включения",
-  "tui.voice.error.no_auth": "Сначала войдите в аккаунт MiMo",
+  "tui.voice.error.no_auth": "Голосовая функция недоступна",
   "tui.voice.error.no_recorder": "Инструмент записи не найден, установите sox",
   "tui.voice.error.too_short": "Запись слишком короткая",
   "tui.voice.error.network": "Ошибка транскрипции, проверьте сеть",
@@ -418,23 +418,22 @@ export const dict = {
   "tui.command.plugins.list.title": "Плагины",
   "tui.command.plugins.install.title": "Установить плагин",
 
-  // MiMo Auto (free) — TUI login dialog
-  "tui.dialog.login.Encode_free": "MiMo Auto (free)",
+  // Encode (free) — TUI login dialog
+  "tui.dialog.login.Encode_free": "Encode (бесплатно)",
   "tui.dialog.login.Encode_free.desc": "Анонимный бесплатный канал — вход не требуется",
-  "tui.dialog.login.Encode_free.success": "MiMo Auto (free) готов — модель по умолчанию: Encode/Encode-auto",
-  "tui.dialog.login.Encode_free.unavailable": "Провайдер MiMo Auto (free) не загружен",
+  "tui.dialog.login.Encode_free.success": "Encode (бесплатно) готов — модель по умолчанию: Encode/Encode-auto",
+  "tui.dialog.login.Encode_free.unavailable": "Провайдер Encode (бесплатно) не загружен",
 
   // CLI: providers command (auth login)
   "cli.providers.select": "Выберите провайдера",
   "cli.providers.other": "Другой провайдер",
   "cli.providers.Encode.recommended_hint": "рекомендуется",
   "cli.providers.Encode_free.hint": "Анонимный бесплатный канал / Encode-auto",
-  "cli.providers.Encode_free.verifying": "Проверка канала MiMo Auto (free)...",
-  "cli.providers.Encode_free.ready": "Канал MiMo Auto (free) готов",
-  "cli.providers.Encode_free.failed": "Не удалось проверить MiMo Auto (free)",
+  "cli.providers.Encode_free.verifying": "Проверка канала Encode (бесплатно)...",
+  "cli.providers.Encode_free.ready": "Канал Encode (бесплатно) готов",
+  "cli.providers.Encode_free.failed": "Не удалось проверить Encode (бесплатно)",
   "cli.providers.Encode_free.default_set": "Модель по умолчанию: Encode/Encode-auto (контекст 1M, бесплатно)",
-  "cli.providers.Encode_free.usage_hint":
-    "Вход не требуется — просто запустите Encode. Для платных/премиум-моделей выберите вход через браузер MiMo.",
+  "cli.providers.Encode_free.usage_hint": "Вход не требуется — просто запустите Encode.",
   "cli.providers.Encode_login.decrypt_retry": "Ошибка расшифровки, повторите попытку (осталось попыток: {remaining})",
   "cli.providers.Encode_login.decrypt_exhausted": "Ошибка расшифровки, превышено максимальное число попыток",
 

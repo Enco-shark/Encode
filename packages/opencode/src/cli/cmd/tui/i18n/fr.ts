@@ -216,7 +216,7 @@ export const dict = {
   "tui.tips.docker":
     "Exécutez {highlight}docker run -it --rm ghcr.io/anomalyco/opencode{/highlight} pour une utilisation conteneurisée",
   "tui.tips.zen":
-    "Utilisez {highlight}/connect{/highlight} avec MiMo Code pour des modèles testés et sélectionnés",
+    "Utilisez {highlight}/connect{/highlight} pour configurer votre fournisseur LLM préféré",
   "tui.tips.agents_md":
     "Versionnez le fichier {highlight}AGENTS.md{/highlight} de votre projet sur Git pour le partager avec l'équipe",
   "tui.tips.review":
@@ -392,7 +392,7 @@ export const dict = {
   "tui.command.voice.control.title": "Basculer le contrôle vocal (multimodal)",
   "tui.command.voice.control.title_on": "Contrôle vocal : activé (multimodal) — cliquer pour désactiver",
   "tui.command.voice.control.title_off": "Contrôle vocal : désactivé (ASR rapide) — cliquer pour activer",
-  "tui.voice.error.no_auth": "Veuillez d'abord vous connecter à MiMo",
+  "tui.voice.error.no_auth": "La fonction vocale n'est pas disponible",
   "tui.voice.error.no_recorder": "Aucun outil d'enregistrement trouvé, installez sox",
   "tui.voice.error.too_short": "Enregistrement trop court",
   "tui.voice.error.network": "La transcription a échoué, vérifiez votre réseau",
@@ -406,23 +406,22 @@ export const dict = {
   "tui.command.plugins.list.title": "Plugins",
   "tui.command.plugins.install.title": "Installer un plugin",
 
-  // MiMo Auto (free) — TUI login dialog
-  "tui.dialog.login.Encode_free": "MiMo Auto (free)",
+  // Encode (free) — TUI login dialog
+  "tui.dialog.login.Encode_free": "Encode (gratuit)",
   "tui.dialog.login.Encode_free.desc": "Canal anonyme gratuit — aucune connexion requise",
-  "tui.dialog.login.Encode_free.success": "MiMo Auto (free) est prêt — modèle par défaut défini sur Encode/Encode-auto",
-  "tui.dialog.login.Encode_free.unavailable": "Fournisseur MiMo Auto (free) non chargé",
+  "tui.dialog.login.Encode_free.success": "Encode (gratuit) est prêt — modèle par défaut défini sur Encode/Encode-auto",
+  "tui.dialog.login.Encode_free.unavailable": "Fournisseur Encode (gratuit) non chargé",
 
   // CLI: providers command (auth login)
   "cli.providers.select": "Sélectionner un fournisseur",
   "cli.providers.other": "Autre fournisseur",
   "cli.providers.Encode.recommended_hint": "recommandé",
   "cli.providers.Encode_free.hint": "Canal anonyme gratuit / Encode-auto",
-  "cli.providers.Encode_free.verifying": "Vérification du canal MiMo Auto (free)...",
-  "cli.providers.Encode_free.ready": "Canal MiMo Auto (free) prêt",
-  "cli.providers.Encode_free.failed": "Échec de la vérification de MiMo Auto (free)",
+  "cli.providers.Encode_free.verifying": "Vérification du canal Encode (gratuit)...",
+  "cli.providers.Encode_free.ready": "Canal Encode (gratuit) prêt",
+  "cli.providers.Encode_free.failed": "Échec de la vérification de Encode (gratuit)",
   "cli.providers.Encode_free.default_set": "Modèle par défaut défini sur Encode/Encode-auto (contexte 1M, gratuit)",
-  "cli.providers.Encode_free.usage_hint":
-    "Aucune connexion requise — exécutez simplement Encode. Pour les modèles payants/premium, choisissez plutôt la connexion navigateur MiMo.",
+  "cli.providers.Encode_free.usage_hint": "Aucune connexion requise — exécutez simplement Encode.",
   "cli.providers.Encode_login.decrypt_retry": "Échec du déchiffrement, veuillez réessayer ({remaining} tentatives restantes)",
   "cli.providers.Encode_login.decrypt_exhausted": "Échec du déchiffrement, nombre maximal de tentatives atteint",
 

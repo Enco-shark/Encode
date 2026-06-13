@@ -239,101 +239,6 @@ async function EncodeFreeLogin() {
   }
 }
 
-async function EncodeLogin() {
-  const hooks = await AppRuntime.runPromise(
-    Effect.gen(function* () {
-      const plugin = yield* Plugin.Service
-      return yield* plugin.list()
-    }),
-  )
-  const EncodeHook = hooks.findLast((h) => h.auth?.provider === "xiaomi")
-  if (!EncodeHook?.auth) {
-    prompts.log.error("MiMo auth plugin not found")
-    return
-  }
-
-  const method = EncodeHook.auth.methods[0]
-  if (method.type !== "oauth") return
-
-  const authorize = await method.authorize()
-  if (authorize.method !== "auto") return
-
-  prompts.log.info(`Browser didn't open? Use the url below to sign in:\n${authorize.url}`)
-
-  const browserPromise = authorize.callback().catch(() => ({ type: "failed" as const }))
-
-  const MAX_RETRIES = 3
-  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-    const raceResult = await raceCallbackAndStdin(browserPromise)
-
-    if (raceResult.source === "browser") {
-      if (raceResult.data.type === "success" && "key" in raceResult.data) {
-        await put("xiaomi", {
-          type: "api",
-          key: raceResult.data.key,
-          ...(raceResult.data.metadata ? { metadata: raceResult.data.metadata } : {}),
-        })
-        prompts.log.success("Login successful")
-        prompts.outro("Done")
-        return
-      }
-      prompts.log.error("Login failed")
-      prompts.outro("Done")
-      return
-    }
-
-    const callbackResult = await authorize.callback(raceResult.input)
-    if (callbackResult.type === "success" && "key" in callbackResult) {
-      await put("xiaomi", {
-        type: "api",
-        key: callbackResult.key,
-        ...(callbackResult.metadata ? { metadata: callbackResult.metadata } : {}),
-      })
-      prompts.log.success("Login successful")
-      prompts.outro("Done")
-      return
-    }
-
-    const remaining = MAX_RETRIES - attempt - 1
-    if (remaining > 0) {
-      prompts.log.error(t("cli.providers.Encode_login.decrypt_retry", { remaining }))
-    } else {
-      prompts.log.error(t("cli.providers.Encode_login.decrypt_exhausted"))
-    }
-  }
-}
-
-function raceCallbackAndStdin<T>(
-  browserPromise: Promise<T>,
-): Promise<{ source: "browser"; data: T } | { source: "paste"; input: string }> {
-  return new Promise((resolve) => {
-    const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
-
-    let settled = false
-    const cleanup = () => {
-      if (settled) return
-      settled = true
-      rl.close()
-    }
-
-    browserPromise.then((data) => {
-      if (settled) return
-      cleanup()
-      process.stdout.write("\n")
-      resolve({ source: "browser", data })
-    })
-
-    rl.question("Paste code here if prompted > ", (answer) => {
-      if (settled) return
-      const trimmed = answer.trim()
-      if (trimmed.length > 0) {
-        cleanup()
-        resolve({ source: "paste", input: trimmed })
-      }
-    })
-  })
-}
-
 export const ProvidersCommand = cmd({
   command: "providers",
   aliases: ["auth"],
@@ -517,10 +422,7 @@ export const ProvidersLoginCommand = cmd({
         ]
 
         let provider: string
-        if (args.provider === "xiaomi") {
-          await EncodeLogin()
-          return
-        } else if (args.provider === "Encode" || args.provider === "Encode-free") {
+        if (args.provider === "Encode") {
           await EncodeFreeLogin()
           return
         } else if (args.provider) {
@@ -537,19 +439,13 @@ export const ProvidersLoginCommand = cmd({
           const choice = await prompts.select({
             message: t("cli.providers.select"),
             options: [
-              { label: "MiMo", value: "xiaomi", hint: t("cli.providers.Encode.recommended_hint") },
-              { label: "MiMo Auto (free)", value: "Encode-free", hint: t("cli.providers.Encode_free.hint") },
+              { label: "Encode", value: "Encode", hint: t("cli.providers.Encode_free.hint") },
               { label: t("cli.providers.other"), value: "__other__" },
             ],
           })
           if (prompts.isCancel(choice)) throw new UI.CancelledError()
 
-          if (choice === "xiaomi") {
-            await EncodeLogin()
-            return
-          }
-
-          if (choice === "Encode-free") {
+          if (choice === "Encode") {
             await EncodeFreeLogin()
             return
           }
@@ -676,23 +572,6 @@ export const ProvidersWhoamiCommand = cmd({
   async handler(_args) {
     UI.empty()
     prompts.intro("Current user")
-    const info = await AppRuntime.runPromise(
-      Effect.gen(function* () {
-        const auth = yield* Auth.Service
-        return yield* auth.get("xiaomi")
-      }),
-    )
-    if (!info) {
-      prompts.log.error("Not logged in. Run `Encode auth login` to log in.")
-      return
-    }
-    if (info.type === "api" && info.metadata) {
-      prompts.log.info(`Provider: MiMo`)
-      prompts.log.info(`User ID: ${info.metadata.uid ?? "unknown"}`)
-    } else {
-      prompts.log.info(`Provider: MiMo`)
-      prompts.log.info(`Type: ${info.type}`)
-    }
-    prompts.outro("")
+    prompts.log.info("Run `Encode providers` to manage providers and authentication.")
   },
 })

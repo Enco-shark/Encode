@@ -39,7 +39,7 @@ const BUILTIN_TIERS = new Set(["ultra", "standard", "lite"])
 const warnedContextDefaults = new Set<string>()
 
 export const DEFAULT_CHUNK_TIMEOUT = 480_000 // 8 minutes — bounds single-attempt SSE stall.
-// Tuned for Encode-v2.5-pro on MiMo Router whose cold-path TTFT after context
+// Tuned for Encode-v2.5-pro whose cold-path TTFT after context
 // rebuild can dip to ~5 minutes silent. Reasoning models with multi-minute
 // thinking still emit partial chunks / heartbeats within this window. Override
 // per-provider via encode.json's `chunkTimeout` config for tighter or looser
@@ -408,7 +408,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         autoload: false,
         options: {
           headers: {
-            "HTTP-Referer": "https://Encode.xiaomi.com/coder/",
+            "HTTP-Referer": "https://github.com/Enco-shark/Encode",
             "X-Title": "encode",
             "X-Source": "encode",
           },
@@ -419,7 +419,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         autoload: false,
         options: {
           headers: {
-            "HTTP-Referer": "https://Encode.xiaomi.com/coder/",
+            "HTTP-Referer": "https://github.com/Enco-shark/Encode",
             "X-Title": "encode",
             "X-OpenRouter-Categories": "programming,programming-app,cli-agent",
           },
@@ -430,7 +430,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         autoload: false,
         options: {
           headers: {
-            "HTTP-Referer": "https://Encode.xiaomi.com/coder/",
+            "HTTP-Referer": "https://github.com/Enco-shark/Encode",
             "X-Title": "encode",
           },
         },
@@ -440,7 +440,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         autoload: false,
         options: {
           headers: {
-            "http-referer": "https://Encode.xiaomi.com/coder/",
+            "http-referer": "https://github.com/Enco-shark/Encode",
             "x-title": "encode",
           },
         },
@@ -538,7 +538,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         autoload: false,
         options: {
           headers: {
-            "HTTP-Referer": "https://Encode.xiaomi.com/coder/",
+            "HTTP-Referer": "https://github.com/Enco-shark/Encode",
             "X-Title": "encode",
           },
         },
@@ -823,7 +823,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         autoload: false,
         options: {
           headers: {
-            "HTTP-Referer": "https://Encode.xiaomi.com/coder/",
+            "HTTP-Referer": "https://github.com/Enco-shark/Encode",
             "X-Title": "encode",
           },
         },
