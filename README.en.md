@@ -22,7 +22,7 @@ Encode supports connecting to any mainstream LLM provider API.
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/Encode.git
+git clone https://github.com/Enco-shark/Encode.git
 cd Encode
 
 # Install dependencies

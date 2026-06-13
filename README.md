@@ -22,7 +22,7 @@ Encode 支持连接任何主流 LLM 提供商 API。
 
 ```bash
 # 克隆仓库
-git clone https://github.com/your-username/Encode.git
+git clone https://github.com/Enco-shark/Encode.git
 cd Encode
 
 # 安装依赖
