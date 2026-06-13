@@ -770,7 +770,7 @@ export function Logo(props: { shape?: LogoShape; ink?: RGBA; idle?: boolean; swe
       const peakMixBot = charLit ? Math.min(1, pulseBot.peak) : 0
       const primaryMixTop = charLit ? Math.min(1, pulseTop.primary) : 0
       const primaryMixBot = charLit ? Math.min(1, pulseBot.primary) : 0
-      // Layer primary tint first, then white peak on top â€?so the halo/tail pulls toward primary,
+      // Layer primary tint first, then white peak on top â€” so the halo/tail pulls toward primary,
       // while the bright core stays pure white
       const inkTopTint = primaryMixTop > 0 ? tint(ink, theme.primary, primaryMixTop) : ink
       const inkBotTint = primaryMixBot > 0 ? tint(ink, theme.primary, primaryMixBot) : ink
@@ -837,13 +837,13 @@ export function Logo(props: { shape?: LogoShape; ink?: RGBA; idle?: boolean; swe
       if (char === ",") {
         return (
           <text fg={shade(shadowBot, theme, ghost(s, 0.22) + ghost(q, 0.05))} attributes={attrs} selectable={false}>
-            â–?
+            â–„
           </text>
         )
       }
 
-      // Solid â–? render as â–€ so the top pixel (fg) and bottom pixel (bg) can carry independent shimmer values
-      if (char === "â–?) {
+      // Solid â–ˆ: render as â–€ so the top pixel (fg) and bottom pixel (bg) can carry independent shimmer values
+      if (char === "â–ˆ") {
         return (
           <text
             fg={shade(inkTop, theme, n + p + e + b)}
@@ -865,11 +865,11 @@ export function Logo(props: { shape?: LogoShape; ink?: RGBA; idle?: boolean; swe
         )
       }
 
-      // â–?bottom-half-lit: fg uses bottom-pixel sample
-      if (char === "â–?) {
+      // â–„ bottom-half-lit: fg uses bottom-pixel sample
+      if (char === "â–„") {
         return (
           <text fg={shade(inkBot, theme, n + p + e + b)} attributes={attrs} selectable={false}>
-            â–?
+            â–„
           </text>
         )
       }
@@ -904,8 +904,8 @@ export function Logo(props: { shape?: LogoShape; ink?: RGBA; idle?: boolean; swe
     }
   }
 
-  const Encode_ORANGE = RGBA.fromInts(251, 129, 71)
-  const Encode_GRAY = RGBA.fromInts(160, 160, 160)
+  const MIMO_ORANGE = RGBA.fromInts(251, 129, 71)
+  const MIMO_GRAY = RGBA.fromInts(160, 160, 160)
 
   return (
     <box ref={(item: BoxRenderable) => (box = item)}>
@@ -924,21 +924,21 @@ export function Logo(props: { shape?: LogoShape; ink?: RGBA; idle?: boolean; swe
           if (labelRow) {
             return (
               <box flexDirection="row" gap={1}>
-                <text fg={Encode_GRAY} selectable={false}>{line}</text>
-                <text fg={Encode_GRAY} selectable={false}>{ctx.shape.right[index()]}</text>
+                <text fg={MIMO_GRAY} selectable={false}>{line}</text>
+                <text fg={MIMO_GRAY} selectable={false}>{ctx.shape.right[index()]}</text>
               </box>
             )
           }
           return (
             <box flexDirection="row" gap={1}>
               <box flexDirection="row">
-                {renderLine(line, index(), props.ink ?? Encode_ORANGE, true, 0, frame(), dusk(), idleState())}
+                {renderLine(line, index(), props.ink ?? MIMO_ORANGE, true, 0, frame(), dusk(), idleState())}
               </box>
               <box flexDirection="row">
                 {renderLine(
                   ctx.shape.right[index()],
                   index(),
-                  props.ink ?? Encode_GRAY,
+                  props.ink ?? MIMO_GRAY,
                   true,
                   ctx.LEFT + GAP,
                   frame(),

@@ -56,7 +56,7 @@ export const UninstallCommand = {
     UI.empty()
     UI.println(UI.logo("  "))
     UI.empty()
-    prompts.intro("Uninstall encode")
+    prompts.intro("Uninstall Encode")
 
     const method = await AppRuntime.runPromise(Installation.Service.use((svc) => svc.method()))
     prompts.log.info(`Installation method: ${method}`)
@@ -115,17 +115,17 @@ async function showRemovalSummary(targets: RemovalTargets, method: Installation.
     const size = await getDirectorySize(dir.path)
     const sizeStr = formatSize(size)
     const status = dir.keep ? UI.Style.TEXT_DIM + "(keeping)" : ""
-    const prefix = dir.keep ? "â—? : "âœ?
+    const prefix = dir.keep ? "â—‹" : "âœ“"
 
     prompts.log.info(`  ${prefix} ${dir.label}: ${shortenPath(dir.path)} ${UI.Style.TEXT_DIM}(${sizeStr})${status}`)
   }
 
   if (targets.binary) {
-    prompts.log.info(`  âœ?Binary: ${shortenPath(targets.binary)}`)
+    prompts.log.info(`  âœ“ Binary: ${shortenPath(targets.binary)}`)
   }
 
   if (targets.shellConfig) {
-    prompts.log.info(`  âœ?Shell PATH in ${shortenPath(targets.shellConfig)}`)
+    prompts.log.info(`  âœ“ Shell PATH in ${shortenPath(targets.shellConfig)}`)
   }
 
   if (method !== "curl" && method !== "unknown") {
@@ -138,7 +138,7 @@ async function showRemovalSummary(targets: RemovalTargets, method: Installation.
       // choco: "choco uninstall encode",
       // scoop: "scoop uninstall encode",
     }
-    prompts.log.info(`  âœ?Package: ${cmds[method] || method}`)
+    prompts.log.info(`  âœ“ Package: ${cmds[method] || method}`)
   }
 }
 
@@ -227,7 +227,7 @@ async function executeUninstall(method: Installation.Method, targets: RemovalTar
   }
 
   UI.empty()
-  prompts.log.success("Thank you for using encode!")
+  prompts.log.success("Thank you for using Encode!")
 }
 
 async function getShellConfigFile(): Promise<string | null> {

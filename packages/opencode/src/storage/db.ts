@@ -16,7 +16,7 @@ import { InstanceState } from "@/effect"
 import { iife } from "@/util/iife"
 import { init } from "#db"
 
-declare const ENCODE_MIGRATIONS: { sql: string; timestamp: number; name: string }[] | undefined
+declare const OPENCODE_MIGRATIONS: { sql: string; timestamp: number; name: string }[] | undefined
 
 export const NotFoundError = NamedError.create(
   "NotFoundError",
@@ -29,9 +29,9 @@ const log = Log.create({ service: "db" })
 
 export function getChannelPath() {
   if (["latest", "beta", "prod"].includes(InstallationChannel) || Flag.ENCODE_DISABLE_CHANNEL_DB)
-    return path.join(Global.Path.data, "ENCODE.db")
+    return path.join(Global.Path.data, "encode.db")
   const safe = InstallationChannel.replace(/[^a-zA-Z0-9._-]/g, "-")
-  return path.join(Global.Path.data, `ENCODE-${safe}.db`)
+  return path.join(Global.Path.data, `encode-${safe}.db`)
 }
 
 export const Path = iife(() => {
@@ -95,13 +95,13 @@ export const Client = lazy(() => {
 
   // Apply schema migrations
   const entries =
-    typeof ENCODE_MIGRATIONS !== "undefined"
-      ? ENCODE_MIGRATIONS
+    typeof OPENCODE_MIGRATIONS !== "undefined"
+      ? OPENCODE_MIGRATIONS
       : migrations(path.join(import.meta.dirname, "../../migration"))
   if (entries.length > 0) {
     log.info("applying migrations", {
       count: entries.length,
-      mode: typeof ENCODE_MIGRATIONS !== "undefined" ? "bundled" : "dev",
+      mode: typeof OPENCODE_MIGRATIONS !== "undefined" ? "bundled" : "dev",
     })
     if (Flag.ENCODE_SKIP_MIGRATIONS) {
       for (const item of entries) {

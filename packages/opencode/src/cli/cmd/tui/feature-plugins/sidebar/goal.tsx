@@ -15,7 +15,7 @@ function View(props: { api: TuiPluginApi; session_id: string }) {
   })
 
   // Show whenever there is an active goal, or a verdict survives from a goal
-  // that just cleared (so the âœ?âŠ?result lingers briefly).
+  // that just cleared (so the âœ“/âŠ˜ result lingers briefly).
   const show = createMemo(() => Boolean(goal()?.condition || latest()))
 
   const status = createMemo(() => {
@@ -39,7 +39,7 @@ function View(props: { api: TuiPluginApi; session_id: string }) {
           {(condition) => (
             <box flexDirection="row" gap={1}>
               <text flexShrink={0} fg={theme().primary}>
-                â€?
+                â€¢
               </text>
               <text fg={theme().textMuted} wrapMode="word">
                 {condition()}
@@ -51,7 +51,7 @@ function View(props: { api: TuiPluginApi; session_id: string }) {
           {(s) => (
             <box flexDirection="row" gap={1}>
               <text flexShrink={0} fg={s().dot}>
-                â€?
+                â€¢
               </text>
               <text fg={theme().textMuted} wrapMode="word">
                 Judge: {s().label}

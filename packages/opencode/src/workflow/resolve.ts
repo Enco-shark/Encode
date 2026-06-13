@@ -12,7 +12,7 @@ export function isInlineScript(nameOrScript: string): boolean {
 
 // Walk from `start` up to `stop` (the worktree root), checking
 // .encode/workflows/<name>.js then .claude/workflows/<name>.js at each level.
-// First hit wins, nearest-first (project dir overrides a higher-level one) â€?
+// First hit wins, nearest-first (project dir overrides a higher-level one) â€”
 // mirrors how skills/commands resolve named user files. Returns the script body
 // or null if no file matches (the caller turns null into a thrown, fail-loud
 // "unknown workflow"). A bare name is constrained to a single path segment so it

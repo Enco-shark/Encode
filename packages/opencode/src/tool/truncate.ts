@@ -130,7 +130,7 @@ export const layer = Layer.effect(
             : `The tool call succeeded but the output was truncated. Full output saved to: ${file}\nUse Grep to search the full content or Read with offset/limit to view specific sections.`
 
           return {
-            content: `${headOut.join("\n")}\n\n... ${omitted} lines omitted â€?showing head and tail ...\n\n${tailOut.join("\n")}\n\n${hintText}`,
+            content: `${headOut.join("\n")}\n\n... ${omitted} lines omitted â€” showing head and tail ...\n\n${tailOut.join("\n")}\n\n${hintText}`,
             truncated: true,
             outputPath: file,
           } as const

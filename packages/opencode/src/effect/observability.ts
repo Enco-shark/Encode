@@ -45,9 +45,9 @@ export function resource(): { serviceName: string; serviceVersion: string; attri
     attributes: {
       ...attributes,
       "deployment.environment.name": InstallationChannel,
-      "encode.client": Flag.ENCODE_CLIENT,
-      "encode.process_role": processMetadata.processRole,
-      "encode.run_id": processMetadata.runID,
+      "opencode.client": Flag.ENCODE_CLIENT,
+      "opencode.process_role": processMetadata.processRole,
+      "opencode.run_id": processMetadata.runID,
       "service.instance.id": processID,
     },
   }
@@ -76,7 +76,7 @@ const traces = async () => {
   // register(), so the global @opentelemetry/api context manager stays
   // as the no-op default. Non-Effect code (like the AI SDK) that calls
   // tracer.startActiveSpan() relies on context.active() to find the
-  // parent span �?without a real context manager every span starts a
+  // parent span — without a real context manager every span starts a
   // new trace. Registering AsyncLocalStorageContextManager fixes this.
   const { AsyncLocalStorageContextManager } = await import("@opentelemetry/context-async-hooks")
   const { context } = await import("@opentelemetry/api")

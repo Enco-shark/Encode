@@ -84,7 +84,7 @@ export async function SubagentProgressCheckerPlugin(_pluginInput: PluginInput): 
       // Use excludeOnly so the matcher fires for ALL actor types EXCEPT those
       // listed (including built-in subagents like general/explore/build/title).
       // The default matcher path (`!isBuiltIn`) would silently skip built-ins
-      // â€?which are exactly the most common task-bound subagents this plugin
+      // â€” which are exactly the most common task-bound subagents this plugin
       // exists to validate. checkpoint-writer / title / summary / dream /
       // distill / compaction never have task_id semantics, so excluding them
       // is harmless even though task_id check below would already short-circuit.
@@ -104,8 +104,8 @@ export async function SubagentProgressCheckerPlugin(_pluginInput: PluginInput): 
       },
       run: async (input, output) => {
         const taskId = (input as { task_id?: string }).task_id
-        if (!taskId) return // caller didn't bind to a task â†?no-op
-        // Read-only agents (canWrite === false) cannot satisfy a "write the journal" nudge â€?
+        if (!taskId) return // caller didn't bind to a task â†’ no-op
+        // Read-only agents (canWrite === false) cannot satisfy a "write the journal" nudge â€”
         // skip the check entirely so we don't burn postStop re-entries on an impossible ask.
         // `=== false` (not falsy): an absent canWrite must NOT suppress (fail-open).
         if ((input as { canWrite?: boolean }).canWrite === false) return

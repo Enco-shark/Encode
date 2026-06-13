@@ -6,7 +6,7 @@ const id = "internal:sidebar-task"
 
 // Active tasks render in full; completed tasks show a short recent tail (so the
 // user gets "what just finished" feedback) with the rest folded behind a
-// clickable "N more done" row. abandoned tasks stay hidden â€?drops, not wins.
+// clickable "N more done" row. abandoned tasks stay hidden â€” drops, not wins.
 const RECENT_DONE_LIMIT = 3
 
 function depthOf(taskId: string): number {
@@ -20,7 +20,7 @@ function View(props: { api: TuiPluginApi; session_id: string }) {
   const [doneExpanded, setDoneExpanded] = createSignal(false)
   const theme = () => props.api.theme.current
   const all = createMemo(() => props.api.state.session.task(props.session_id))
-  // Active work, ordered in_progress â†?open(todo) â†?blocked; ties broken by id
+  // Active work, ordered in_progress â†’ open(todo) â†’ blocked; ties broken by id
   // so same-status rows keep a stable order across polls (no visual jitter).
   const active = createMemo(() =>
     all()
@@ -45,7 +45,7 @@ function View(props: { api: TuiPluginApi; session_id: string }) {
       <box>
         <box flexDirection="row" gap={1} onMouseDown={() => collapsible() && setOpen((x) => !x)}>
           <Show when={collapsible()}>
-            <text fg={theme().text}>{open() ? "â–? : "â–?}</text>
+            <text fg={theme().text}>{open() ? "â–¼" : "â–¶"}</text>
           </Show>
           <text fg={theme().text}>
             <b>Tasks</b>
@@ -66,7 +66,7 @@ function View(props: { api: TuiPluginApi; session_id: string }) {
           <Show when={hiddenDoneCount() > 0 || doneExpanded()}>
             <box flexDirection="row" gap={0} onMouseDown={() => setDoneExpanded((x) => !x)}>
               <text fg={theme().textMuted}>
-                {doneExpanded() ? "  â–?fewer done" : `  â–?${hiddenDoneCount()} more done`}
+                {doneExpanded() ? "  â–¾ fewer done" : `  â–¸ ${hiddenDoneCount()} more done`}
               </text>
             </box>
           </Show>

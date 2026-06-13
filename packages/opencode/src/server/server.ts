@@ -79,7 +79,7 @@ export async function openapi() {
   const result = await generateSpecs(app, {
     documentation: {
       info: {
-        title: "opencode",
+        title: "encode",
         version: "1.0.0",
         description: "opencode api",
       },

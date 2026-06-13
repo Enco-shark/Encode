@@ -21,7 +21,7 @@ function View(props: { api: TuiPluginApi }) {
           {(file) => (
             <box flexDirection="row" gap={1}>
               <text flexShrink={0} fg={theme().primary}>
-                â€?
+                â€¢
               </text>
               <text fg={theme().textMuted} wrapMode="none">
                 {file}

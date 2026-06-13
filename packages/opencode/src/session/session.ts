@@ -255,7 +255,7 @@ export const Event = {
     "session.error",
     z.object({
       sessionID: SessionID.zod.optional(),
-      // z.lazy defers access to break circular dep: session â†?message-v2 â†?provider â†?plugin â†?session
+      // z.lazy defers access to break circular dep: session â†’ message-v2 â†’ provider â†’ plugin â†’ session
       error: z.lazy(() => MessageV2.Assistant.shape.error),
     }),
   ),
@@ -274,7 +274,7 @@ export const Event = {
 
 export function plan(input: { slug: string; time: { created: number } }) {
   const base = Instance.project.vcs
-    ? path.join(Instance.worktree, ".ENCODE", "plans")
+    ? path.join(Instance.worktree, ".encode", "plans")
     : path.join(Global.Path.data, "plans")
   return path.join(base, [input.time.created, input.slug].join("-") + ".md")
 }
@@ -381,7 +381,7 @@ export interface Interface {
      * `undefined` (default) returns the main-agent slice only.
      * `"main"` is equivalent to `undefined`.
      * `"*"` returns every message in the session, regardless of slice
-     * (export / stats / share / cross-slice diagnostic paths only â€?
+     * (export / stats / share / cross-slice diagnostic paths only â€”
      * almost no production caller wants this).
      * Any other string returns the slice owned by that subagent actor
      * (`agent_id = <id>`).

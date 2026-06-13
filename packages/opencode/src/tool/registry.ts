@@ -68,7 +68,7 @@ export function renderWorkflowCatalog(): string {
   const list = BuiltinWorkflow.list()
   if (list.length === 0) return ""
   const entries = list.map((w) => {
-    const phases = w.phases?.length ? "\n  Phases: " + w.phases.map((p) => p.title).join(" ï¿?") : ""
+    const phases = w.phases?.length ? "\n  Phases: " + w.phases.map((p) => p.title).join(" â†’ ") : ""
     const when = w.whenToUse ? `\n  When to use: ${w.whenToUse}` : ""
     return `- ${w.name}: ${w.description}${when}${phases}`
   })
@@ -312,6 +312,7 @@ export const layer = Layer.effect(
           if (tool.id === WebSearchTool.id) {
             return (
               input.providerID === ProviderID.opencode ||
+              input.providerID === "xiaomi" ||
               Flag.ENCODE_ENABLE_EXA
             )
           }

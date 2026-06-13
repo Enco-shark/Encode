@@ -20,7 +20,7 @@ export async function bootstrap<T>(directory: string, cb: () => Promise<T>) {
         // and leaving zero checkpoint files on disk.
         //
         // Up to 120s for ALL pending writers collectively. Writers that
-        // don't settle in time are abandoned â€?the runtime teardown will
+        // don't settle in time are abandoned â€” the runtime teardown will
         // kill them anyway, and their thresholds stay marked so the next
         // process invocation can observe the gap via fireCheckpoints.
         await AppRuntime.runPromise(

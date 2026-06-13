@@ -605,20 +605,20 @@ function generateSystem(colors: TerminalColors, mode: "dark" | "light"): ThemeJs
   const diffRemovedLineNumberBg = tint(diffContextBg, ansiColors.red, diffAlpha)
   const diffLineNumber = textMuted
 
-  const accentColor = RGBA.fromInts(255, 103, 0)
+  const xiaomiOrange = RGBA.fromInts(255, 103, 0)
 
   return {
     theme: {
-      // Primary colors using accent color
-      primary: accentColor,
-      secondary: accentColor,
-      accent: accentColor,
+      // Primary colors using Xiaomi Orange
+      primary: xiaomiOrange,
+      secondary: xiaomiOrange,
+      accent: xiaomiOrange,
 
       // Status colors using ANSI
       error: ansiColors.red,
       warning: ansiColors.yellow,
-      success: accentColor,
-      info: accentColor,
+      success: xiaomiOrange,
+      info: xiaomiOrange,
 
       // Text colors
       text: fg,

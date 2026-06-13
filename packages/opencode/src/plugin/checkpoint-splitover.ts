@@ -21,7 +21,7 @@ export async function CheckpointSplitoverPlugin(pluginInput: PluginInput): Promi
       matcher: { agentType: { include: ["checkpoint-writer"] } },
       run: async (input, output) => {
         // Bookkeeping (CheckpointContext) and file paths (checkpointPath) are keyed
-        // on the PARENT session â€?the writer runs in a child session post-Axis-A but
+        // on the PARENT session â€” the writer runs in a child session post-Axis-A but
         // writes to the parent's artifacts. Fall back to input.sessionID for spawn
         // shapes where parent === sessionID (dream/distill don't get the child redirect).
         const sessionID = (input.parentSessionID ?? input.sessionID) as SessionID
@@ -50,7 +50,7 @@ export async function CheckpointSplitoverPlugin(pluginInput: PluginInput): Promi
             })
             return
           }
-          // warn-only â†?fall through, leave output untouched
+          // warn-only â†’ fall through, leave output untouched
         } catch (err) {
           log.error("checkpoint-splitover hook failed", { err, sessionID, actorID: input.actorID })
         }

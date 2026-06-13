@@ -54,7 +54,7 @@ export const UpgradeCommand = {
       return
     }
 
-    prompts.log.info(`From ${InstallationVersion} â†?${target}`)
+    prompts.log.info(`From ${InstallationVersion} â†’ ${target}`)
     const spinner = prompts.spinner()
     spinner.start("Upgrading...")
     const err = await AppRuntime.runPromise(Installation.Service.use((svc) => svc.upgrade(method, target))).catch(

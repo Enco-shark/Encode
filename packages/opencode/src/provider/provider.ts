@@ -38,11 +38,11 @@ const BUILTIN_TIERS = new Set(["ultra", "standard", "lite"])
 // F41: warn once per (providerID, modelID) when limit.context falls back to default
 const warnedContextDefaults = new Set<string>()
 
-export const DEFAULT_CHUNK_TIMEOUT = 480_000 // 8 minutes ï¿?bounds single-attempt SSE stall.
-// Tuned for encode-v2.5-pro on Encode Router whose cold-path TTFT after context
+export const DEFAULT_CHUNK_TIMEOUT = 480_000 // 8 minutes â€” bounds single-attempt SSE stall.
+// Tuned for Encode-v2.5-pro on MiMo Router whose cold-path TTFT after context
 // rebuild can dip to ~5 minutes silent. Reasoning models with multi-minute
 // thinking still emit partial chunks / heartbeats within this window. Override
-// per-provider via ENCODE.json's `chunkTimeout` config for tighter or looser
+// per-provider via encode.json's `chunkTimeout` config for tighter or looser
 // bounds.
 
 function shouldUseCopilotResponsesApi(modelID: string): boolean {
@@ -163,7 +163,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
           },
         },
       }),
-    opencode: Effect.fnUntraced(function* (input: Info) {
+    encode: Effect.fnUntraced(function* (input: Info) {
       const env = yield* dep.env()
       const hasKey = iife(() => {
         if (input.env.some((item) => env[item])) return true
@@ -172,7 +172,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
       const ok =
         hasKey ||
         Boolean(yield* dep.auth(input.id)) ||
-        Boolean((yield* dep.config()).provider?.["opencode"]?.options?.apiKey)
+        Boolean((yield* dep.config()).provider?.["encode"]?.options?.apiKey)
 
       if (!ok) {
         for (const [key, value] of Object.entries(input.models)) {
@@ -325,7 +325,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
           }
 
           // Region resolution precedence (highest to lowest):
-          // 1. options.region from ENCODE.json provider config
+          // 1. options.region from encode.json provider config
           // 2. defaultRegion from AWS_REGION environment variable
           // 3. Default "us-east-1" (baked into defaultRegion)
           const region = options?.region ?? defaultRegion
@@ -408,9 +408,9 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         autoload: false,
         options: {
           headers: {
-            "HTTP-Referer": "https://encode.ai",
-            "X-Title": "ENCODE",
-            "X-Source": "ENCODE",
+            "HTTP-Referer": "https://Encode.xiaomi.com/coder/",
+            "X-Title": "encode",
+            "X-Source": "encode",
           },
         },
       }),
@@ -419,8 +419,8 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         autoload: false,
         options: {
           headers: {
-            "HTTP-Referer": "https://encode.ai",
-            "X-Title": "ENCODE",
+            "HTTP-Referer": "https://Encode.xiaomi.com/coder/",
+            "X-Title": "encode",
             "X-OpenRouter-Categories": "programming,programming-app,cli-agent",
           },
         },
@@ -430,18 +430,116 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         autoload: false,
         options: {
           headers: {
-            "HTTP-Referer": "https://encode.ai",
-            "X-Title": "ENCODE",
+            "HTTP-Referer": "https://Encode.xiaomi.com/coder/",
+            "X-Title": "encode",
           },
         },
       }),
-    nvidia: () =>
+    vercel: () =>
       Effect.succeed({
         autoload: false,
         options: {
           headers: {
-            "HTTP-Referer": "https://encode.ai",
-            "X-Title": "ENCODE",
+            "http-referer": "https://Encode.xiaomi.com/coder/",
+            "x-title": "encode",
+          },
+        },
+      }),
+    "google-vertex": Effect.fnUntraced(function* (provider: Info) {
+      const env = yield* dep.env()
+      const project =
+        provider.options?.project ?? env["GOOGLE_CLOUD_PROJECT"] ?? env["GCP_PROJECT"] ?? env["GCLOUD_PROJECT"]
+
+      const location = String(
+        provider.options?.location ??
+          env["GOOGLE_VERTEX_LOCATION"] ??
+          env["GOOGLE_CLOUD_LOCATION"] ??
+          env["VERTEX_LOCATION"] ??
+          "us-central1",
+      )
+
+      const autoload = Boolean(project)
+      if (!autoload) return { autoload: false }
+      return {
+        autoload: true,
+        vars(_options: Record<string, any>) {
+          const endpoint = location === "global" ? "aiplatform.googleapis.com" : `${location}-aiplatform.googleapis.com`
+          return {
+            ...(project && { GOOGLE_VERTEX_PROJECT: project }),
+            GOOGLE_VERTEX_LOCATION: location,
+            GOOGLE_VERTEX_ENDPOINT: endpoint,
+          }
+        },
+        options: {
+          project,
+          location,
+          fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
+            const { GoogleAuth } = await import("google-auth-library")
+            const auth = new GoogleAuth()
+            const client = await auth.getApplicationDefault()
+            const token = await client.credential.getAccessToken()
+
+            const headers = new Headers(init?.headers)
+            headers.set("Authorization", `Bearer ${token.token}`)
+
+            return fetch(input, { ...init, headers })
+          },
+        },
+        async getModel(sdk: any, modelID: string) {
+          const id = String(modelID).trim()
+          return sdk.languageModel(id)
+        },
+      }
+    }),
+    "google-vertex-anthropic": Effect.fnUntraced(function* () {
+      const env = yield* dep.env()
+      const project = env["GOOGLE_CLOUD_PROJECT"] ?? env["GCP_PROJECT"] ?? env["GCLOUD_PROJECT"]
+      const location = env["GOOGLE_CLOUD_LOCATION"] ?? env["VERTEX_LOCATION"] ?? "global"
+      const autoload = Boolean(project)
+      if (!autoload) return { autoload: false }
+      return {
+        autoload: true,
+        options: {
+          project,
+          location,
+        },
+        async getModel(sdk: any, modelID) {
+          const id = String(modelID).trim()
+          return sdk.languageModel(id)
+        },
+      }
+    }),
+    "sap-ai-core": Effect.fnUntraced(function* () {
+      const auth = yield* dep.auth("sap-ai-core")
+      // TODO: Using process.env directly because Env.set only updates a shallow copy (not process.env),
+      // until the scope of the Env API is clarified (test only or runtime?)
+      const envServiceKey = iife(() => {
+        const envAICoreServiceKey = process.env.AICORE_SERVICE_KEY
+        if (envAICoreServiceKey) return envAICoreServiceKey
+        if (auth?.type === "api") {
+          process.env.AICORE_SERVICE_KEY = auth.key
+          return auth.key
+        }
+        return undefined
+      })
+      const deploymentId = process.env.AICORE_DEPLOYMENT_ID
+      const resourceGroup = process.env.AICORE_RESOURCE_GROUP
+
+      return {
+        autoload: !!envServiceKey,
+        options: envServiceKey ? { deploymentId, resourceGroup } : {},
+        async getModel(sdk: any, modelID: string) {
+          return sdk(modelID)
+        },
+      }
+    }),
+    zenmux: () =>
+      Effect.succeed({
+        autoload: false,
+        options: {
+          headers: {
+            "HTTP-Referer": "https://Encode.xiaomi.com/coder/",
+            "X-Title": "encode",
           },
         },
       }),
@@ -466,7 +564,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
       const directory = yield* InstanceState.directory
 
       const aiGatewayHeaders = {
-        "User-Agent": `ENCODE/${InstallationVersion} gitlab-ai-provider/${GITLAB_PROVIDER_VERSION} (${os.platform()} ${os.release()}; ${os.arch()})`,
+        "User-Agent": `encode/${InstallationVersion} gitlab-ai-provider/${GITLAB_PROVIDER_VERSION} (${os.platform()} ${os.release()}; ${os.arch()})`,
         "anthropic-beta": "context-1m-2025-08-07",
         ...providerConfig?.options?.aiGatewayHeaders,
       }
@@ -619,7 +717,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         options: {
           apiKey,
           headers: {
-            "User-Agent": `ENCODE/${InstallationVersion} cloudflare-workers-ai (${os.platform()} ${os.release()}; ${os.arch()})`,
+            "User-Agent": `encode/${InstallationVersion} cloudflare-workers-ai (${os.platform()} ${os.release()}; ${os.arch()})`,
           },
         },
         async getModel(sdk: any, modelID: string) {
@@ -667,7 +765,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
       if (!apiToken) {
         throw new Error(
           "CLOUDFLARE_API_TOKEN (or CF_AIG_TOKEN) is required for Cloudflare AI Gateway. " +
-            "Set it via environment variable or run `ENCODE auth cloudflare-ai-gateway`.",
+            "Set it via environment variable or run `encode auth cloudflare-ai-gateway`.",
         )
       }
 
@@ -690,7 +788,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         skipCache: input.options?.skipCache,
         collectLog: input.options?.collectLog,
         headers: {
-          "User-Agent": `ENCODE/${InstallationVersion} cloudflare-ai-gateway (${os.platform()} ${os.release()}; ${os.arch()})`,
+          "User-Agent": `encode/${InstallationVersion} cloudflare-ai-gateway (${os.platform()} ${os.release()}; ${os.arch()})`,
         },
       }
 
@@ -716,7 +814,7 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         autoload: false,
         options: {
           headers: {
-            "X-Cerebras-3rd-Party-Integration": "ENCODE",
+            "X-Cerebras-3rd-Party-Integration": "encode",
           },
         },
       }),
@@ -725,8 +823,8 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         autoload: false,
         options: {
           headers: {
-            "HTTP-Referer": "https://encode.ai",
-            "X-Title": "ENCODE",
+            "HTTP-Referer": "https://Encode.xiaomi.com/coder/",
+            "X-Title": "encode",
           },
         },
       }),
@@ -1126,7 +1224,7 @@ const layer: Layer.Layer<
                       providerID,
                       modelID,
                       defaulting_to: DEFAULT_CONTEXT_WINDOW,
-                      fix: `Set limit.context explicitly in ENCODE.json under provider.${providerID}.models.${modelID}`,
+                      fix: `Set limit.context explicitly in encode.json under provider.${providerID}.models.${modelID}`,
                     })
                   }
                   return DEFAULT_CONTEXT_WINDOW
@@ -1542,7 +1640,7 @@ const layer: Layer.Layer<
       ref: string,
       contextProviderID?: ProviderID,
     ) {
-      // Literal "provider/model" ï¿?unchanged path.
+      // Literal "provider/model" â€” unchanged path.
       if (ref.includes("/")) {
         const parsed = parseModel(ref)
         return yield* getModel(parsed.providerID, parsed.modelID)
@@ -1589,7 +1687,7 @@ const layer: Layer.Layer<
       }
 
       // Otherwise route through the `lite` tier: configured lite group
-      // (provider-aware) ï¿?else the built-in tier fallback to defaultModel().
+      // (provider-aware) â†’ else the built-in tier fallback to defaultModel().
       return yield* resolveModelRef("lite", providerID)
     })
 

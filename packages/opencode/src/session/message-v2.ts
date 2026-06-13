@@ -879,9 +879,9 @@ export function toModelMessages(
 
 export function page(input: { sessionID: SessionID; limit: number; before?: string; agentID?: string }) {
   const before = input.before ? cursor.decode(input.before) : undefined
-  // Slice contract: agentID `undefined` (default) â‡?main slice only;
-  // `"*"` â‡?every slice (full-stream opt-out for export/stats/share/etc.);
-  // any other string â‡?that subagent's actorID slice.
+  // Slice contract: agentID `undefined` (default) â‡’ main slice only;
+  // `"*"` â‡’ every slice (full-stream opt-out for export/stats/share/etc.);
+  // any other string â‡’ that subagent's actorID slice.
   const agentClause =
     input.agentID === "*"
       ? undefined
@@ -927,9 +927,9 @@ export function page(input: { sessionID: SessionID; limit: number; before?: stri
  * Iterate session messages oldest-last (caller usually reverses).
  *
  * Slice contract (forwarded to `page`):
- *   options.agentID === undefined  â†?main slice only (default)
- *   options.agentID === "*"        â†?every slice (full-stream opt-out)
- *   any other string               â†?that actor's slice
+ *   options.agentID === undefined  â†’ main slice only (default)
+ *   options.agentID === "*"        â†’ every slice (full-stream opt-out)
+ *   any other string               â†’ that actor's slice
  */
 export function* stream(sessionID: SessionID, options?: { agentID?: string }) {
   const size = 50
@@ -994,7 +994,7 @@ export const filterCompactedEffect = Effect.fnUntraced(function* (
   if (!options?.contextFrom) return ownMessages
 
   // Load parent messages up to the watermark. Inherited parent context is
-  // always scoped to the parent's main thread (agent_id = 'main') â€?subagent
+  // always scoped to the parent's main thread (agent_id = 'main') â€” subagent
   // siblings on the parent must not leak into a child session/subagent.
   const parentStream = stream(options.contextFrom, { agentID: "main" })
   const parentFiltered = filterCompacted(parentStream)
@@ -1027,7 +1027,7 @@ export function fromError(
     // own maxRetries. Unwrap to the underlying error (.lastError) so the
     // APICallError branch below can extract statusCode/isRetryable/responseBody.
     // Without this, a wrapped 5xx falls through to the `e instanceof Error`
-    // catch-all and collapses to an opaque UnknownError â€?which SessionRetry
+    // catch-all and collapses to an opaque UnknownError â€” which SessionRetry
     // can't classify, so the visible retry status never fires and the turn
     // hangs with a dead spinner.
     case RetryError.isInstance(e): {

@@ -564,7 +564,7 @@ export const BashTool = Tool.define(
       if (!output) output = "(no output)"
 
       if (cut && file) {
-        // Check if tail contains error patterns â€?if so, prepend head for context
+        // Check if tail contains error patterns â€” if so, prepend head for context
         const tailScan = end.text.length > 2048 ? end.text.slice(-2048) : end.text
         const hasErrors = ERROR_PATTERN.test(tailScan)
         if (hasErrors) {

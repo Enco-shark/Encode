@@ -134,7 +134,7 @@ const cli = yargs(args)
             last = percent
             if (tty) {
               const fill = Math.round((percent / 100) * width)
-              const bar = `${"â–?.repeat(fill)}${"ï½?.repeat(width - fill)}`
+              const bar = `${"â– ".repeat(fill)}${"ï½¥".repeat(width - fill)}`
               process.stderr.write(
                 `\r${orange}${bar} ${percent.toString().padStart(3)}%${reset} ${muted}${event.label.padEnd(12)} ${event.current}/${event.total}${reset}`,
               )

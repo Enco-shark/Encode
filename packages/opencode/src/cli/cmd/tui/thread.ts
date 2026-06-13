@@ -18,7 +18,7 @@ import { TuiConfig } from "./config/tui"
 import { ENCODE_PROCESS_ROLE, ENCODE_RUN_ID, ensureRunID, sanitizedProcessEnv } from "@/util/Encode-process"
 
 declare global {
-  const ENCODE_WORKER_PATH: string
+  const OPENCODE_WORKER_PATH: string
 }
 
 type RpcClient = ReturnType<typeof Rpc.client<typeof rpc>>
@@ -52,7 +52,7 @@ function createEventSource(client: RpcClient): EventSource {
 }
 
 async function target() {
-  if (typeof ENCODE_WORKER_PATH !== "undefined") return ENCODE_WORKER_PATH
+  if (typeof OPENCODE_WORKER_PATH !== "undefined") return OPENCODE_WORKER_PATH
   const dist = new URL("./cli/cmd/tui/worker.js", import.meta.url)
   if (await Filesystem.exists(fileURLToPath(dist))) return dist
   return new URL("./worker.ts", import.meta.url)
@@ -67,12 +67,12 @@ async function input(value?: string) {
 
 export const TuiThreadCommand = cmd({
   command: "$0 [project]",
-  describe: "start ENCODE tui",
+  describe: "start encode tui",
   builder: (yargs) =>
     withNetworkOptions(yargs)
       .positional("project", {
         type: "string",
-        describe: "path to start ENCODE in",
+        describe: "path to start encode in",
       })
       .option("model", {
         type: "string",
@@ -104,7 +104,7 @@ export const TuiThreadCommand = cmd({
       .option("never-ask-questions", {
         type: "boolean",
         describe:
-          "start in never-ask mode �?never prompt you; pick the best option autonomously (toggle at runtime with /never-ask-questions)",
+          "start in never-ask mode — never prompt you; pick the best option autonomously (toggle at runtime with /never-ask-questions)",
         default: false,
       }),
   handler: async (args) => {
@@ -112,7 +112,7 @@ export const TuiThreadCommand = cmd({
     // (Important when running under `bun run` wrappers on Windows.)
     const unguard = win32InstallCtrlCGuard()
     try {
-      // Must be the very first thing �?disables CTRL_C_EVENT before any Worker
+      // Must be the very first thing — disables CTRL_C_EVENT before any Worker
       // spawn or async work so the OS cannot kill the process group.
       win32DisableProcessedInput()
 

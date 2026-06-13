@@ -288,26 +288,26 @@ export const layer = Layer.effect(
             options: {},
             native: true,
             hidden: true,
-            // No `prompt` field â€?fork agent contract: at spawn time,
+            // No `prompt` field â€” fork agent contract: at spawn time,
             // tryStartCheckpointWriter captures parent's full LLM request prefix
             // (system + tools + messages-to-watermark) into a frozen ForkContext,
             // stored in Actor service's in-memory map. fork's runLoop reads from
             // that snapshot instead of recomputing from this agent's identity.
             // See docs/superpowers/specs/2026-05-26-fork-agent-prefix-cache-design.md
             //
-            // No `toolAllowlist` field â€?fork agents must mirror parent's tool
+            // No `toolAllowlist` field â€” fork agents must mirror parent's tool
             // schema for prefix-cache alignment. Runtime tool restriction is
             // enforced via actor.tools whitelist (set in tryStartCheckpointWriter).
-            // Permission inherits `defaults` (+ user) only â€?NO bespoke block.
+            // Permission inherits `defaults` (+ user) only â€” NO bespoke block.
             // At runtime the fork's LLM-visible tool schema is filtered against the
             // PARENT agent's permission (ForkContext.parentPermission, fed to
             // handle.process in prompt.ts's fork branch), so it matches the parent
             // (prompt-cache parity). NOTE: the per-call ctx.ask still evaluates this
             // agent's own permission, but that is bounded by the actor.tools whitelist
-            // (set in tryStartCheckpointWriter) and memory-path-guard â€?the real write
-            // authority â€?so inheriting `defaults` over-grants nothing in practice.
+            // (set in tryStartCheckpointWriter) and memory-path-guard â€” the real write
+            // authority â€” so inheriting `defaults` over-grants nothing in practice.
             // Memory writes skip the edit ask (askEditUnlessMemory), and any
-            // un-answerable ask fails clean (SYSTEM_SPAWNED_AGENT_TYPES â†?
+            // un-answerable ask fails clean (SYSTEM_SPAWNED_AGENT_TYPES â†’
             // interactive:false). See
             // docs/superpowers/specs/2026-06-05-checkpoint-writer-permission-deadlock-design.md
             permission: Permission.merge(defaults, user),

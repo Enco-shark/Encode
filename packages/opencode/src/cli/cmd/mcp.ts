@@ -23,11 +23,11 @@ import { Effect } from "effect"
 function getAuthStatusIcon(status: MCP.AuthStatus): string {
   switch (status) {
     case "authenticated":
-      return "âœ?
+      return "âœ“"
     case "expired":
-      return "âš?
+      return "âš "
     case "not_authenticated":
-      return "âœ?
+      return "âœ—"
   }
 }
 
@@ -60,7 +60,7 @@ function configuredServers(config: Config.Info) {
 
 function sourceLabel(config: Config.Info, name: string) {
   const origin = config.mcp_origins?.[name]
-  if (!origin) return "opencode"
+  if (!origin) return "encode"
   const home = Global.Path.home
   const source = origin.source === home ? "~" : origin.source.startsWith(home + path.sep) ? "~" + origin.source.slice(home.length) : origin.source
   return `${origin.type}:${source}`
@@ -147,29 +147,29 @@ export const McpListCommand = cmd({
           let hint = ""
 
           if (!status) {
-            statusIcon = "â—?
+            statusIcon = "â—‹"
             statusText = "not initialized"
           } else if (status.status === "connected") {
-            statusIcon = "âœ?
+            statusIcon = "âœ“"
             statusText = "connected"
             if (hasOAuth && hasStoredTokens) {
               hint = " (OAuth)"
             }
           } else if (status.status === "disabled") {
-            statusIcon = "â—?
+            statusIcon = "â—‹"
             statusText = "disabled"
           } else if (status.status === "pending") {
-            statusIcon = "â—?
+            statusIcon = "â—‹"
             statusText = "pending approval"
           } else if (status.status === "needs_auth") {
-            statusIcon = "âš?
+            statusIcon = "âš "
             statusText = "needs authentication"
           } else if (status.status === "needs_client_registration") {
-            statusIcon = "âœ?
+            statusIcon = "âœ—"
             statusText = "needs client registration"
             hint = "\n    " + status.error
           } else {
-            statusIcon = "âœ?
+            statusIcon = "âœ—"
             statusText = "failed"
             hint = "\n    " + status.error
           }

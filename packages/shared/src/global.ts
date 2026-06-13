@@ -15,7 +15,7 @@ export type ResolvedPaths = {
 }
 
 /**
- * Resolve ENCODE's four base directories (config/data/state/cache)
+ * Resolve encode's four base directories (config/data/state/cache)
  * from environment variables.
  *
  * If ENCODE_HOME is set and non-empty, the four paths are subdirectories

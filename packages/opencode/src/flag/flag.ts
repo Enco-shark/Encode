@@ -19,15 +19,15 @@ function number(key: string) {
 
 const ENCODE_EXPERIMENTAL = truthy("ENCODE_EXPERIMENTAL")
 
-// Defaults to false. When enabled, ENCODE runs in pure-Encode mode:
-//   â€?does NOT inherit Claude Code's settings (CLAUDE.md, ~/.claude/skills, etc.)
-//   â€?does NOT pick up provider API keys from environment variables
-//   â€?falls back to the Encode-auto model as the default
-// Set ENCODE_Encode_ONLY=true to disable .claude inheritance and env-based
+// Defaults to false. When enabled, encode runs in pure-Encode mode:
+//   â€” does NOT inherit Claude Code's settings (CLAUDE.md, ~/.claude/skills, etc.)
+//   â€” does NOT pick up provider API keys from environment variables
+//   â€” falls back to the Encode-auto model as the default
+// Set ENCODE_MIMO_ONLY=true to disable .claude inheritance and env-based
 // provider auto-detection.
-const ENCODE_Encode_ONLY = truthy("ENCODE_Encode_ONLY")
+const ENCODE_MIMO_ONLY = truthy("ENCODE_MIMO_ONLY")
 const ENCODE_DISABLE_CLAUDE_CODE_ENV = truthy("ENCODE_DISABLE_CLAUDE_CODE")
-const ENCODE_DISABLE_CLAUDE_CODE = ENCODE_Encode_ONLY || ENCODE_DISABLE_CLAUDE_CODE_ENV
+const ENCODE_DISABLE_CLAUDE_CODE = ENCODE_MIMO_ONLY || ENCODE_DISABLE_CLAUDE_CODE_ENV
 
 const ENCODE_DISABLE_EXTERNAL_SKILLS = truthy("ENCODE_DISABLE_EXTERNAL_SKILLS")
 const ENCODE_DISABLE_CLAUDE_CODE_SKILLS =
@@ -69,8 +69,8 @@ export const Flag = {
   // bounds the decoded byte size of a single image. Values must be positive integers.
   ENCODE_MAX_PROMPT_IMAGES: number("ENCODE_MAX_PROMPT_IMAGES"),
   ENCODE_MAX_PROMPT_IMAGE_SIZE: number("ENCODE_MAX_PROMPT_IMAGE_SIZE"),
-  ENCODE_Encode_ONLY,
-  ENCODE_DISABLE_PROVIDER_ENV: ENCODE_Encode_ONLY || truthy("ENCODE_DISABLE_PROVIDER_ENV"),
+  ENCODE_MIMO_ONLY,
+  ENCODE_DISABLE_PROVIDER_ENV: ENCODE_MIMO_ONLY || truthy("ENCODE_DISABLE_PROVIDER_ENV"),
   ENCODE_DISABLE_CLAUDE_CODE,
   get ENCODE_DISABLE_CLAUDE_CODE_MCP() {
     // MCP compatibility stays on in Encode-only mode so users can reuse Claude Code
@@ -122,8 +122,8 @@ export const Flag = {
   ENCODE_DISABLE_EMBEDDED_WEB_UI: truthy("ENCODE_DISABLE_EMBEDDED_WEB_UI"),
   ENCODE_DB: process.env["ENCODE_DB"],
 
-  // Defaults to true â€?all channels share a single ENCODE.db. The per-channel
-  // DB isolation (ENCODE-{channel}.db) is unnecessary for ENCODE since we
+  // Defaults to true â€” all channels share a single encode.db. The per-channel
+  // DB isolation (encode-{channel}.db) is unnecessary for encode since we
   // don't ship multiple release channels yet. Use ENCODE_HOME to isolate dev
   // environments instead. Set ENCODE_DISABLE_CHANNEL_DB=false to restore
   // per-channel isolation.

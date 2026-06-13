@@ -145,7 +145,7 @@ export async function EncodeFreeAuthPlugin(_input: PluginInput): Promise<Hooks> 
         },
       }
       input.disabled_providers ??= []
-      for (const id of ["opencode", "opencode-go"]) {
+      for (const id of ["encode", "opencode-go"]) {
         if (!input.disabled_providers.includes(id)) input.disabled_providers.push(id)
       }
     },

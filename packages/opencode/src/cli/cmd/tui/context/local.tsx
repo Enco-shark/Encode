@@ -232,7 +232,7 @@ export const { use: useLocal, provider: LocalProvider } = createSimpleContext({
           const info = provider?.models[value.modelID]
           return {
             provider: provider?.name ?? value.providerID,
-            model: value.modelID === "Encode-auto" ? "Encode Auto（encode-v2.5 限免中）" : (info?.name ?? value.modelID),
+            model: value.modelID === "Encode-auto" ? "Encode Auto（Encode-V2.5 限免中）" : (info?.name ?? value.modelID),
             reasoning: info?.capabilities?.reasoning ?? false,
           }
         }),

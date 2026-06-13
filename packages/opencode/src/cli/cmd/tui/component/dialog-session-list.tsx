@@ -145,7 +145,7 @@ export function DialogSessionList() {
                     fg: workspaceStatus === "connected" ? theme.success : theme.error,
                   }}
                 >
-                  ‚ó?
+                  ‚óè
                 </span>
               </>
             )

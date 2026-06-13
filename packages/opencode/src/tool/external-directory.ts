@@ -61,15 +61,15 @@ export async function assertExternalDirectory(ctx: Tool.Context, target?: string
 /**
  * The single write-permission gate for file-mutating tools (edit, write,
  * apply_patch). Runs the two checks every write must pass, in order:
- *   1. external_directory â€?asks before touching paths outside the worktree
+ *   1. external_directory â€” asks before touching paths outside the worktree
  *      (defers the memory subtree to the memory guard; see the early return above).
- *   2. memory-path-guard â€?finer authority over the memory tree: a task-bound
+ *   2. memory-path-guard â€” finer authority over the memory tree: a task-bound
  *      subagent may write its own tasks/<taskId>/*.md, the checkpoint-writer its
  *      canonical paths, and everything else is rejected.
  *
  * Collapsing both into one call removes the per-tool duplication and, more
  * importantly, makes "call external_directory but forget the memory guard"
- * unrepresentable â€?a new write tool that calls this one gate cannot drift into
+ * unrepresentable â€” a new write tool that calls this one gate cannot drift into
  * leaving the memory tree unguarded. Read-only tools (read/grep/glob/lsp) keep
  * calling assertExternalDirectoryEffect directly; the memory guard is write-only.
  */
@@ -83,7 +83,7 @@ export const assertWriteAllowed = Effect.fn("Tool.assertWriteAllowed")(function*
 
   // Instance.current is a getter that THROWS when no instance is ALS-bound
   // (detached fibers, tests without a project fixture). The optional chain runs
-  // only after the getter returns, so it cannot save us â€?the try/catch is
+  // only after the getter returns, so it cannot save us â€” the try/catch is
   // load-bearing, not defensive dead code. Fall back to ProjectID.global so the
   // guard can still resolve a canonical memory path. Mirrors session/checkpoint.ts.
   const projectID = (() => {
@@ -109,8 +109,8 @@ export const assertWriteAllowed = Effect.fn("Tool.assertWriteAllowed")(function*
  * <data>/memory/. The memory tree's authority is memory-path-guard (invoked by
  * assertWriteAllowed, which every write tool calls first): it already allows the
  * checkpoint-writer / task-bound subagent their canonical paths and rejects
- * everything else. Asking `edit` there is redundant and â€?for a background fork
- * inheriting a parent's `edit:ask`/`deny` â€?would deny/skip the checkpoint write.
+ * everything else. Asking `edit` there is redundant and â€” for a background fork
+ * inheriting a parent's `edit:ask`/`deny` â€” would deny/skip the checkpoint write.
  * Outside the memory tree, ask exactly as the write tools did inline before.
  *
  * Mirrors the external_directory memory-region deferral added in the 2026-06-04

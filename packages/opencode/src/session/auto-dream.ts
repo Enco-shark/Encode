@@ -76,7 +76,7 @@ function shouldAutoRun(input: {
         ),
       )
       if (!earliest || now - earliest.time_created < intervalMs) {
-        log.info(`auto-${input.label} skipped â€?project too young`, {
+        log.info(`auto-${input.label} skipped â€” project too young`, {
           projectAge: earliest ? Math.round((now - earliest.time_created) / DAY_MS) + "d" : "empty",
           interval: input.intervalDays + "d",
         })
@@ -85,7 +85,7 @@ function shouldAutoRun(input: {
     }
 
     if (elapsed < intervalMs) {
-      log.info(`auto-${input.label} skipped â€?last run too recent`, {
+      log.info(`auto-${input.label} skipped â€” last run too recent`, {
         lastRunAgo: Math.round(elapsed / DAY_MS) + "d",
         interval: input.intervalDays + "d",
       })

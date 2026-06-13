@@ -5,21 +5,21 @@ type Keys = keyof typeof en
 export const dict = {
   // Language names
   "language.en": "English",
-  "language.zh": "简体中�?,
+  "language.zh": "简体中文",
   "language.zht": "繁體中文",
-  "language.ko": "한국�?,
+  "language.ko": "한국어",
   "language.de": "Deutsch",
   "language.es": "Español",
   "language.fr": "Français",
   "language.da": "Dansk",
-  "language.ja": "日本�?,
+  "language.ja": "日本語",
   "language.pl": "Polski",
   "language.ru": "Русский",
   "language.ar": "العربية",
   "language.no": "Norsk",
   "language.br": "Português (Brasil)",
   "language.bs": "Bosanski",
-  "language.th": "ไท�?,
+  "language.th": "ไทย",
   "language.tr": "Türkçe",
 
   // Prompt placeholders
@@ -49,7 +49,7 @@ export const dict = {
   "tui.tips.theme_mode":
     "Ejecuta {highlight}/dark{/highlight} para el modo oscuro o {highlight}/light{/highlight} para el modo claro",
   "tui.tips.doc": "Ejecuta {highlight}/doc{/highlight} para abrir la documentación de usuario",
-  "tui.tips.free_models": "Modelos gratuitos disponibles por tiempo limitado �?¡pruébalos ahora!",
+  "tui.tips.free_models": "Modelos gratuitos disponibles por tiempo limitado — ¡pruébalos ahora!",
   "tui.tips.background":
     "Ejecuta {highlight}/background{/highlight} para usar una imagen personalizada como fondo de inicio",
   "tui.tips.undo":
@@ -121,7 +121,7 @@ export const dict = {
   "tui.tips.mcp_config":
     "Configura servidores MCP locales o remotos en la sección {highlight}mcp{/highlight}",
   "tui.tips.mcp_oauth":
-    "encode gestiona automáticamente OAuth para servidores MCP remotos que requieran autenticación",
+    "Encode gestiona automáticamente OAuth para servidores MCP remotos que requieran autenticación",
   "tui.tips.custom_command":
     "Añade archivos {highlight}.md{/highlight} en {highlight}.encode/command/{/highlight} para definir indicaciones personalizadas reutilizables",
   "tui.tips.command_args":
@@ -138,12 +138,12 @@ export const dict = {
     'Define {highlight}"rm -rf *": "deny"{/highlight} para bloquear comandos destructivos',
   "tui.tips.bash_ask":
     'Configura {highlight}"git push": "ask"{/highlight} para exigir confirmación antes de hacer push',
-  "tui.tips.formatter": "encode formatea archivos automáticamente con prettier, gofmt, ruff y más",
+  "tui.tips.formatter": "Encode formatea archivos automáticamente con prettier, gofmt, ruff y más",
   "tui.tips.disable_formatter":
     'Define {highlight}"formatter": false{/highlight} en la config para desactivar el formato automático',
   "tui.tips.custom_formatter":
     "Define comandos de formateo personalizados por extensión de archivo en la configuración",
-  "tui.tips.lsp": "encode usa servidores LSP para análisis inteligente de código",
+  "tui.tips.lsp": "Encode usa servidores LSP para análisis inteligente de código",
   "tui.tips.custom_tool":
     "Crea archivos {highlight}.ts{/highlight} en {highlight}.encode/tools/{/highlight} para definir nuevas herramientas LLM",
   "tui.tips.tool_scripts":
@@ -153,7 +153,7 @@ export const dict = {
   "tui.tips.plugin_notify":
     "Usa plugins para enviar notificaciones del sistema cuando termine una sesión",
   "tui.tips.plugin_protect":
-    "Crea un plugin que impida a encode leer archivos sensibles",
+    "Crea un plugin que impida a Encode leer archivos sensibles",
   "tui.tips.run":
     "Usa {highlight}Encode run{/highlight} para scripting no interactivo",
   "tui.tips.continue":
@@ -163,7 +163,7 @@ export const dict = {
   "tui.tips.format_json":
     "Usa {highlight}--format json{/highlight} para obtener salida legible por máquina en scripts",
   "tui.tips.serve":
-    "Ejecuta {highlight}Encode serve{/highlight} para acceso headless a la API de encode",
+    "Ejecuta {highlight}Encode serve{/highlight} para acceso headless a la API de Encode",
   "tui.tips.attach_server":
     "Usa {highlight}Encode run --attach{/highlight} para conectarte a un servidor en ejecución",
   "tui.tips.upgrade":
@@ -227,7 +227,7 @@ export const dict = {
   "tui.tips.docker":
     "Ejecuta {highlight}docker run -it --rm ghcr.io/anomalyco/opencode{/highlight} para uso en contenedor",
   "tui.tips.zen":
-    "Usa {highlight}/connect{/highlight} con Encode para modelos seleccionados y probados",
+    "Usa {highlight}/connect{/highlight} con MiMo Code para modelos seleccionados y probados",
   "tui.tips.agents_md":
     "Sube el {highlight}AGENTS.md{/highlight} de tu proyecto a Git para compartirlo con el equipo",
   "tui.tips.review":
@@ -272,11 +272,11 @@ export const dict = {
   "tui.command.model.cycle_favorite_reverse.title": "Ciclo de favoritos (inverso)",
   "tui.command.agent.list.title": "Cambiar agente",
   "tui.command.mcp.list.title": "Alternar MCP",
-  "tui.command.never_ask.title_on": "Sin preguntas: ACTIVADO �?desactivar (volver a preguntarme)",
-  "tui.command.never_ask.title_off": "Sin preguntas: DESACTIVADO �?activar (decidir sin preguntar)",
+  "tui.command.never_ask.title_on": "Sin preguntas: ACTIVADO — desactivar (volver a preguntarme)",
+  "tui.command.never_ask.title_off": "Sin preguntas: DESACTIVADO — activar (decidir sin preguntar)",
   "tui.command.never_ask.toast_on":
-    "Sin preguntas ACTIVADO �?no te preguntaré; elegiré la mejor opción yo mismo hasta que lo desactives (/never-ask-questions). Las solicitudes de permiso siguen requiriendo tu aprobación.",
-  "tui.command.never_ask.toast_off": "Sin preguntas DESACTIVADO �?volveré a preguntarte en los puntos de decisión.",
+    "Sin preguntas ACTIVADO — no te preguntaré; elegiré la mejor opción yo mismo hasta que lo desactives (/never-ask-questions). Las solicitudes de permiso siguen requiriendo tu aprobación.",
+  "tui.command.never_ask.toast_off": "Sin preguntas DESACTIVADO — volveré a preguntarte en los puntos de decisión.",
   "tui.command.agent.cycle.title": "Ciclo de agentes",
   "tui.command.variant.cycle.title": "Ciclo de variantes",
   "tui.command.variant.list.title": "Cambiar variante de modelo",
@@ -390,21 +390,21 @@ export const dict = {
   "tui.command.prompt.editor.title": "Abrir editor",
   "tui.command.prompt.skills.title": "Habilidades",
   "tui.command.voice.toggle.title": "Alternar entrada de voz",
-  "tui.command.voice.toggle.title_on": "Entrada de voz: activada �?clic para desactivar",
-  "tui.command.voice.toggle.title_off": "Entrada de voz: desactivada �?clic para activar",
-  "tui.voice.enabled": "Entrada de voz activada (chino/inglés) �?clic en [Voice] para grabar",
+  "tui.command.voice.toggle.title_on": "Entrada de voz: activada — clic para desactivar",
+  "tui.command.voice.toggle.title_off": "Entrada de voz: desactivada — clic para activar",
+  "tui.voice.enabled": "Entrada de voz activada (chino/inglés) — clic en [Voice] para grabar",
   "tui.voice.disabled": "Entrada de voz deshabilitada",
-  "tui.voice.send.enabled": "Envío por voz habilitado �?di「发送」o \"send it\" para enviar",
+  "tui.voice.send.enabled": "Envío por voz habilitado — di「发送」o \"send it\" para enviar",
   "tui.voice.send.disabled": "Envío por voz deshabilitado",
   "tui.command.voice.send.title": "Alternar envío por voz",
-  "tui.command.voice.send.title_on": "Envío por voz: activado �?clic para desactivar",
-  "tui.command.voice.send.title_off": "Envío por voz: desactivado �?clic para activar",
-  "tui.voice.control.enabled": "Control de voz habilitado �?usa modelo multimodal para edición inteligente (más lento)",
-  "tui.voice.control.disabled": "Control de voz deshabilitado �?usa transcripción ASR rápida",
+  "tui.command.voice.send.title_on": "Envío por voz: activado — clic para desactivar",
+  "tui.command.voice.send.title_off": "Envío por voz: desactivado — clic para activar",
+  "tui.voice.control.enabled": "Control de voz habilitado — usa modelo multimodal para edición inteligente (más lento)",
+  "tui.voice.control.disabled": "Control de voz deshabilitado — usa transcripción ASR rápida",
   "tui.command.voice.control.title": "Alternar control de voz (multimodal)",
-  "tui.command.voice.control.title_on": "Control de voz: activado (multimodal) �?clic para desactivar",
-  "tui.command.voice.control.title_off": "Control de voz: desactivado (ASR rápido) �?clic para activar",
-  "tui.voice.error.no_auth": "Inicia sesión en Encode primero",
+  "tui.command.voice.control.title_on": "Control de voz: activado (multimodal) — clic para desactivar",
+  "tui.command.voice.control.title_off": "Control de voz: desactivado (ASR rápido) — clic para activar",
+  "tui.voice.error.no_auth": "Inicia sesión en MiMo primero",
   "tui.voice.error.no_recorder": "No se encontró herramienta de grabación, instala sox",
   "tui.voice.error.too_short": "Grabación demasiado corta",
   "tui.voice.error.network": "La transcripción falló, verifica tu red",
@@ -420,7 +420,7 @@ export const dict = {
   "tui.command.plugins.list.title": "Plugins",
   "tui.command.plugins.install.title": "Instalar plugin",
 
-  // Question i18n �?plan_exit
+  // Question i18n — plan_exit
   "tui.question.plan_exit.question": "El plan en {{plan}} está completo. ¿Desea cambiar al agente build para comenzar la implementación?",
   "tui.question.plan_exit.header": "Salir del plan",
   "tui.question.plan_exit.option.0.label": "Sí",

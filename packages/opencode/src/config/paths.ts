@@ -28,13 +28,13 @@ export const directories = Effect.fn("ConfigPaths.directories")(function* (direc
     Global.Path.config,
     ...(!Flag.ENCODE_DISABLE_PROJECT_CONFIG
       ? yield* afs.up({
-          targets: [".ENCODE"],
+          targets: [".encode"],
           start: directory,
           stop: worktree,
         })
       : []),
     ...(yield* afs.up({
-      targets: [".ENCODE"],
+      targets: [".encode"],
       start: Global.Path.home,
       stop: Global.Path.home,
     })),

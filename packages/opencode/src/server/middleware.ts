@@ -42,7 +42,7 @@ export const AuthMiddleware: MiddlewareHandler = (c, next) => {
   if (c.req.method === "OPTIONS") return next()
   const password = Flag.ENCODE_SERVER_PASSWORD
   if (!password) return next()
-  const username = Flag.ENCODE_SERVER_USERNAME ?? "ENCODE"
+  const username = Flag.ENCODE_SERVER_USERNAME ?? "encode"
 
   if (c.req.query("auth_token")) c.req.raw.headers.set("authorization", `Basic ${c.req.query("auth_token")}`)
 

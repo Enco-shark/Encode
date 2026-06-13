@@ -3,13 +3,13 @@ import { Effect } from "effect"
 import { HttpClient } from "effect/unstable/http"
 import * as Tool from "../tool"
 import * as McpExa from "../mcp-exa"
-import * as EncodeWebsearch from "./Encode"
+import * as MimoWebsearch from "./mimo"
 import { Auth } from "@/auth"
 import { Provider } from "@/provider"
 import DESCRIPTION from "./websearch.txt"
 
 const WEBFETCH_FALLBACK =
-  "Web search unavailable. Use `webfetch` with a relevant URL instead, or enable the Web Search plugin at https://encode.ai/console/plugin."
+  "Web search unavailable. Use `webfetch` with a relevant URL instead, or enable the Web Search plugin at https://platform.xiaomiEncode.com/console/plugin."
 const MAX_TIMEOUT = 120 * 1000 // 2 minutes
 
 const Parameters = z.object({
@@ -63,17 +63,17 @@ export const WebSearchTool = Tool.define(
           const timeout = params.timeout === undefined ? undefined : Math.min(params.timeout * 1000, MAX_TIMEOUT)
 
           const result =
-            model?.providerID === "Encode"
+            model?.providerID === "xiaomi"
               ? yield* Effect.catchCause(
                   Effect.gen(function* () {
-                    const info = yield* auth.get("Encode")
+                    const info = yield* auth.get("xiaomi")
                     if (!info || info.type !== "api") return undefined
-                    return yield* EncodeWebsearch.call(
+                    return yield* MimoWebsearch.call(
                       http,
                       model.api.url,
                       info.key,
                       params.query,
-                      "encode-v2.5",
+                      "Encode-v2.5",
                       timeout ?? "30 seconds",
                     )
                   }),

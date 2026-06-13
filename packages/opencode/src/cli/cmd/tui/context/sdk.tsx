@@ -1,4 +1,4 @@
-import { createOpencodeClient } from "@encode-ai/sdk/v2"
+import { createEncodeClient } from "@encode-ai/sdk/v2"
 import type { GlobalEvent } from "@encode-ai/sdk/v2"
 import { createSimpleContext } from "./helper"
 import { createGlobalEmitter } from "@solid-primitives/event-bus"
@@ -24,7 +24,7 @@ export const { use: useSDK, provider: SDKProvider } = createSimpleContext({
     let currentDirectory = props.directory
 
     function createSDK(directory?: string) {
-      return createOpencodeClient({
+      return createEncodeClient({
         baseUrl: props.url,
         signal: abort.signal,
         directory,

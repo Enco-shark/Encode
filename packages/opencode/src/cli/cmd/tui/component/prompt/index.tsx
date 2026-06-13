@@ -227,8 +227,8 @@ export function Prompt(props: PromptProps) {
     }
     if (state === "finishing") return
     // Start streaming
-    const EncodeProvider = sync.data.provider.find((p) => p.id === "Encode")
-    if (!EncodeProvider?.key) {
+    const xiaomi = sync.data.provider.find((p) => p.id === "xiaomi")
+    if (!xiaomi?.key) {
       toast.show({ message: t("tui.voice.error.no_auth"), variant: "error" })
       return
     }
@@ -236,8 +236,8 @@ export function Prompt(props: PromptProps) {
       toast.show({ message: t("tui.voice.error.no_recorder"), variant: "error" })
       return
     }
-    const apiKey = EncodeProvider.key
-    const baseUrl = (EncodeProvider.options?.baseURL as string) || "https://api.encode.ai/v1"
+    const apiKey = xiaomi.key
+    const baseUrl = (xiaomi.options?.baseURL as string) || "https://api.xiaomiEncode.com/v1"
 
     const av: NonNullable<typeof activeVoice> = {
       handle: undefined!,
@@ -303,7 +303,7 @@ export function Prompt(props: PromptProps) {
             baseUrl,
           }).then((text) => {
             if (text) {
-              if (voiceSendEnabled() && Voice.SEND_RE.test(text.replace(/[\s�?!！？?�?]+$/g, "").trim())) {
+              if (voiceSendEnabled() && Voice.SEND_RE.test(text.replace(/[\s。.!！？?，,]+$/g, "").trim())) {
                 av.submit()
               } else {
                 av.appendText(text.trim())
@@ -1402,7 +1402,7 @@ export function Prompt(props: PromptProps) {
           borderColor={borderHighlight()}
           customBorderChars={{
             ...SplitBorder.customBorderChars,
-            bottomLeft: "�?,
+            bottomLeft: "╹",
           }}
         >
           <box
@@ -1649,7 +1649,7 @@ export function Prompt(props: PromptProps) {
           borderColor={borderHighlight()}
           customBorderChars={{
             ...EmptyBorder,
-            vertical: theme.backgroundElement.a !== 0 ? "�? : " ",
+            vertical: theme.backgroundElement.a !== 0 ? "╹" : " ",
           }}
         >
           <box

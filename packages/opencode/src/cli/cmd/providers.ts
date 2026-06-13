@@ -10,6 +10,7 @@ import os from "os"
 import { Config } from "../../config"
 import { Global } from "../../global"
 import { Plugin } from "../../plugin"
+import { EncodeFree } from "../../plugin/Encode-free"
 import { t } from "../i18n"
 import { Instance } from "../../project/instance"
 import type { Hooks } from "@encode-ai/plugin"
@@ -214,6 +215,30 @@ export function resolvePluginProviders(input: {
   return result
 }
 
+async function EncodeFreeLogin() {
+  const spinner = prompts.spinner()
+  spinner.start(t("cli.providers.Encode_free.verifying"))
+  try {
+    const { fingerprint, exp } = await EncodeFree.verify()
+    spinner.stop(t("cli.providers.Encode_free.ready"))
+    const expDate = new Date(exp).toISOString()
+    prompts.log.success(t("cli.providers.Encode_free.default_set"))
+    prompts.log.info(
+      [
+        `Endpoint:    ${EncodeFree.chatBaseUrl}/chat`,
+        `Fingerprint: ${fingerprint.slice(0, 12)}…${fingerprint.slice(-4)}`,
+        `Token exp:   ${expDate}`,
+      ].join("\n"),
+    )
+    prompts.log.info(t("cli.providers.Encode_free.usage_hint"))
+    prompts.outro("Done")
+  } catch (err) {
+    spinner.stop(t("cli.providers.Encode_free.failed"), 1)
+    prompts.log.error(err instanceof Error ? err.message : String(err))
+    prompts.outro("Done")
+  }
+}
+
 async function EncodeLogin() {
   const hooks = await AppRuntime.runPromise(
     Effect.gen(function* () {
@@ -221,9 +246,9 @@ async function EncodeLogin() {
       return yield* plugin.list()
     }),
   )
-  const EncodeHook = hooks.findLast((h) => h.auth?.provider === "Encode")
+  const EncodeHook = hooks.findLast((h) => h.auth?.provider === "xiaomi")
   if (!EncodeHook?.auth) {
-    prompts.log.error("Encode auth plugin not found")
+    prompts.log.error("MiMo auth plugin not found")
     return
   }
 
@@ -243,7 +268,7 @@ async function EncodeLogin() {
 
     if (raceResult.source === "browser") {
       if (raceResult.data.type === "success" && "key" in raceResult.data) {
-        await put("Encode", {
+        await put("xiaomi", {
           type: "api",
           key: raceResult.data.key,
           ...(raceResult.data.metadata ? { metadata: raceResult.data.metadata } : {}),
@@ -259,7 +284,7 @@ async function EncodeLogin() {
 
     const callbackResult = await authorize.callback(raceResult.input)
     if (callbackResult.type === "success" && "key" in callbackResult) {
-      await put("Encode", {
+      await put("xiaomi", {
         type: "api",
         key: callbackResult.key,
         ...(callbackResult.metadata ? { metadata: callbackResult.metadata } : {}),
@@ -492,8 +517,11 @@ export const ProvidersLoginCommand = cmd({
         ]
 
         let provider: string
-        if (args.provider === "Encode") {
+        if (args.provider === "xiaomi") {
           await EncodeLogin()
+          return
+        } else if (args.provider === "Encode" || args.provider === "Encode-free") {
+          await EncodeFreeLogin()
           return
         } else if (args.provider) {
           const input = args.provider
@@ -506,6 +534,26 @@ export const ProvidersLoginCommand = cmd({
           }
           provider = match.value
         } else {
+          const choice = await prompts.select({
+            message: t("cli.providers.select"),
+            options: [
+              { label: "MiMo", value: "xiaomi", hint: t("cli.providers.Encode.recommended_hint") },
+              { label: "MiMo Auto (free)", value: "Encode-free", hint: t("cli.providers.Encode_free.hint") },
+              { label: t("cli.providers.other"), value: "__other__" },
+            ],
+          })
+          if (prompts.isCancel(choice)) throw new UI.CancelledError()
+
+          if (choice === "xiaomi") {
+            await EncodeLogin()
+            return
+          }
+
+          if (choice === "Encode-free") {
+            await EncodeFreeLogin()
+            return
+          }
+
           const selected = await prompts.autocomplete({
             message: t("cli.providers.select"),
             maxItems: 8,
@@ -557,7 +605,7 @@ export const ProvidersLoginCommand = cmd({
         }
 
         if (provider === "encode") {
-          prompts.log.info("Create an api key at https://encode.ai/auth")
+          prompts.log.info("Create an api key at https://opencode.ai/auth")
         }
 
         if (provider === "vercel") {
@@ -566,7 +614,7 @@ export const ProvidersLoginCommand = cmd({
 
         if (["cloudflare", "cloudflare-ai-gateway"].includes(provider)) {
           prompts.log.info(
-            "Cloudflare AI Gateway can be configured with CLOUDFLARE_GATEWAY_ID, CLOUDFLARE_ACCOUNT_ID, and CLOUDFLARE_API_TOKEN environment variables. Read more: https://encode.ai/docs/providers/#cloudflare-ai-gateway",
+            "Cloudflare AI Gateway can be configured with CLOUDFLARE_GATEWAY_ID, CLOUDFLARE_ACCOUNT_ID, and CLOUDFLARE_API_TOKEN environment variables. Read more: https://opencode.ai/docs/providers/#cloudflare-ai-gateway",
           )
         }
 
@@ -631,7 +679,7 @@ export const ProvidersWhoamiCommand = cmd({
     const info = await AppRuntime.runPromise(
       Effect.gen(function* () {
         const auth = yield* Auth.Service
-        return yield* auth.get("Encode")
+        return yield* auth.get("xiaomi")
       }),
     )
     if (!info) {
@@ -639,10 +687,10 @@ export const ProvidersWhoamiCommand = cmd({
       return
     }
     if (info.type === "api" && info.metadata) {
-      prompts.log.info(`Provider: Encode`)
+      prompts.log.info(`Provider: MiMo`)
       prompts.log.info(`User ID: ${info.metadata.uid ?? "unknown"}`)
     } else {
-      prompts.log.info(`Provider: Encode`)
+      prompts.log.info(`Provider: MiMo`)
       prompts.log.info(`Type: ${info.type}`)
     }
     prompts.outro("")

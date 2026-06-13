@@ -29,13 +29,13 @@ interface MigrateInput {
 }
 
 /**
- * Migrates tui-specific keys (theme, keybinds, tui) from ENCODE.json files
+ * Migrates tui-specific keys (theme, keybinds, tui) from encode.json files
  * into dedicated tui.json files. Migration is performed per-directory and
  * skips only locations where a tui.json already exists.
  */
 export async function migrateTuiConfig(input: MigrateInput) {
-  const ENCODE = await ENCODEFiles(input)
-  for (const file of ENCODE) {
+  const encode = await encodeFiles(input)
+  for (const file of encode) {
     const source = await Filesystem.readText(file).catch((error) => {
       log.warn("failed to read config for tui migration", { path: file, error })
       return undefined
@@ -131,13 +131,13 @@ async function backupAndStripLegacy(file: string, source: string) {
     })
 }
 
-async function ENCODEFiles(input: { directories: string[]; cwd: string }) {
+async function encodeFiles(input: { directories: string[]; cwd: string }) {
   const files = [
-    ...ConfigPaths.fileInDirectory(Global.Path.config, "ENCODE"),
-    ...(await Filesystem.findUp(["ENCODE.json", "ENCODE.jsonc"], input.cwd, undefined, { rootFirst: true })),
+    ...ConfigPaths.fileInDirectory(Global.Path.config, "encode"),
+    ...(await Filesystem.findUp(["encode.json", "encode.jsonc"], input.cwd, undefined, { rootFirst: true })),
   ]
   for (const dir of unique(input.directories)) {
-    files.push(...ConfigPaths.fileInDirectory(dir, "ENCODE"))
+    files.push(...ConfigPaths.fileInDirectory(dir, "encode"))
   }
   if (Flag.ENCODE_CONFIG) files.push(Flag.ENCODE_CONFIG)
 

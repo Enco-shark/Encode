@@ -24,7 +24,7 @@ import { Log } from "@/util"
 const log = Log.create({ service: "actor.spawn" })
 
 /**
- * Cap on preStop ReAct re-entries per spawn â€?prevents infinite loops.
+ * Cap on preStop ReAct re-entries per spawn â€” prevents infinite loops.
  * TODO: lift to encode.json config (e.g. actor.maxPreReact) and add per-hook
  * `maxContinue` clamp at registration. Plan: platform cap = hard ceiling, hook
  * cap may only narrow, never widen. See spec Future work.
@@ -38,7 +38,7 @@ const RETURN_FORMAT_INSTRUCTION = `
 
 ## Return format (required)
 
-Your FINAL assistant message â€?what the spawning agent will receive â€?MUST start with this header block:
+Your FINAL assistant message â€” what the spawning agent will receive â€” MUST start with this header block:
 
   **Status**: success | partial | failed | blocked
   **Summary**: <one sentence describing what happened>
@@ -50,7 +50,7 @@ If applicable, also include below the deliverable:
   **Files touched**: <comma-separated paths or "(none)">
   **Findings worth promoting**: <bullet list of cross-task transferable facts; "(none)" if just routine work>
 
-This format lets the spawning agent and the checkpoint writer extract your progress without parsing free-form prose. Do NOT precede the header with an introduction â€?your final message must start with "**Status**:".
+This format lets the spawning agent and the checkpoint writer extract your progress without parsing free-form prose. Do NOT precede the header with an introduction â€” your final message must start with "**Status**:".
 `
 
 export interface ForkContext {
@@ -58,7 +58,7 @@ export interface ForkContext {
   /**
    * Tool schema as parent would emit at watermark, captured for invariant
    * verification only. NOT consumed by fork's runLoop for the actual LLM
-   * request â€?that uses `resolveTools(forkAgent)` for executable tools with
+   * request â€” that uses `resolveTools(forkAgent)` for executable tools with
    * dispatch closures. Schema parity is currently enforced because
    * checkpoint-writer has no `toolAllowlist` (Task 2.6); both paths call
    * `registry.tools` with equivalent agent inputs and produce identical
@@ -71,7 +71,7 @@ export interface ForkContext {
   /**
    * Parent agent's permission ruleset, captured at spawn. The fork evaluates
    * permissions and filters its LLM-visible tool list against THIS (the parent's)
-   * ruleset rather than the checkpoint-writer agent's own â€?restoring prompt-cache
+   * ruleset rather than the checkpoint-writer agent's own â€” restoring prompt-cache
    * tool-visibility parity with the parent and keeping permission semantics
    * consistent with the captor. Memory-tree writes are still governed by
    * memory-path-guard (see askEditUnlessMemory), so an inherited `edit:deny`
@@ -80,10 +80,10 @@ export interface ForkContext {
   readonly parentPermission: Permission.Ruleset
   readonly inheritedMessages: ModelMessage[]
   /**
-   * Boundary marker â€?the last main-slice message id at spawn. Used by fork's
+   * Boundary marker â€” the last main-slice message id at spawn. Used by fork's
    * runLoop to filter ownNew messages (belt-and-braces alongside the agent_id
    * check; agent_id is sufficient on its own, watermark is the documentary
-   * anchor). NEVER use this for slicing inheritedMessages â€?inheritedMessages
+   * anchor). NEVER use this for slicing inheritedMessages â€” inheritedMessages
    * is captured as a complete snapshot at spawn time.
    * See docs/superpowers/specs/2026-05-26-fork-agent-prefix-cache-design.md
    */
@@ -95,12 +95,12 @@ export type AgentOutcome =
   | {
       status: "success"
       finalText?: string
-      // Structured-output (json_schema) result â€?when the spawn requested a
+      // Structured-output (json_schema) result â€” when the spawn requested a
       // format, the validated object is surfaced here and takes precedence over
       // finalText (DW spec P3).
       structured?: unknown
       // Subagent's self-reported header status (parsed from finalText), possibly
-      // overridden by the completion gate (DB truth wins â€?see onSuccess).
+      // overridden by the completion gate (DB truth wins â€” see onSuccess).
       reportedStatus?: ReturnStatus
       reportedSummary?: string
       // Task IDs the subagent left non-terminal after the gate's cap. Present
@@ -133,7 +133,7 @@ export interface SpawnInput {
   model?: { providerID: ProviderID; modelID: ModelID }
   background: boolean
   parentActorID?: string
-  task_id?: string // Spec â‘? bound user-task ID for postStop progress.md validation
+  task_id?: string // Spec â‘¡: bound user-task ID for postStop progress.md validation
   cwd?: string
   forkContext?: ForkContext // NEW
   lifecycle?: Lifecycle
@@ -147,14 +147,14 @@ export interface SpawnInput {
   format?: MessageV2.OutputFormat
   /**
    * Fired SYNCHRONOUSLY with the freshly-allocated actorID inside the spawn
-   * Effect â€?right after the actor is registered, BEFORE its work fiber detaches
+   * Effect â€” right after the actor is registered, BEFORE its work fiber detaches
    * (forkWork forks into the actor scope). Lets a caller record the child id the
    * instant the actor exists, closing the window where an in-flight spawn would
    * otherwise be invisible to a concurrent cancel/reclaim. The WorkflowRuntime
    * uses this to add the id to its reclaim set before detach (MR104 #2). Best-
    * effort: a throw is swallowed so a buggy callback can't fail the spawn. Only
    * the subagent path invokes it (the workflow spawns subagents); spawnPeer does
-   * not â€?peers are not orchestrated by the workflow runtime.
+   * not â€” peers are not orchestrated by the workflow runtime.
    */
   onActorID?: (actorID: string) => void
 }
@@ -194,7 +194,7 @@ export const layer = Layer.effect(
 
     // Real agent loop: marks the actor running, then drives a SessionPrompt.prompt
     // turn. The user message persisted by SessionPrompt carries the actor's
-    // agentID, which the projector writes to MessageTable.agent_id â€?that is the
+    // agentID, which the projector writes to MessageTable.agent_id â€” that is the
     // load-bearing piece this primitive exists for.
     //
     // Returns the assistant's final text (if any) so forkWork's onSuccess can
@@ -263,7 +263,7 @@ export const layer = Layer.effect(
         // `done` stays gate/model-driven. Uses parentSessionID because the task
         // lives in the parent/main session, not a peer's child session.
         // ignoreCause (not ignore): TaskRegistry.start raises a missing task_id as
-        // a *defect* (Effect.die), which Effect.ignore does NOT swallow â€?only
+        // a *defect* (Effect.die), which Effect.ignore does NOT swallow â€” only
         // ignoreCause does. A stale/missing task_id must never block the spawn,
         // but log on swallow so a genuine bug in start() leaves a breadcrumb.
         if (input.task_id) {
@@ -297,16 +297,16 @@ export const layer = Layer.effect(
         const actorMode: "peer" | "subagent" = input.parentSessionID === input.sessionID ? "subagent" : "peer"
 
         // Writability of THIS agent, derived from the same predicate the runtime uses to
-        // strip the Write tool (llm.ts resolveTools â†?Permission.disabled). Read-only agents
-        // (e.g. explore: "*":deny) â†?canWrite=false â†?postStop progress check is skipped for
+        // strip the Write tool (llm.ts resolveTools â†’ Permission.disabled). Read-only agents
+        // (e.g. explore: "*":deny) â†’ canWrite=false â†’ postStop progress check is skipped for
         // them (they cannot satisfy a "write the journal" nudge; their findings return via
         // finalText). Agent-static: uses agentInfo.permission ONLY, not the session-merged
         // ruleset resolveTools builds (merge(agent, session)). So canWrite diverges from
-        // runtime tool-stripping only under a session-level override â€?e.g. session "*":allow
+        // runtime tool-stripping only under a session-level override â€” e.g. session "*":allow
         // un-stripping a read-only agent's write (we skip though runtime allows), or session
         // "*":deny on a writable agent (we nudge though runtime strips). Both are deliberately
         // ignored: not reachable in normal usage (Encode run sets no such rule, spawn doesn't
-        // rewrite session.permission). See spec Â§Decision. Unknown agent â†?fail-open (true).
+        // rewrite session.permission). See spec Â§Decision. Unknown agent â†’ fail-open (true).
         const forkAgentInfo = yield* agents.get(input.agentType)
         const canWrite = forkAgentInfo ? !Permission.disabled(["write"], forkAgentInfo.permission).has("write") : true
 
@@ -369,7 +369,7 @@ export const layer = Layer.effect(
               iteration: iteration - 1,
             })
             if (!decision.continue) break
-            if (!decision.reason) break // defense-in-depth â€?T4 invariant guarantees this won't fire
+            if (!decision.reason) break // defense-in-depth â€” T4 invariant guarantees this won't fire
 
             yield* bus.publish(HookEvent.ReActReentered, {
               phase: "pre",
@@ -477,7 +477,7 @@ export const layer = Layer.effect(
 
                 // === postStop ReAct loop ===
                 // Caller has already resolved; new finalTexts are not propagated.
-                // NOTE: parallel structure to preStop loop above â€?pre runs turn THEN checks,
+                // NOTE: parallel structure to preStop loop above â€” pre runs turn THEN checks,
                 // post checks THEN runs turn. Both give 1 (delivery) + MAX_POST_REACT re-entries.
                 let postIter = 0
                 let lastFinalText = finalText
@@ -654,8 +654,8 @@ export const layer = Layer.effect(
       }
 
       // Auto-inject return-format instruction for non-specialized subagents.
-      // Excluded: agents with hardcoded `prompt` (explore/title/summary â€?own
-      // contracts), checkpoint-writer (special â€?task is itself a complete
+      // Excluded: agents with hardcoded `prompt` (explore/title/summary â€” own
+      // contracts), checkpoint-writer (special â€” task is itself a complete
       // writer-instruction string), and peer mode (routes via spawnPeer).
       const agentInfo = yield* agents.get(input.agentType)
       const gateEligible =
@@ -719,7 +719,7 @@ export const layer = Layer.effect(
 
 // Wrapped in Layer.suspend so the cross-module `.defaultLayer` reads defer to
 // first use instead of running at module load. Without this, the
-// spawn â†?prompt â†?app-runtime import cycle hits a load order where
+// spawn â†’ prompt â†’ app-runtime import cycle hits a load order where
 // AppLayer's mergeAll runs while SessionPrompt is mid-init and throws
 // "Cannot access 'defaultLayer' before initialization", breaking every
 // it.live test harness. Same pattern session/prompt, session/checkpoint,

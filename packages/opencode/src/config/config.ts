@@ -63,7 +63,7 @@ function normalizeLoadedConfig(data: unknown, source: string) {
   delete copy.theme
   delete copy.keybinds
   delete copy.tui
-  log.warn("tui keys in ENCODE config are deprecated; move them to tui.json", { path: source })
+  log.warn("tui keys in encode config are deprecated; move them to tui.json", { path: source })
   return copy
 }
 
@@ -101,7 +101,7 @@ const InfoSchema = Schema.Struct({
     description: "Server configuration for Encode serve and web commands",
   }),
   command: Schema.optional(Schema.Record(Schema.String, ConfigCommand.Info)).annotate({
-    description: "Command configuration, see https://encode.ai/docs/commands",
+    description: "Command configuration, see https://opencode.ai/docs/commands",
   }),
   skills: Schema.optional(ConfigSkills.Info).annotate({ description: "Additional skill folder paths" }),
   watcher: Schema.optional(
@@ -186,7 +186,7 @@ const InfoSchema = Schema.Struct({
       }),
       [Schema.Record(Schema.String, AgentRef)],
     ),
-  ).annotate({ description: "Agent configuration, see https://encode.ai/docs/agents" }),
+  ).annotate({ description: "Agent configuration, see https://opencode.ai/docs/agents" }),
   provider: Schema.optional(Schema.Record(Schema.String, ConfigProvider.Info)).annotate({
     description: "Custom provider configurations and model overrides",
   }),
@@ -306,7 +306,7 @@ const InfoSchema = Schema.Struct({
           "Per-section token caps for rebuild context (renderRebuildContext). Each section is loaded up to its cap so the rebuild stays within a predictable budget.",
       }),
       task_archive_days: Schema.optional(PositiveInt).annotate({
-        description: "Number of days after task done/abandoned before it's filtered out of `list({include_archived: false})`. Rows are NOT deleted �?see v9 for true GC. Default: 7.",
+        description: "Number of days after task done/abandoned before it's filtered out of `list({include_archived: false})`. Rows are NOT deleted — see v9 for true GC. Default: 7.",
       }),
       task_cleanup_days: Schema.optional(PositiveInt).annotate({
         description: "[deprecated] Alias for task_archive_days. Will be removed in v9.",
@@ -324,7 +324,7 @@ const InfoSchema = Schema.Struct({
     Schema.Struct({
       cc_index: Schema.optional(Schema.Boolean).annotate({
         description:
-          "Index Claude Code memory (~/.claude/projects/<slug>/memory) and expose under scope='cc'. Default: false. Note: when enabled, every ENCODE agent (build/explore/subagents) can search these memories via the builtin `memory` tool �?including CC's `type: user` (your role/preferences) and `type: feedback` (your guidance) categories. CC originally writes them for future CC sessions; flipping this on widens the consumer set to ENCODE agents on the same machine. Leave disabled (default) if you don't want personal context recallable from a prompt-injection-vulnerable agent.",
+          "Index Claude Code memory (~/.claude/projects/<slug>/memory) and expose under scope='cc'. Default: false. Note: when enabled, every encode agent (build/explore/subagents) can search these memories via the builtin `memory` tool — including CC's `type: user` (your role/preferences) and `type: feedback` (your guidance) categories. CC originally writes them for future CC sessions; flipping this on widens the consumer set to encode agents on the same machine. Leave disabled (default) if you don't want personal context recallable from a prompt-injection-vulnerable agent.",
       }),
     }),
   ),
@@ -389,7 +389,7 @@ const InfoSchema = Schema.Struct({
     Schema.Struct({
       maxConcurrentAgents: Schema.optional(Schema.Number).annotate({
         description:
-          "Process-wide ceiling on subagents running concurrently across ALL workflow runs (including nested children). Default min(16, 2x CPU cores). No upper clamp: the previous 2x-cores hard cap was removed so an operator can match real provider capacity �?but that also means a misconfigured value (e.g. an extra zero) can exhaust provider rate limits or host memory. This is the only concurrency ceiling, so set it deliberately.",
+          "Process-wide ceiling on subagents running concurrently across ALL workflow runs (including nested children). Default min(16, 2x CPU cores). No upper clamp: the previous 2x-cores hard cap was removed so an operator can match real provider capacity — but that also means a misconfigured value (e.g. an extra zero) can exhaust provider rate limits or host memory. This is the only concurrency ceiling, so set it deliberately.",
       }),
       maxDepth: Schema.optional(Schema.Number).annotate({
         description: "Max nesting depth for workflow()-calls-workflow. Default 8. Exceeding it fails the run.",
@@ -459,10 +459,10 @@ export interface Interface {
   readonly waitForDependencies: () => Effect.Effect<void>
 }
 
-export class Service extends Context.Service<Service, Interface>()("@encode/Config") {}
+export class Service extends Context.Service<Service, Interface>()("@opencode/Config") {}
 
 function globalConfigFile() {
-  const candidates = ["ENCODE.jsonc", "ENCODE.json", "config.json"].map((file) =>
+  const candidates = ["encode.jsonc", "encode.json", "config.json"].map((file) =>
     path.join(Global.Path.config, file),
   )
   for (const file of candidates) {
@@ -537,8 +537,8 @@ export const layer = Layer.effect(
 
       yield* Effect.promise(() => resolveLoadedPlugins(data, options.path))
       if (!data.$schema) {
-        data.$schema = "https://encode.ai/config.json"
-        const updated = text.replace(/^\s*\{/, '{\n  "$schema": "https://encode.ai/config.json",')
+        data.$schema = "https://opencode.ai/config.json"
+        const updated = text.replace(/^\s*\{/, '{\n  "$schema": "https://opencode.ai/config.json",')
         yield* fs.writeFileString(options.path, updated).pipe(Effect.catch(() => Effect.void))
       }
       return data
@@ -555,8 +555,8 @@ export const layer = Layer.effect(
       let result: Info = pipe(
         {},
         mergeDeep(yield* loadFile(path.join(Global.Path.config, "config.json"))),
-        mergeDeep(yield* loadFile(path.join(Global.Path.config, "ENCODE.json"))),
-        mergeDeep(yield* loadFile(path.join(Global.Path.config, "ENCODE.jsonc"))),
+        mergeDeep(yield* loadFile(path.join(Global.Path.config, "encode.json"))),
+        mergeDeep(yield* loadFile(path.join(Global.Path.config, "encode.jsonc"))),
       )
 
       const legacy = path.join(Global.Path.config, "config")
@@ -566,7 +566,7 @@ export const layer = Layer.effect(
             .then(async (mod) => {
               const { provider, model, ...rest } = mod.default
               if (provider && model) result.model = `${provider}/${model}`
-              result["$schema"] = "https://encode.ai/config.json"
+              result["$schema"] = "https://opencode.ai/config.json"
               result = mergeDeep(result, rest)
               await fsNode.writeFile(path.join(Global.Path.config, "config.json"), JSON.stringify(result, null, 2))
               await fsNode.unlink(legacy)
@@ -681,7 +681,7 @@ export const layer = Layer.effect(
           for (const [name, server] of Object.entries(data.mcpServers)) {
             const existing = result.mcp?.[name]
             if (existing && result.mcp_origins?.[name]?.type !== "claude") {
-              log.info(`skipped Claude Code MCP server "${name}"; native encode MCP with same name already exists.`)
+              log.info(`skipped Claude Code MCP server "${name}"; native opencode MCP with same name already exists.`)
               continue
             }
 
@@ -707,17 +707,17 @@ export const layer = Layer.effect(
           if (value.type === "wellknown") {
             const url = key.replace(/\/+$/, "")
             process.env[value.key] = value.token
-            log.debug("fetching remote config", { url: `${url}/.well-known/encode` })
+            log.debug("fetching remote config", { url: `${url}/.well-known/opencode` })
             const response = yield* Effect.promise(() =>
-              fetch(`${url}/.well-known/encode`, { signal: AbortSignal.timeout(1000) }),
+              fetch(`${url}/.well-known/opencode`, { signal: AbortSignal.timeout(1000) }),
             )
             if (!response.ok) {
               throw new Error(`failed to fetch remote config from ${url}: ${response.status}`)
             }
             const wellknown = (yield* Effect.promise(() => response.json())) as { config?: Record<string, unknown> }
             const remoteConfig = wellknown.config ?? {}
-            if (!remoteConfig.$schema) remoteConfig.$schema = "https://encode.ai/config.json"
-            const source = `${url}/.well-known/encode`
+            if (!remoteConfig.$schema) remoteConfig.$schema = "https://opencode.ai/config.json"
+            const source = `${url}/.well-known/opencode`
             const next = yield* loadConfig(JSON.stringify(remoteConfig), {
               dir: path.dirname(source),
               source,
@@ -736,7 +736,7 @@ export const layer = Layer.effect(
         }
 
         if (!Flag.ENCODE_DISABLE_PROJECT_CONFIG) {
-          for (const file of yield* ConfigPaths.files("ENCODE", ctx.directory, ctx.worktree).pipe(Effect.orDie)) {
+          for (const file of yield* ConfigPaths.files("encode", ctx.directory, ctx.worktree).pipe(Effect.orDie)) {
             yield* merge(file, yield* loadFile(file), "local")
           }
         }
@@ -753,14 +753,14 @@ export const layer = Layer.effect(
 
         const deps: Fiber.Fiber<void, never>[] = []
 
-        // Load Claude Code commands first so .ENCODE commands override on name collision.
+        // Load Claude Code commands first so .encode commands override on name collision.
         for (const dir of yield* ConfigPaths.claudeCommandDirectories(ctx.directory, ctx.worktree)) {
           result.command = mergeDeep(result.command ?? {}, yield* Effect.promise(() => ConfigCommand.load(dir)))
         }
 
         for (const dir of directories) {
-          if (dir.endsWith(".ENCODE") || dir === Flag.ENCODE_CONFIG_DIR) {
-            for (const file of ["ENCODE.json", "ENCODE.jsonc"]) {
+          if (dir.endsWith(".encode") || dir === Flag.ENCODE_CONFIG_DIR) {
+            for (const file of ["encode.json", "encode.jsonc"]) {
               const source = path.join(dir, file)
               log.debug(`loading config from ${source}`)
               yield* merge(source, yield* loadFile(source))
@@ -798,7 +798,7 @@ export const layer = Layer.effect(
           result.command = mergeDeep(result.command ?? {}, yield* Effect.promise(() => ConfigCommand.load(dir)))
           result.agent = mergeDeep(result.agent ?? {}, yield* Effect.promise(() => ConfigAgent.load(dir)))
           result.agent = mergeDeep(result.agent ?? {}, yield* Effect.promise(() => ConfigAgent.loadMode(dir)))
-          // Auto-discovered plugins under `.ENCODE/plugin(s)` are already local files, so ConfigPlugin.load
+          // Auto-discovered plugins under `.encode/plugin(s)` are already local files, so ConfigPlugin.load
           // returns normalized Specs and we only need to attach origin metadata here.
           const list = yield* Effect.promise(() => ConfigPlugin.load(dir))
           yield* mergePluginOrigins(dir, list)
@@ -855,7 +855,7 @@ export const layer = Layer.effect(
 
         const managedDir = ConfigManaged.managedConfigDir()
         if (existsSync(managedDir)) {
-          for (const file of ["ENCODE.json", "ENCODE.jsonc"]) {
+          for (const file of ["encode.json", "encode.jsonc"]) {
             const source = path.join(managedDir, file)
             yield* merge(source, yield* loadFile(source), "global")
           }
@@ -869,7 +869,7 @@ export const layer = Layer.effect(
             source: managed.source,
           })
           result = mergeConfigConcatArrays(result, next)
-          mergeMcpOrigins(managed.source, next, "opencode")
+          mergeMcpOrigins(managed.source, next, "encode")
         }
 
         if (!Flag.ENCODE_DISABLE_CLAUDE_CODE_MCP) {

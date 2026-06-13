@@ -23,8 +23,8 @@ async function setupProjectIdEnvironment(workingDir: string): Promise<void> {
   const mainGit = resolveMainGitDir(workingDir)
   if (!mainGit) return
 
-  const localFile = nodePath.join(workingDir, ".ENCODE-project-id")
-  const idFile = nodePath.join(mainGit, "ENCODE-project-id")
+  const localFile = nodePath.join(workingDir, ".encode-project-id")
+  const idFile = nodePath.join(mainGit, "encode-project-id")
 
   if (await Bun.file(localFile).exists()) {
     if (!(await Bun.file(idFile).exists())) {
@@ -34,14 +34,14 @@ async function setupProjectIdEnvironment(workingDir: string): Promise<void> {
     await nodeFs.unlink(localFile).catch(() => {})
   }
 
-  // Belt-and-suspenders: ensure .git/info/exclude lists .ENCODE-project-id
+  // Belt-and-suspenders: ensure .git/info/exclude lists .encode-project-id
   const excludeFile = nodePath.join(mainGit, "info", "exclude")
   await nodeFs.mkdir(nodePath.dirname(excludeFile), { recursive: true })
   const existing = await Bun.file(excludeFile)
     .text()
     .catch(() => "")
-  if (!existing.includes(".ENCODE-project-id")) {
-    await nodeFs.appendFile(excludeFile, "\n.ENCODE-project-id\n")
+  if (!existing.includes(".encode-project-id")) {
+    await nodeFs.appendFile(excludeFile, "\n.encode-project-id\n")
   }
 }
 

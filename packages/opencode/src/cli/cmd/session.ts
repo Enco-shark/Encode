@@ -51,7 +51,7 @@ export const SessionCommand = cmd({
 
 export const SessionImportClaudeCommand = cmd({
   command: "import-claude",
-  describe: "import Claude Code sessions (~/.claude/projects) into ENCODE",
+  describe: "import Claude Code sessions (~/.claude/projects) into encode",
   builder: (yargs: Argv) =>
     yargs.option("force", {
       describe: "re-sync every session, ignoring the mtime cache",

@@ -951,10 +951,10 @@ export class Agent implements ACPAgent {
         // Replay file attachments as appropriate ACP content blocks.
         // Encode stores files internally as { type: "file", url, filename, mime }.
         // We convert these back to ACP blocks based on the URL scheme and MIME type:
-        // - file:// URLs �?resource_link
-        // - data: URLs with image/* �?image block
-        // - data: URLs with text/* or application/json �?resource with text
-        // - data: URLs with other types �?resource with blob
+        // - file:// URLs → resource_link
+        // - data: URLs with image/* → image block
+        // - data: URLs with text/* or application/json → resource with text
+        // - data: URLs with other types → resource with blob
         const url = part.url
         const filename = part.filename ?? "file"
         const mime = part.mime || "application/octet-stream"
@@ -1570,7 +1570,7 @@ async function defaultModel(config: ACPConfig, cwd?: string): Promise<{ provider
 
   if (specified && !providers.length) return specified
 
-  const opencodeProvider = providers.find((p) => p.id === "opencode")
+  const opencodeProvider = providers.find((p) => p.id === "encode")
   if (opencodeProvider) {
     if (opencodeProvider.models["big-pickle"]) {
       return { providerID: ProviderID.opencode, modelID: ModelID.make("big-pickle") }
@@ -1707,9 +1707,9 @@ function buildVariantMeta(input: {
   variant?: string
   availableVariants: string[]
 }) {
-    return {
-      encode: {
-        modelId: `${input.model.providerID}/${input.model.modelID}`,
+  return {
+    encode: {
+      modelId: `${input.model.providerID}/${input.model.modelID}`,
       variant: input.variant ?? null,
       availableVariants: input.availableVariants,
     },

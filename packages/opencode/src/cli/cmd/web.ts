@@ -31,7 +31,7 @@ function getNetworkIPs() {
 export const WebCommand = cmd({
   command: "web",
   builder: (yargs) => withNetworkOptions(yargs),
-  describe: "start ENCODE server and open web interface",
+  describe: "start encode server and open web interface",
   handler: async (args) => {
     if (!Flag.ENCODE_SERVER_PASSWORD) {
       UI.println(UI.Style.TEXT_WARNING_BOLD + "!  ENCODE_SERVER_PASSWORD is not set; server is unsecured.")

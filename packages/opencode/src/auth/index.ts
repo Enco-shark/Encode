@@ -4,7 +4,7 @@ import { zod } from "@/util/effect-zod"
 import { Global } from "../global"
 import { AppFileSystem } from "@encode-ai/shared/filesystem"
 
-export const OAUTH_DUMMY_KEY = "ENCODE-oauth-dummy-key"
+export const OAUTH_DUMMY_KEY = "encode-oauth-dummy-key"
 
 const file = path.join(Global.Path.data, "auth.json")
 

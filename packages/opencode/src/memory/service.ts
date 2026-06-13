@@ -75,7 +75,7 @@ export const layer: Layer.Layer<Service, never, Config.Service> = Layer.effect(
       // far below a doc matching several rare query words. We drop the
       // common-word noise with a RELATIVE floor: keep results scoring at
       // least `ratio` of the top hit's score. Relative (not absolute)
-      // because BM25 magnitudes are corpus-size-dependent â€?in a tiny corpus
+      // because BM25 magnitudes are corpus-size-dependent â€” in a tiny corpus
       // every score collapses toward 0 (low IDF), so any fixed absolute floor
       // would wrongly wipe real hits. The #1 result is ALWAYS kept (a match
       // is a match even when BM25 can't discriminate). Default 0.15.

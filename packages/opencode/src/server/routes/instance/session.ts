@@ -976,7 +976,7 @@ export const SessionRoutes = lazy(() =>
           // the server-side runner to Idle ourselves. Otherwise the prompt
           // fiber keeps running with no consumer, and any next POST attaches
           // to the same dead Deferred via SessionRunState.ensureRunning's
-          // `Running` branch â€?every subsequent turn then hangs waiting on a
+          // `Running` branch â€” every subsequent turn then hangs waiting on a
           // result that will never arrive. SessionPrompt.cancel interrupts
           // the fiber, which lets the runner transition Running -> Idle
           // through Runner.cancel, freeing the next POST to start a fresh run.

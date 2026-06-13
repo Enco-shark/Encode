@@ -84,7 +84,7 @@ const scriptDir = () => path.join(Global.Path.data, "workflow")
 // or dot-dot (`../../../etc/passwd`, `wf_../x`, an absolute path) would escape
 // scriptDir. The HTTP route already rejects these, but resume()/journal IO are also
 // reachable from the workflow tool and the TUI, so we re-enforce the minted shape
-// here (`wf_` + base62 â€?a charset with no `.` or `/`). A throw here surfaces as an
+// here (`wf_` + base62 â€” a charset with no `.` or `/`). A throw here surfaces as an
 // Effect defect: on the async IO paths (readScript/loadJournal) resume() captures it
 // via Effect.exit and treats it as not-resumable; on the synchronous journal appends
 // it fails as a defect BEFORE any appendFileSync (the caller Effect.ignore's it), so
@@ -130,7 +130,7 @@ const recordStart = (input: {
   /** The per-agent timeout for this run, persisted so a subsequent resume
    * (especially via TUI / API where the caller doesn't know the original
    * launch parameters) can read it back instead of silently defaulting to
-   * unbounded â€?which would let a wedged Encode TTFT stall the run forever. */
+   * unbounded â€” which would let a wedged Encode TTFT stall the run forever. */
   agentTimeoutMs?: number
 }) =>
   Effect.sync(() =>
@@ -153,7 +153,7 @@ const recordStart = (input: {
         // On resume the row already exists. We reset the counters AND re-stamp the
         // script_sha: launch passes the CURRENT script's sha, so a same-script
         // resume re-writes the identical sha (no-op) while a changed-script relaunch
-        // (the P1-2 mismatch path) overwrites the stale sha with the new one â€?so a
+        // (the P1-2 mismatch path) overwrites the stale sha with the new one â€” so a
         // SUBSEQUENT resume of the now-current script replays correctly. The sha
         // COMPARISON happens in resume() against load()'s pre-launch value, before
         // this overwrite runs, so re-stamping here never hides the mismatch.
@@ -245,7 +245,7 @@ const appendJournal = (runID: string, event: JournalEvent) =>
 
 // Synchronous append (one or a batch of events). Called PER-AGENT from the
 // agent() hook the instant a spawn succeeds, so each result is durable on disk
-// immediately â€?a mid-run process exit / SIGKILL / deadline leaves a journal
+// immediately â€” a mid-run process exit / SIGKILL / deadline leaves a journal
 // containing every completed agent, which is what makes resume replay them
 // (durability does NOT wait for run completion). It is SYNCHRONOUS on purpose:
 // an Effect.promise(async fs) append suspends the calling fiber on a macrotask,
@@ -273,7 +273,7 @@ const loadJournal = (runID: string): Effect.Effect<JournalLoad> =>
       try {
         ev = JSON.parse(line) as JournalEvent
       } catch {
-        continue // torn/partial line (crash mid-append) â€?skip
+        continue // torn/partial line (crash mid-append) â€” skip
       }
       if (typeof ev.pass === "number" && ev.pass > maxPass) maxPass = ev.pass
       if (ev.t === "agent") results.set(ev.key, ev.result)
@@ -283,12 +283,12 @@ const loadJournal = (runID: string): Effect.Effect<JournalLoad> =>
 
 // Truncate the journal to empty (MR104 P1-2). Called on the resume sha-mismatch
 // path BEFORE the fresh relaunch appends: replaying the OLD journal onto an EDITED
-// script is silent divergence, so the stale lines must not survive â€?and a fresh
+// script is silent divergence, so the stale lines must not survive â€” and a fresh
 // run must not interleave its appends with them (a LATER resume's loadJournal would
-// otherwise read both old + new â†?wrong replay). We truncate (write "") rather than
+// otherwise read both old + new â†’ wrong replay). We truncate (write "") rather than
 // delete so the file always exists for a concurrent reader; loadJournal treats an
 // empty file as "no results, pass 1" exactly like a missing one. mkdir first so the
-// truncate cannot fail on a never-written run (no journal yet â†?still ends empty).
+// truncate cannot fail on a never-written run (no journal yet â†’ still ends empty).
 const clearJournal = (runID: string) =>
   Effect.promise(async () => {
     const fs = await import("fs/promises")

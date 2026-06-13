@@ -44,7 +44,7 @@ export type Task = SessionTaskResponse[number]
  * TUI-side view of a dynamic-workflow run (server route `GET /workflows`, bus
  * events `workflow.started/phase/finished`). The list route serializes the
  * runtime's `RunSummary` but is described as `z.array(z.any())`, so the SDK gen
- * surfaces it as `Array<unknown>` rather than a named export â€?mirror the
+ * surfaces it as `Array<unknown>` rather than a named export â€” mirror the
  * server's `RunSummary` shape here so the store and the dialog stay in lockstep.
  */
 export type WorkflowRun = {

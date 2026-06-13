@@ -24,7 +24,7 @@ const Query = Schema.Struct({
 
 const Headers = Schema.Struct({
   authorization: Schema.optional(Schema.String),
-  "x-ENCODE-directory": Schema.optional(Schema.String),
+  "x-encode-directory": Schema.optional(Schema.String),
 })
 
 function decode(input: string) {
@@ -73,7 +73,7 @@ const auth = Layer.succeed(
       Effect.gen(function* () {
         if (!Flag.ENCODE_SERVER_PASSWORD) return yield* effect
 
-        const user = Flag.ENCODE_SERVER_USERNAME ?? "ENCODE"
+        const user = Flag.ENCODE_SERVER_USERNAME ?? "encode"
         if (credential.username !== user) {
           return yield* new Unauthorized({ message: "Unauthorized" })
         }
@@ -91,7 +91,7 @@ const instance = HttpRouter.middleware()(
       Effect.gen(function* () {
         const query = yield* HttpServerRequest.schemaSearchParams(Query)
         const headers = yield* HttpServerRequest.schemaHeaders(Headers)
-        const raw = query.directory || headers["x-ENCODE-directory"] || process.cwd()
+        const raw = query.directory || headers["x-encode-directory"] || process.cwd()
         const workspace = query.workspace || undefined
         const ctx = yield* Effect.promise(() =>
           Instance.provide({
