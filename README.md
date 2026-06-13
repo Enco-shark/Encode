@@ -4,118 +4,118 @@
   <img src="assets/readme/Encode.png" alt="Encode" width="700">
 </p>
 
-<p align="center"><strong>An open-source AI coding agent with cross-session memory.</strong></p>
+<p align="center"><strong>开源 AI 编码助手，支持跨会话记忆。</strong></p>
 
 <p align="center">
-  <a href="README.zh.md">中文</a> | English
+  中文 | <a href="README.en.md">English</a>
 </p>
 
 ---
 
-Encode is a terminal-native AI coding assistant. It can read and write code, run commands, manage Git, and use a persistent memory system to keep a deep understanding of your project across sessions while continuously improving itself.
+Encode 是一款终端原生 AI 编码助手。它可以读写代码、运行命令、管理 Git，并使用持久化记忆系统在会话之间保持对项目的深入理解，同时不断自我改进。
 
-Encode supports connecting to any mainstream LLM provider API.
+Encode 支持连接任何主流 LLM 提供商 API。
 
 ---
 
-## Quick Start
+## 快速开始
 
 ```bash
-# One-line install
+# 一键安装
 curl -fsSL https://encode.ai/install | bash
 
-# Or install via npm
+# 或通过 npm 安装
 npm install -g @encode-ai/cli
 ```
 
-The first launch guides you through configuration automatically. Supported options:
-- **Custom Provider** — add any OpenAI-compatible API in the TUI
-- **Import from Claude Code** — migrate existing authentication in one step
+首次启动会自动引导配置。支持的选项：
+- **自定义提供商** — 在 TUI 中添加任何 OpenAI 兼容 API
+- **从 Claude Code 导入** — 一步迁移现有认证
 
 ---
 
-## Core Features
+## 核心功能
 
-### Multiple Agents
+### 多代理模式
 
-| Agent | Description |
+| 代理 | 描述 |
 |--------|------|
-| **build** | Default. Full tool permissions for development |
-| **plan** | Read-only analysis mode for code exploration and solution design |
-| **compose** | Orchestration mode for specs-driven development and skill-driven workflows |
+| **build** | 默认模式，具有完整工具权限用于开发 |
+| **plan** | 只读分析模式，用于代码探索和方案设计 |
+| **compose** | 编排模式，用于规范驱动开发和技能驱动工作流 |
 
-Press `Tab` to switch between primary agents. Subagents are created by the system as needed.
+按 `Tab` 切换主代理。系统会根据需要自动创建子代理。
 
-### Persistent Memory
+### 持久化记忆
 
-Cross-session memory powered by SQLite FTS5 full-text search:
+基于 SQLite FTS5 全文搜索的跨会话记忆：
 
-- **Project memory** (`MEMORY.md`) — persistent project knowledge, rules, and architecture decisions
-- **Session checkpoint** (`checkpoint.md`) — structured state snapshots maintained automatically by the checkpoint-writer subagent
-- **Scratch notes** (`notes.md`) — temporary note area for agents
-- **Task progress** (`tasks/<id>/progress.md`) — per-task logs
+- **项目记忆** (`MEMORY.md`) — 持久化项目知识、规则和架构决策
+- **会话检查点** (`checkpoint.md`) — 由检查点写入子代理自动维护的结构化状态快照
+- **临时笔记** (`notes.md`) — 代理的临时笔记区域
+- **任务进度** (`tasks/<id>/progress.md`) — 每个任务的日志
 
-Memory is injected automatically when a session resumes, so the agent does not need to relearn project context.
+会话恢复时自动注入记忆，代理无需重新学习项目上下文。
 
-### Intelligent Context Management
+### 智能上下文管理
 
-- **Automatic checkpoints** — decides when to save session state based on the model context window
-- **Context reconstruction** — when context approaches the limit, rebuilds it from the latest checkpoint, project memory, task progress, and retained recent messages so the agent can continue the current task
-- **Budgeted injection** — uses a token budget to control how much checkpoint, memory, and notes content enters context, with importance ranking
+- **自动检查点** — 根据模型上下文窗口决定何时保存会话状态
+- **上下文重建** — 当上下文接近限制时，从最新检查点、项目记忆、任务进度和保留的近期消息重建，以便代理继续当前任务
+- **预算注入** — 使用 token 预算控制进入上下文的检查点、记忆和笔记内容量，并进行重要性排序
 
-### Task Tracking
+### 任务跟踪
 
-A tree-shaped task system (`T1`, `T1.1`, `T1.2`, …) that integrates automatically with the checkpoint system, so task progress is preserved when sessions resume.
+树形任务系统 (`T1`, `T1.1`, `T1.2`, …)，自动与检查点系统集成，任务进度在会话恢复时保留。
 
-### Subagent System
+### 子代理系统
 
-The primary agent can create subagents on demand. Subagents share the current session context and can work in parallel, with lifecycle tracking, cancellation, and background execution.
+主代理可以按需创建子代理。子代理共享当前会话上下文，支持并行执行、生命周期跟踪、取消和后台执行。
 
-### Goal / Stop Condition
+### 目标驱动
 
-The `/goal` command sets a stopping condition for a session. When the agent tries to stop, an independent judge model evaluates the conversation to decide whether the condition is truly satisfied — preventing premature "optimistic stops" during autonomous work.
+`/goal` 命令为会话设置停止条件。当代理尝试停止时，独立评判模型会评估对话以确定条件是否真正满足 — 防止自主工作中过早"乐观停止"。
 
-### Compose Mode
+### Compose 模式
 
-Compose mode provides a structured workflow for specs-driven development. It includes built-in skills for planning, execution, code review, TDD, debugging, verification, and merging — orchestrating the full lifecycle from spec to shipped code.
+Compose 模式为规范驱动开发提供结构化工作流。内置规划、执行、代码审查、TDD、调试、验证和合并技能 — 编排从规范到交付代码的完整生命周期。
 
 ### Dream & Distill
 
-- **`/dream`** — scans recent session traces, extracts persistent knowledge into project memory, and removes outdated entries
-- **`/distill`** — discovers repeated manual workflows in recent work and packages high-confidence candidates into reusable skills, subagents, or commands
+- **`/dream`** — 扫描近期会话痕迹，将持久知识提取到项目记忆，并移除过时条目
+- **`/distill`** — 发现近期工作中的重复手动工作流，并将高置信度候选项打包成可重用技能、子代理或命令
 
 ---
 
-## Configuration
+## 配置
 
-Encode is configured via `.encode/encode.json` in the project directory (or `~/.config/encode/encode.json` globally). Key options include:
+Encode 通过项目目录中的 `.encode/encode.json` 进行配置（或全局 `~/.config/encode/encode.json`）。主要选项包括：
 
-- Provider and model selection
-- Agent permissions and custom agents
-- Checkpoint and memory behavior
-- MCP server connections
-- Keybindings and theme
+- 提供商和模型选择
+- 代理权限和自定义代理
+- 检查点和记忆行为
+- MCP 服务器连接
+- 按键绑定和主题
 
-Max Mode (parallel best-of-N reasoning with judge selection) can be enabled via `experimental.maxMode` in the config.
+Max Mode（并行 best-of-N 推理与评判选择）可通过配置中的 `experimental.maxMode` 启用。
 
 ---
 
-## Development
+## 开发
 
 ```bash
-bun install              # Install dependencies
-bun run dev              # Run in development mode
-bun turbo typecheck      # Type check
+bun install              # 安装依赖
+bun run dev              # 以开发模式运行
+bun turbo typecheck      # 类型检查
 ```
 
 ---
 
-## Relationship to OpenCode
+## 与 OpenCode 的关系
 
-Encode is built as a fork of [OpenCode](https://github.com/anomalyco/opencode). It keeps all core OpenCode capabilities (multiple providers, TUI, LSP, MCP, plugins) and adds persistent memory, intelligent context management, subagent orchestration, goal-driven autonomous loops, compose workflows, and self-improvement via dream/distill.
+Encode 基于 [OpenCode](https://github.com/anomalyco/opencode) 的 fork 构建。保留了 OpenCode 的所有核心能力（多提供商、TUI、LSP、MCP、插件），并添加了持久化记忆、智能上下文管理、子代理编排、目标驱动自主循环、Compose 工作流，以及通过 dream/distill 实现的自我改进。
 
 ---
 
-## License
+## 许可证
 
-Source code is licensed under the [MIT License](./LICENSE).
+源代码采用 [MIT 许可证](./LICENSE)。
