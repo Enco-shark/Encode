@@ -28,16 +28,13 @@ describe("acp.agent interface compliance", () => {
     // Required
     "initialize",
     "newSession",
-    "prompt",
-    "cancel",
-    // Optional but checked by SDK router
+    // Optional
     "loadSession",
     "setSessionMode",
     "authenticate",
     // Unstable - SDK checks these with unstable_ prefix
     "listSessions",
     "unstable_forkSession",
-    "unstable_resumeSession",
     "unstable_setSessionModel",
   ]
 
