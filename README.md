@@ -21,11 +21,15 @@ Encode 支持连接任何主流 LLM 提供商 API。
 ## 快速开始
 
 ```bash
-# 一键安装
-curl -fsSL https://encode.ai/install | bash
+# 克隆仓库
+git clone https://github.com/your-username/Encode.git
+cd Encode
 
-# 或通过 npm 安装
-npm install -g @encode-ai/cli
+# 安装依赖
+bun install
+
+# 运行 TUI
+bun dev
 ```
 
 首次启动会自动引导配置。支持的选项：

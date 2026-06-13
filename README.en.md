@@ -21,11 +21,15 @@ Encode supports connecting to any mainstream LLM provider API.
 ## Quick Start
 
 ```bash
-# One-line install
-curl -fsSL https://encode.ai/install | bash
+# Clone the repository
+git clone https://github.com/your-username/Encode.git
+cd Encode
 
-# Or install via npm
-npm install -g @encode-ai/cli
+# Install dependencies
+bun install
+
+# Run TUI
+bun dev
 ```
 
 The first launch guides you through configuration automatically. Supported options:
@@ -170,6 +174,26 @@ Max Mode (parallel best-of-N reasoning with judge selection) can be enabled via 
 bun install              # Install dependencies
 bun run dev              # Run in development mode
 bun turbo typecheck      # Type check
+```
+
+### Project Structure
+
+```
+packages/
+├── opencode/    # Core business logic & server
+│   └── src/cli/cmd/tui/  # TUI terminal interface
+├── app/         # Web interface (SolidJS)
+├── ui/          # Shared UI component library
+├── desktop/     # Electron desktop client
+├── sdk/         # JavaScript SDK
+└── script/      # Build scripts
+```
+
+### Build Standalone Executable
+
+```bash
+./packages/opencode/script/build.ts --single
+./packages/opencode/dist/encode-<platform>/bin/Encode
 ```
 
 ---
