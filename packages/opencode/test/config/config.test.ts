@@ -211,7 +211,7 @@ test("loads Claude Code MCP servers from home and project config", async () => {
         url: "https://project.example.com/mcp",
         enabled: false,
       })
-      expect(config.mcp_origins?.context7?.type).toBe("opencode")
+      expect(config.mcp_origins?.context7?.type).toBe("encode")
       expect(config.mcp_origins?.filesystem).toEqual({
         type: "claude",
         source: path.join(Global.Path.home, ".claude.json"),
