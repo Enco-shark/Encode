@@ -20,6 +20,21 @@ Encode 支持连接任何主流 LLM 提供商 API。
 
 ## 快速开始
 
+### 通过 npm 安装
+
+```bash
+npm install -g encode-ai-cli
+encode
+```
+
+或直接运行：
+
+```bash
+npx encode-ai-cli
+```
+
+### 从源码运行
+
 ```bash
 # 克隆仓库
 git clone https://github.com/Enco-shark/Encode.git
