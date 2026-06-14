@@ -63,7 +63,7 @@ describe("plugin.workspace", () => {
         )
 
         await Bun.write(
-          path.join(dir, "ENCODE.json"),
+          path.join(dir, "encode.json"),
           JSON.stringify(
             {
               $schema: "https://encode.ai/config.json",
