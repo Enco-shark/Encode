@@ -6,6 +6,7 @@ import { ProviderID } from "@/provider/schema"
 import { mapValues } from "remeda"
 import { Effect, Layer, Schema } from "effect"
 import { HttpApi, HttpApiBuilder, HttpApiEndpoint, HttpApiError, HttpApiGroup, OpenApi } from "effect/unstable/httpapi"
+import { HttpServerResponse } from "effect/unstable/http"
 
 const root = "/provider"
 
@@ -112,8 +113,8 @@ export const providerHandlers = Layer.unwrap(
           method: ctx.payload.method,
           inputs: ctx.payload.inputs,
         })
-        .pipe(Effect.catch(() => Effect.fail(new HttpApiError.BadRequest({}))))
-      if (!result) return yield* new HttpApiError.BadRequest({})
+        .pipe(Effect.catch(() => Effect.succeed(null)))
+      if (!result) return HttpServerResponse.empty({ status: 400 })
       return result
     })
 
@@ -127,7 +128,7 @@ export const providerHandlers = Layer.unwrap(
           method: ctx.payload.method,
           code: ctx.payload.code,
         })
-        .pipe(Effect.catch(() => Effect.fail(new HttpApiError.BadRequest({}))))
+        .pipe(Effect.catch(() => Effect.succeed(undefined)))
       return true
     })
 

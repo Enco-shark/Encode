@@ -230,6 +230,8 @@ export function Prompt(props: PromptProps) {
     toast.show({ message: "Voice feature is not available", variant: "error" })
     return
 
+    const apiKey = ""
+    const baseUrl = ""
     const av: NonNullable<typeof activeVoice> = {
       handle: undefined!,
       pending: 0,
@@ -325,7 +327,7 @@ export function Prompt(props: PromptProps) {
       toast.show({ message: t("tui.voice.error.no_recorder"), variant: "error" })
       return
     }
-    av.handle = handle
+    av.handle = handle!
     activeVoice = av
     setVoiceState("listening")
   }
